@@ -4,7 +4,7 @@
 +(id)extensionWithIdentifier:(id)arg1 error:(id*)arg2; // iOS 10 - 12
 @end
 
-@interface WGWidgetInfo // iOS 10 - 12
+@interface WGWidgetInfo : NSObject // iOS 10 - 12
 +(id)widgetInfoWithExtension:(id)arg1; // iOS 10 - 12
 +(CGFloat)maximumContentHeightForCompactDisplayMode; // iOS 10 - 12
 @end

@@ -10,8 +10,9 @@
 
 @interface WGWidgetInfo (Private) // iOS 10 - 12
 @property (setter=_setDisplayName:, nonatomic, copy) NSString *displayName; // iOS 10 - 12
-@property (setter=_setIcon:,nonatomic,retain) UIImage *icon; // iOS 10 - 12
 @property (nonatomic,copy,readonly) NSString *widgetIdentifier; // iOS 10 - 12
+-(UIImage *)icon; // iOS 10 - 11
+-(id)_icon; // iOS 12
 @end
 
 @interface WGWidgetDiscoveryController : NSObject {
@@ -109,7 +110,10 @@ static WGWidgetDiscoveryController *widgetDiscoveryController = nil;
 
 	WGWidgetInfo *widgetInfo = [_widgetInfos objectAtIndex:indexPath.row];
 	cell.textLabel.text = widgetInfo.displayName;
-	cell.imageView.image = widgetInfo.icon;
+	if ([widgetInfo respondsToSelector:@selector(_icon)])
+		cell.imageView.image = [widgetInfo _icon];
+	else
+		cell.imageView.image = [widgetInfo icon];
 	return cell;
 }
 

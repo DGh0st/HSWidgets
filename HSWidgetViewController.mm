@@ -103,8 +103,12 @@
 	_expandBoxView = [[objc_getClass("SBCloseBoxView") alloc] initWithFrame:CGRectZero];
 	[_expandBoxView addTarget:self action:@selector(expandBoxTapped) forControlEvents:UIControlEventTouchUpInside];
 	UIImage *expandImage = [UIImage imageNamed:kExpandImageName inBundle:[NSBundle bundleWithPath:kBundlePath] compatibleWithTraitCollection:nil];
-	((UIImageView *)[_expandBoxView valueForKey:@"_xColorBurnView"]).image = expandImage;
-	((UIImageView *)[_expandBoxView valueForKey:@"_xPlusDView"]).image = expandImage;
+	try {
+		((UIImageView *)[_expandBoxView valueForKey:@"_xColorBurnView"]).image = expandImage;
+		((UIImageView *)[_expandBoxView valueForKey:@"_xPlusDView"]).image = expandImage;
+	} catch (NSException *exception) {
+		_expandBoxView.imageView.image = expandImage;
+	}
 	[_expandBoxView sizeToFit];
 	_expandBoxView.center = CGPointMake(_editingView.frame.size.width - _expandBoxView.frame.size.width, _expandBoxView.frame.size.height);
 	_expandBoxView.layer.cornerRadius = [self _cornerRadius] / _expandBoxView.frame.size.width;
@@ -113,8 +117,12 @@
 	_shrinkBoxView = [[objc_getClass("SBCloseBoxView") alloc] initWithFrame:CGRectZero];
 	[_shrinkBoxView addTarget:self action:@selector(shrinkBoxTapped) forControlEvents:UIControlEventTouchUpInside];
 	UIImage *shrinkImage = [UIImage imageNamed:kShrinkImageName inBundle:[NSBundle bundleWithPath:kBundlePath] compatibleWithTraitCollection:nil];
-	((UIImageView *)[_shrinkBoxView valueForKey:@"_xColorBurnView"]).image = shrinkImage;
-	((UIImageView *)[_shrinkBoxView valueForKey:@"_xPlusDView"]).image = shrinkImage;
+	try {
+		((UIImageView *)[_shrinkBoxView valueForKey:@"_xColorBurnView"]).image = shrinkImage;
+		((UIImageView *)[_shrinkBoxView valueForKey:@"_xPlusDView"]).image = shrinkImage;
+	} catch (NSException *exception) {
+		_expandBoxView.imageView.image = shrinkImage;
+	}
 	[_shrinkBoxView sizeToFit];
 	_shrinkBoxView.center = CGPointMake(_editingView.frame.size.width - _expandBoxView.frame.size.width * 3.0 / 2.0 - _shrinkBoxView.frame.size.width, _shrinkBoxView.frame.size.height);
 	_shrinkBoxView.layer.cornerRadius = [self _cornerRadius] / _shrinkBoxView.frame.size.width;
