@@ -135,7 +135,7 @@
 	[pan release];
 
 	[self _editingStateChanged];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_editingStateChanged) name:@"SBIconEditingStateChangedNotification" object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_editingStateChanged) name:kEditingStateChangedNotification object:nil];
 }
 
 -(void)_updateAvailableSpace:(HSWidgetAvailableSpace)space {
@@ -390,7 +390,7 @@
 		[self.view.layer addAnimation:[objc_getClass("SBIconView") _jitterXTranslationAnimation] forKey:@"HSWidgetPositionX"];
 	if ([objc_getClass("SBIconView") respondsToSelector:@selector(_jitterYTranslationAnimation)])
 		[self.view.layer addAnimation:[objc_getClass("SBIconView") _jitterYTranslationAnimation] forKey:@"HSWidgetPositionY"];
-			
+
 	// rotation/transformation
 	if ([objc_getClass("SBIconView") respondsToSelector:@selector(_jitterTransformAnimation)])
 		[self.view.layer addAnimation:[objc_getClass("SBIconView") _jitterTransformAnimation] forKey:@"HSWidgetTransform"];
@@ -410,7 +410,7 @@
 }
 
 -(void)dealloc {
-	[[NSNotificationCenter defaultCenter] removeObserver:self name:@"SBIconEditingStateChangedNotification" object:nil];
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:kEditingStateChangedNotification object:nil];
 
 	if (_editingView != nil) {
 		[_editingView removeFromSuperview];
