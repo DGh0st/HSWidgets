@@ -3,7 +3,6 @@
 #import "HSAddNewWidgetView.h"
 #import "HSAddWidgetRootViewController.h"
 
-
 // One of SpringBoard structs (iOS 7 - 11)
 typedef struct SBIconCoordinate {
 	NSInteger row;
@@ -171,7 +170,7 @@ static NSMutableDictionary *allPagesWidgetLayouts = nil;
 				[allPagesWidgetLayouts removeObjectForKey:pageKey];
 			}
 		}
-		
+
 		if (wereAnyChangesMade)
 			[allPagesWidgetLayouts writeToFile:kWidgetLayoutPreferencesPath atomically:YES];
 	}
@@ -314,7 +313,7 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 	BOOL stateDidChange = arg1 != [self isEditing];
 
 	%orig;
-	
+
 	if (stateDidChange && ![self isKindOfClass:%c(SBDockIconListView)]) {
 		if (arg1) {
 			HSWidgetAvailableSpace availableSpace = [self maxAvailableSpace];
@@ -393,14 +392,14 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 
 	if (![self.addNewWidgetView isDescendantOfView:self])
 		[self addSubview:self.addNewWidgetView];
-	
+
 	self.addNewWidgetView.frame = (CGRect){origin, size};
 	[self.addNewWidgetView setNeedsDisplay];
 }
 
 %new
 -(void)_configureAddWidgetViewIfNeededWithRect:(CGRect)frame withAvailableSpace:(HSWidgetAvailableSpace)availableSpace {
-	if (self.addNewWidgetView == nil) {	
+	if (self.addNewWidgetView == nil) {
 		self.addNewWidgetView = [[HSAddNewWidgetView alloc] initWithFrame:frame withAvailableSpace:availableSpace];
 		[self.addNewWidgetView setAddNewWidgetDelegate:self];
 	}
@@ -645,7 +644,7 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 			self.isWidgetsAvailableForCurrentEmptySpace = [availableWidgetControllerClassesForAvailableRows([self maxAvailableSpace].numRows) count] > 0;
 			self.draggingWidgetViewController.originRow = previousRow;
 		}
-		
+
 		// animate views with delay to get smoother animations
 		if (self.newRowForDraggingAnimation != result) {
 			self.newRowForDraggingAnimation = result;
@@ -659,7 +658,7 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 -(void)_updatePageForExpandOrShrinkOfWidget:(HSWidgetViewController *)widgetViewController fromRows:(NSUInteger)rows {
 	// changes made to widget layout so they need to be saved
 	self.requiresSaveToFileForWidgetChanges = YES;
-	
+
 	SBIconListModel *model = [self model]; // update maxIconCount for current page
 
 	NSInteger numRowsToRemove = [widgetViewController numRows] - rows;
@@ -746,7 +745,7 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 				return NSOrderedSame;
 		}];
 	}
-	
+
 	// animate add widget view and icon moving based new widget location
 	BOOL isAddNewWidgetViewVisible = self.addNewWidgetView != nil;
 	HSWidgetAvailableSpace availableSpace = [self maxAvailableSpace];
@@ -796,7 +795,7 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 	[hsWidgetPickerTableViewController _setAvailableSpace:availableSpace];
 	hsWidgetPickerTableViewController.addWidgetSelectionDelegate = self;
 	hsWidgetPickerTableViewController.availableWidgetClasses = availableWidgetControllerClassesForAvailableRows(availableSpace.numRows);
-	
+
 	SBIconListModel *model = MSHookIvar<SBIconListModel *>(self, "_model");
 	NSMutableDictionary *widgetsToExclude = [NSMutableDictionary dictionary];
 	for (HSWidgetViewController *widgetViewController in model.widgetViewControllers) {
@@ -839,7 +838,7 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 	model.pageLayoutType = currentPageType;
 	widgetViewController.requestedSize = [self sizeForWidgetWithNumRows:numRows];
 	origin.x = (self.frame.size.width - widgetViewController.requestedSize.width) / 2;
-	
+
 	model = [self model]; // update maxIconCount for current page
 
 	// need to get new maxAvailableSpace since the new widget will take up space
@@ -1066,6 +1065,12 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 
 	%orig;
 }
+
+-(void)setIsEditing:(BOOL)arg1 withFeedbackBehavior:(id)arg2 
+	%orig;
+  
+	[[NSNotificationCenter defaultCenter] postNotificationName:kEditingStateChangedNotification object:nil userInfo:nil];
+}
 %end
 
 @interface SBFolderView // iOS 7 - 11
@@ -1161,7 +1166,7 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 		[(SBRootIconListView *)[self currentIconListView] _animateUpdateOfIconDraggingWithCompletion:^(BOOL finished) {
 			self.animatingIconListViewDragLocationChange = NO;
 		}];
-		
+
 		for (SBIconListView *iconListView in self.iconListViews)
 			if ([iconListView isKindOfClass:%c(SBRootIconListView)] && iconListView != [self currentIconListView])
 				[(SBRootIconListView *)iconListView _animateUpdateOfIconDraggingWithCompletion:nil];
@@ -1258,7 +1263,7 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 	}
 
 	%orig;
-	
+
 	self.settings.centerRowCoordinate = previousCenterRowCoordinate;
 }
 

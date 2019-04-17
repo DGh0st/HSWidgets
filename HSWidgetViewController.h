@@ -1,7 +1,7 @@
 #import "HSAddNewWidgetView.h"
 
 #define kAnimationDuration 0.3
-
+#define kEditingStateChangedNotification @"com.dgh0st.hswidget-editingStateChanged"
 #define kBundlePath @"/Library/Application Support/HSWidgets/Assets.bundle"
 
 @interface SBCloseBoxView : UIButton // iOS 7 - 12 (iOS 11+ this is a subclass of SBHomeScreenButton)
