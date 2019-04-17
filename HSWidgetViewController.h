@@ -4,7 +4,16 @@
 
 #define kBundlePath @"/Library/Application Support/HSWidgets/Assets.bundle"
 
-@interface SBCloseBoxView : UIButton // iOS 7 - 11
+@interface SBCloseBoxView : UIButton // iOS 7 - 12 (iOS 11+ this is a subclass of SBHomeScreenButton)
+@end
+
+@interface SBXCloseBoxView : SBCloseBoxView // iOS 11 - 12
+@end
+
+@interface SBExpandBoxView : SBXCloseBoxView
+@end
+
+@interface SBShrinkBoxView : SBXCloseBoxView
 @end
 
 @protocol HSWidgetDelegate

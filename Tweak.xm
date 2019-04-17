@@ -1,5 +1,4 @@
 #import <UIKit/UIKit.h>
-#import <vector>
 #import "HSWidgetViewController.h"
 #import "HSAddNewWidgetView.h"
 #import "HSAddWidgetRootViewController.h"
@@ -75,6 +74,7 @@ typedef NS_ENUM(NSUInteger, PageType) {
 @property (nonatomic, assign) BOOL isWidgetsAvailableForCurrentEmptySpace;
 @property (nonatomic, assign) BOOL requiresSaveToFileForWidgetChanges;
 @property (nonatomic, retain) UINavigationController *hsWidgetPickerNavigationController;
+@property (nonatomic, assign) BOOL shouldDisableWidgetLayout;
 -(void)_updateAddWidgetViewAndLayerForAvailableSpace:(HSWidgetAvailableSpace)maxAvailableSpace;
 -(void)_configureAddWidgetViewIfNeededWithRect:(CGRect)frame withAvailableSpace:(HSWidgetAvailableSpace)availableSpace;
 -(CGSize)sizeForWidgetWithNumRows:(NSUInteger)numRows;
@@ -181,8 +181,7 @@ static NSMutableDictionary *allPagesWidgetLayouts = nil;
 #define kDraggingWidgetHoldDuration 0.03
 
 static NSMutableArray *availableHSWidgetClasses = nil;
-static std::vector<void *> availableHSWidgetHandlers;
-static BOOL shouldDisableWidgetLayout = NO;
+static NSPointerArray *availableHSWidgetHandlers = nil;
 
 static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteger rows) {
 	NSMutableArray *result = [NSMutableArray array];
@@ -199,6 +198,7 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 %property (nonatomic, assign) BOOL isWidgetsAvailableForCurrentEmptySpace;
 %property (nonatomic, assign) BOOL requiresSaveToFileForWidgetChanges;
 %property (nonatomic, retain) UINavigationController *hsWidgetPickerNavigationController;
+%property (nonatomic, assign) BOOL shouldDisableWidgetLayout;
 
 -(id)init {
 	self = %orig;
@@ -206,8 +206,10 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 		self.draggingWidgetViewController = nil;
 		self.addNewWidgetView = nil;
 		self.newRowForDraggingAnimation = 0;
+		self.isWidgetsAvailableForCurrentEmptySpace = NO;
 		self.requiresSaveToFileForWidgetChanges = NO;
 		self.hsWidgetPickerNavigationController = nil;
+		self.shouldDisableWidgetLayout = NO;
 	}
 	return self;
 }
@@ -218,14 +220,16 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 		self.draggingWidgetViewController = nil;
 		self.addNewWidgetView = nil;
 		self.newRowForDraggingAnimation = 0;
+		self.isWidgetsAvailableForCurrentEmptySpace = NO;
 		self.requiresSaveToFileForWidgetChanges = NO;
 		self.hsWidgetPickerNavigationController = nil;
+		self.shouldDisableWidgetLayout = NO;
 	}
 	return self;
 }
 
 -(void)layoutIconsNow {
-	if (!shouldDisableWidgetLayout)
+	if (!self.shouldDisableWidgetLayout)
 		[self layoutWidget];
 
 	%orig;
@@ -855,7 +859,7 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 		// widget addition animation and add new widget view removal animation
 		widgetViewController.view.alpha = 0.0;
 		widgetViewController.view.transform = CGAffineTransformMakeScale(0.01, 0.01);
-		shouldDisableWidgetLayout = YES; // disable widget layout so there are no animation issues
+		self.shouldDisableWidgetLayout = YES; // disable widget layout so there are no animation issues
 		[UIView animateWithDuration:kAnimationDuration animations:^{
 			if (self.isWidgetsAvailableForCurrentEmptySpace) {
 				[self _updateAddWidgetViewAndLayerForAvailableSpace:maxAvailableSpace];
@@ -870,7 +874,7 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 			widgetViewController.view.transform = CGAffineTransformMakeScale(1.0, 1.0);
 			widgetViewController.view.alpha = 1.0;
 		} completion:^(BOOL finished) {
-			shouldDisableWidgetLayout = NO;
+			self.shouldDisableWidgetLayout = NO;
 			if (!self.isWidgetsAvailableForCurrentEmptySpace) {
 				[self.addNewWidgetView removeFromSuperview];
 				[self.addNewWidgetView release];
@@ -1359,7 +1363,7 @@ static void loadHSWidgets() {
 		return;
 
 	availableHSWidgetClasses = [NSMutableArray array];
-	availableHSWidgetHandlers.clear();
+	availableHSWidgetHandlers = [NSPointerArray pointerArrayWithOptions:NSPointerFunctionsOpaqueMemory];
 	for (NSString *widgetDirectoryName in widgetsDirectories) {
 		NSString *widgetDirectoryPath = [prefix stringByAppendingPathComponent:widgetDirectoryName];
 		NSString *infoPath = [NSString stringWithFormat:@"%@/%@.plist", widgetDirectoryPath, widgetDirectoryName];
@@ -1368,18 +1372,26 @@ static void loadHSWidgets() {
 		void *handler = dlopen([dylibPath UTF8String], RTLD_LAZY);
 		if (info != nil && handler != NULL) {
 			[availableHSWidgetClasses addObject:NSClassFromString(info[@"HSPrincipalClass"])];
-			availableHSWidgetHandlers.push_back(handler);
+			[availableHSWidgetHandlers addPointer:handler];
 		}
 	}
 }
 
 static void unloadHSWidgets() {
-	for (void *handler : availableHSWidgetHandlers)
-		dlclose(handler);
-	availableHSWidgetHandlers.clear();
+	for (NSInteger i = 0; i < [availableHSWidgetHandlers count]; ++i)
+		dlclose([availableHSWidgetHandlers pointerAtIndex:i]);
+	availableHSWidgetHandlers = nil;
 }
 
+@interface ISIconSupport : NSObject
++(id)sharedInstance;
+-(BOOL)addExtension:(NSString *)extension;
+@end
+
 %ctor {
+	if (dlopen("/Library/MobileSubstrate/DynamicLibraries/IconSupport.dylib", RTLD_NOW) != NULL && %c(ISIconSupport))
+		[[%c(ISIconSupport) sharedInstance] addExtension:@"com.dgh0st.hswidgets"];
+
 	loadHSWidgets();
 	allPagesWidgetLayouts = [NSMutableDictionary dictionaryWithContentsOfFile:kWidgetLayoutPreferencesPath];
 	if (allPagesWidgetLayouts == nil)

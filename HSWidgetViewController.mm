@@ -18,6 +18,12 @@
 -(BOOL)isEditing; // iOS 3 - 12
 @end
 
+typedef NS_ENUM(NSInteger, BoxViewButtonStyle) {
+	kClose = 0,
+	kExpand,
+	kShrink
+};
+
 @implementation HSWidgetViewController
 -(id)initForOriginRow:(NSUInteger)originRow withOptions:(NSDictionary *)options {
 	self = [super init];
@@ -85,6 +91,23 @@
 		_editingView.frame = [self calculatedFrame];
 }
 
+-(SBCloseBoxView *)_createCloseBoxView:(SEL)action withStyle:(BoxViewButtonStyle)buttonStyle {
+	SBCloseBoxView *closeButton = nil;
+	if (objc_getClass("SBXCloseBoxView") != nil) {
+		if (buttonStyle == kExpand)
+			closeButton = [[objc_getClass("SBExpandBoxView") alloc] initWithFrame:CGRectZero];
+		else if (buttonStyle == kShrink)
+			closeButton = [[objc_getClass("SBShrinkBoxView") alloc] initWithFrame:CGRectZero];
+		else
+			closeButton = [[objc_getClass("SBXCloseBoxView") alloc] initWithFrame:CGRectZero];
+	} else {
+		closeButton = [[objc_getClass("SBCloseBoxView") alloc] initWithFrame:CGRectZero];
+	}
+	[closeButton addTarget:self action:action forControlEvents:UIControlEventTouchUpInside];
+	[closeButton sizeToFit];
+	return closeButton;
+}
+
 -(void)viewDidLoad {
 	[super viewDidLoad];
 
@@ -94,36 +117,26 @@
 	[self.view addSubview:_editingView];
 	_editingView.hidden = YES;
 
-	_closeBoxView = [[objc_getClass("SBCloseBoxView") alloc] initWithFrame:CGRectZero];
-	[_closeBoxView addTarget:self action:@selector(_closeBoxTapped) forControlEvents:UIControlEventTouchUpInside];
-	[_closeBoxView sizeToFit];
+	_closeBoxView = [self _createCloseBoxView:@selector(_closeBoxTapped) withStyle:kClose];
 	_closeBoxView.center = CGPointMake(_closeBoxView.frame.size.width, _closeBoxView.frame.size.height);
 	[_editingView addSubview:_closeBoxView];
 
-	_expandBoxView = [[objc_getClass("SBCloseBoxView") alloc] initWithFrame:CGRectZero];
-	[_expandBoxView addTarget:self action:@selector(expandBoxTapped) forControlEvents:UIControlEventTouchUpInside];
+	_expandBoxView = [self _createCloseBoxView:@selector(expandBoxTapped) withStyle:kExpand];
 	UIImage *expandImage = [UIImage imageNamed:kExpandImageName inBundle:[NSBundle bundleWithPath:kBundlePath] compatibleWithTraitCollection:nil];
-	try {
-		((UIImageView *)[_expandBoxView valueForKey:@"_xColorBurnView"]).image = expandImage;
-		((UIImageView *)[_expandBoxView valueForKey:@"_xPlusDView"]).image = expandImage;
-	} catch (NSException *exception) {
-		_expandBoxView.imageView.image = expandImage;
+	if (![_expandBoxView isKindOfClass:objc_getClass("SBXCloseBoxView")]) {
+		((UIImageView *)[_expandBoxView valueForKey:@"xColorBurnView"]).image = expandImage;
+		((UIImageView *)[_expandBoxView valueForKey:@"xPlusDView"]).image = expandImage;
 	}
-	[_expandBoxView sizeToFit];
 	_expandBoxView.center = CGPointMake(_editingView.frame.size.width - _expandBoxView.frame.size.width, _expandBoxView.frame.size.height);
 	_expandBoxView.layer.cornerRadius = [self _cornerRadius] / _expandBoxView.frame.size.width;
 	[_editingView addSubview:_expandBoxView];
 
-	_shrinkBoxView = [[objc_getClass("SBCloseBoxView") alloc] initWithFrame:CGRectZero];
-	[_shrinkBoxView addTarget:self action:@selector(shrinkBoxTapped) forControlEvents:UIControlEventTouchUpInside];
+	_shrinkBoxView = [self _createCloseBoxView:@selector(shrinkBoxTapped) withStyle:kShrink];
 	UIImage *shrinkImage = [UIImage imageNamed:kShrinkImageName inBundle:[NSBundle bundleWithPath:kBundlePath] compatibleWithTraitCollection:nil];
-	try {
-		((UIImageView *)[_shrinkBoxView valueForKey:@"_xColorBurnView"]).image = shrinkImage;
-		((UIImageView *)[_shrinkBoxView valueForKey:@"_xPlusDView"]).image = shrinkImage;
-	} catch (NSException *exception) {
-		_expandBoxView.imageView.image = shrinkImage;
+	if (![_expandBoxView isKindOfClass:objc_getClass("SBXCloseBoxView")]) {
+		((UIImageView *)[_shrinkBoxView valueForKey:@"xColorBurnView"]).image = shrinkImage;
+		((UIImageView *)[_shrinkBoxView valueForKey:@"xPlusDView"]).image = shrinkImage;
 	}
-	[_shrinkBoxView sizeToFit];
 	_shrinkBoxView.center = CGPointMake(_editingView.frame.size.width - _expandBoxView.frame.size.width * 3.0 / 2.0 - _shrinkBoxView.frame.size.width, _shrinkBoxView.frame.size.height);
 	_shrinkBoxView.layer.cornerRadius = [self _cornerRadius] / _shrinkBoxView.frame.size.width;
 	[_editingView addSubview:_shrinkBoxView];

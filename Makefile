@@ -6,7 +6,6 @@ include $(THEOS)/makefiles/common.mk
 TWEAK_NAME = HSWidgets
 HSWidgets_FILES = $(wildcard *.xm *.mm)
 HSWidgets_FRAMEWORKS = UIKit CoreGraphics QuartzCore
-HSWidgets_OBJCFLAGS = -std=c++11 -I$(THEOS)/sdks/iPhoneOS8.1.sdk/usr/include/c++/4.2.1/
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 
