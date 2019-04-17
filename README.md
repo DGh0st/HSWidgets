@@ -6,7 +6,7 @@ Add options to display widgets right on your homescreen.
 
 [Theos](https://github.com/theos/theos) is required for building this project.
 
-Currently it is also dependentant on iOS 8.1 sdk as it includes c++ header files (which also reduces environmental dependencies).
+Currently it is also dependent on iOS 8.1 sdk as it includes c++ header files (which also reduces environmental dependencies).
 
 ## Layout Customization
 
@@ -98,4 +98,4 @@ Make sure to have a unique `HSWidgets class name` since this is what HSWidgets u
 
 All custom widgets need to be a subclass of `HSWidgetViewController` (which is a `UIViewController`).
 
-If you want to add additional options in the add new widgets view like Today Widgets than you will need to create a subclass of `HSAdditionalOptionsTableViewController` and override the `+(Class)addNewWidgetAdditionalOptionsClass` method. Take a look at HSTodayWidget for example.
+If you want to add additional options in the add new widgets view like Today Widgets then you will need to create a subclass of `HSAdditionalOptionsTableViewController` and override the `+(Class)addNewWidgetAdditionalOptionsClass` method. Take a look at HSTodayWidget for example.
