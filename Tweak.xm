@@ -1066,7 +1066,7 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 	%orig;
 }
 
--(void)setIsEditing:(BOOL)arg1 withFeedbackBehavior:(id)arg2 
+-(void)setIsEditing:(BOOL)arg1 withFeedbackBehavior:(id)arg2 {
 	%orig;
   
 	[[NSNotificationCenter defaultCenter] postNotificationName:kEditingStateChangedNotification object:nil userInfo:nil];
