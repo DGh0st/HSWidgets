@@ -1376,8 +1376,13 @@ static void loadHSWidgets() {
 		NSDictionary *info = [NSDictionary dictionaryWithContentsOfFile:infoPath];
 		void *handler = dlopen([dylibPath UTF8String], RTLD_LAZY);
 		if (info != nil && handler != NULL) {
-			[availableHSWidgetClasses addObject:NSClassFromString(info[@"HSPrincipalClass"])];
-			[availableHSWidgetHandlers addPointer:handler];
+			Class newWidgetClass = NSClassFromString(info[@"HSPrincipalClass"]);
+			if (newWidgetClass != nil) {
+				[availableHSWidgetClasses addObject:newWidgetClass];
+				[availableHSWidgetHandlers addPointer:handler];
+			} else {
+				dlclose(handler);
+			}
 		}
 	}
 }
