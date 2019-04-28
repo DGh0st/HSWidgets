@@ -26,6 +26,8 @@ The layout of the hswidgets is saved in `/var/mobile/Library/Preferences/com.dgh
 			<dict>
 				<key>normalModeRows</key>
 				<integer>2</integer><!-- Specify a custom number of icon rows that this widget will take up when in non-expanded mode (all apple widgets take up 2) -->
+				<key>normalModeHeight</key>
+				<integer>148</integer><!-- Specify a custom height for nomrla mode -->
 				<key>expandedModeRows</key>
 				<integer>3</integer><!-- Specify a custom number of icon rows that this widget will take up when in expanded mode -->
 				<key>expandedModeHeight</key>
