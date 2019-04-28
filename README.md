@@ -45,7 +45,10 @@ The layout of the hswidgets is saved in `/var/mobile/Library/Preferences/com.dgh
 			<key>widgetClass</key>
 			<string>HSClockWidgetViewController</string>
 			<key>WidgetOptions</key>
-			<dict/>
+			<dict>
+				<key>NumRows</key>
+				<integer>2</integer><!-- Specify the number of rows this clock should take up -->
+			</dict>
 			<key>WidgetOriginRow</key>
 			<integer>0</integer>
 		</dict>

@@ -8,13 +8,15 @@
 @implementation HSClockWidgetViewController
 -(id)initForOriginRow:(NSUInteger)originRow withOptions:(NSDictionary *)options {
 	self = [super initForOriginRow:originRow withOptions:options];
-	if (self != nil)
+	if (self != nil) {
 		self.dateViewController = [[%c(SBLockScreenDateViewController) alloc] initWithNibName:nil bundle:[NSBundle mainBundle]];
+		_numRows = options[@"NumRows"] ? [options[@"NumRows"] integerValue] : kNumRows;
+	}
 	return self;
 }
 
 -(NSUInteger)numRows {
-	return kNumRows;
+	return _numRows;
 }
 
 +(BOOL)canAddWidgetForAvailableRows:(NSUInteger)rows {
@@ -34,7 +36,9 @@
 }
 
 +(NSDictionary *)createOptionsFromController:(id)controller {
-	return nil; // we don't need any options
+	return @{
+		@"NumRows" : @(kNumRows)
+	};
 }
 
 +(NSInteger)allowedInstancesPerPage {
@@ -48,32 +52,44 @@
 -(void)setRequestedSize:(CGSize)requestedSize {
 	[super setRequestedSize:requestedSize];
 
-	if (self.dateViewController != nil)
-		[self.dateViewController dateView].frame = [self calculatedFrame];
+	if (self.dateViewController != nil) {
+		CGFloat twoRowHeight = 74 * kNumRows;
+		[self.dateViewController dateView].frame = CGRectMake(0, (self.requestedSize.height - twoRowHeight) / 2, self.requestedSize.width, twoRowHeight);
+	}
 }
 
 -(void)loadView {
 	[super loadView];
 
-	[self.dateViewController dateView].frame = [self calculatedFrame];
+	[self addChildViewController:self.dateViewController];
+	MSHookIvar<BOOL>(self.dateViewController, "_disablesUpdates") = NO;
+	CGFloat twoRowHeight = 74 * kNumRows;
+	[self.dateViewController dateView].frame = CGRectMake(0, (self.requestedSize.height - twoRowHeight) / 2, self.requestedSize.width, twoRowHeight);
 	[self.view addSubview:[self.dateViewController dateView]];
-	MSHookIvar<BOOL>(self.dateViewController, "_disablesUpdates") = NO;
+	[self.dateViewController didMoveToParentViewController:self];
 	[self.dateViewController _updateView];
 }
 
--(void)viewWillAppear:(BOOL)animated {
-	[super viewWillAppear:animated];
-
-	[self.dateViewController dateView].frame = [self calculatedFrame];
-	MSHookIvar<BOOL>(self.dateViewController, "_disablesUpdates") = NO;
-	[self.dateViewController _updateView];
+-(BOOL)canExpandWidget {
+	return [self availableRows] >= 1;
 }
 
--(void)viewDidDisappear:(BOOL)animated {
-	[super viewDidDisappear:animated];
+-(BOOL)canShrinkWidget {
+	return _numRows > kNumRows;
+}
 
-	MSHookIvar<BOOL>(self.dateViewController, "_disablesUpdates") = YES;
-	[self.dateViewController _updateView];
+-(void)expandBoxTapped {
+	++_numRows;
+	_options[@"NumRows"] = @(_numRows);
+
+	[self updateForExpandOrShrinkFromRows:_numRows - 1];
+}
+
+-(void)shrinkBoxTapped {
+	--_numRows;
+	_options[@"NumRows"] = @(_numRows);
+
+	[self updateForExpandOrShrinkFromRows:_numRows + 1];
 }
 
 -(void)dealloc {
@@ -90,7 +106,9 @@
 -(void)layoutSubviews {
 	%orig;
 	
-	if (self.superview != nil && self.superview.superview != nil && [self.superview.superview isKindOfClass:%c(SBRootIconListView)])
-		self.frame = (CGRect){{0, 0}, self.superview.frame.size};
+	if (self.superview != nil && self.superview.superview != nil && [self.superview.superview isKindOfClass:%c(SBRootIconListView)]) {
+		CGFloat twoRowHeight = 74 * kNumRows;
+		self.frame = CGRectMake(0, (self.superview.frame.size.height - twoRowHeight) / 2, self.superview.frame.size.width, twoRowHeight);
+	}
 }
 %end

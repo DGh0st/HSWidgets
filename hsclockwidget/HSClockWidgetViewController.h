@@ -11,6 +11,8 @@
 -(UIView *)dateView; // iOS 7 - 12
 @end
 
-@interface HSClockWidgetViewController : HSWidgetViewController
+@interface HSClockWidgetViewController : HSWidgetViewController {
+	NSUInteger _numRows;
+}
 @property (nonatomic, retain) SBLockScreenDateViewController *dateViewController;
 @end

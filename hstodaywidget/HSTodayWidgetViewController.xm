@@ -142,9 +142,9 @@ static WGWidgetDiscoveryController *widgetDiscoveryController = nil;
 		_didAddMaterialView = NO;
 		_isExpandedMode = options[@"isExpandedMode"] ? [options[@"isExpandedMode"] boolValue] : NO;
 		_requestedWidgetUpdate = NO;
-		_isNewlyAdded = options[@"isNewlyAdded"] ? [options[@"isNewlyAdded"] boolValue] : NO;
-		if (_isNewlyAdded) {
-			[_options removeObjectForKey:@"isNewlyAdded"]; // remove completely from dictionary as we don't need it to take up space
+		_isNewlyAddedToPage = options[@"isNewlyAddedToPage"] ? [options[@"isNewlyAdded"] boolValue] : NO;
+		if (_isNewlyAddedToPage) {
+			[_options removeObjectForKey:@"isNewlyAddedToPage"]; // remove completely from dictionary as we don't need it to take up space
 			_isFirstLoadAfterRespring = NO;
 		} else {
 			_isFirstLoadAfterRespring = YES;
@@ -157,7 +157,7 @@ static WGWidgetDiscoveryController *widgetDiscoveryController = nil;
 	// TODO: maybe calculate num rows for expanded mode
 	if (_isExpandedMode)
 		return _options[@"expandedModeRows"] ? [_options[@"expandedModeRows"] doubleValue] : kExpandedNumRows;
-	return _options[@"normalModeRows"] ? [_options[@"normalModeRows"] doubleValue]: kNumRows; // apple widgets take up 2 rows (non expanded)
+	return _options[@"normalModeRows"] ? [_options[@"normalModeRows"] doubleValue] : kNumRows; // apple widgets take up 2 rows (non expanded)
 }
 
 +(BOOL)canAddWidgetForAvailableRows:(NSUInteger)rows {
@@ -179,12 +179,12 @@ static WGWidgetDiscoveryController *widgetDiscoveryController = nil;
 +(NSDictionary *)createOptionsFromController:(HSTodayWidgetsListViewController *)controller {
 	return @{
 		@"widgetIdentifier" : controller.selectedWidgetIdentifier,
-		@"isNewlyAdded" : @YES
+		@"isNewlyAddedToPage" : @YES
 	};
 }
 
 /*-(BOOL)canExpandWidget {
-	return [super availableRows] >= (kExpandedNumRows - kNumRows) && !_isExpandedMode;
+	return [self availableRows] >= (kExpandedNumRows - kNumRows) && !_isExpandedMode;
 }
 
 -(BOOL)canShrinkWidget {
@@ -233,6 +233,13 @@ static WGWidgetDiscoveryController *widgetDiscoveryController = nil;
 		((WGWidgetShortLookView *)self.widgetViewController.view).addWidgetButtonVisible = NO;
 		((WGWidgetShortLookView *)self.widgetViewController.view).cornerRadius = 13.0f;
 	} else if ([self.widgetViewController.view isKindOfClass:%c(WGWidgetPlatterView)]) {
+		if(%c(MTMaterialView) && !_didAddMaterialView) {
+			_didAddMaterialView = YES;
+			MTMaterialView *materialView = [%c(MTMaterialView) materialViewWithRecipe:1 options:2];
+			materialView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+			[materialView _setCornerRadius:13.0f];
+			[self.widgetViewController.view insertSubview:materialView atIndex:0];
+		}
 		((WGWidgetPlatterView *)self.widgetViewController.view).addWidgetButtonVisible = NO;
 		((WGWidgetPlatterView *)self.widgetViewController.view).cornerRadius = 13.0f;
 	}
@@ -249,6 +256,7 @@ static WGWidgetDiscoveryController *widgetDiscoveryController = nil;
 		NSExtension *widgetExtension = [%c(NSExtension) extensionWithIdentifier:self.widgetIdentifier error:nil];
 		WGWidgetInfo *widgetInfo = [%c(WGWidgetInfo) widgetInfoWithExtension:widgetExtension];
 		self.widgetViewController = [[%c(WGWidgetViewController) alloc] initWithWidgetInfo:widgetInfo];
+		[self addChildViewController:self.widgetViewController];
 		[self.widgetViewController setDelegate:self];
 		[self _setupWidgetView];
 		if ([self.widgetViewController respondsToSelector:@selector(_shortLookViewLoadingIfNecessary:)])
@@ -258,11 +266,13 @@ static WGWidgetDiscoveryController *widgetDiscoveryController = nil;
 		else
 			[self.view addSubview:self.widgetViewController.view];
 		self.widgetViewController.view.frame = (CGRect){{0, 0}, self.requestedSize}; // back up size
+		[self.widgetViewController didMoveToParentViewController:self];
 
 		// TODO: Correctly update the widget on first load (sometimes the widget just isn't feeling it)
 		if (_isFirstLoadAfterRespring) {
 			[self.widgetViewController.widgetHost _initiateNewSequenceIfNecessary];
 			[self.widgetViewController.widgetHost _updateWidgetWithCompletionHandler:nil];
+			_isFirstLoadAfterRespring = NO;
 		} else {
 			[self connectRemoteViewController];
 			// [self requestWidgetConnect];
@@ -285,7 +295,8 @@ static WGWidgetDiscoveryController *widgetDiscoveryController = nil;
 }
 
 -(void)remoteViewControllerViewDidAppearForWidgetViewController:(id)arg1 {
-	// do nothing
+	_WGWidgetRemoteViewController *widgetRemoteViewController = [self.widgetViewController.widgetHost _remoteViewController];
+	widgetRemoteViewController.view.layer.cornerRadius = 13.0f;
 }
 
 -(CGRect)calculatedFrame {
@@ -295,6 +306,8 @@ static WGWidgetDiscoveryController *widgetDiscoveryController = nil;
 	CGFloat expectedHeight = self.requestedSize.height;
 	if (_options[@"expandedModeHeight"] != nil && _isExpandedMode) {
 		expectedHeight = [_options[@"expandedModeHeight"] doubleValue];
+	} else if (_options[@"normalModeHeight"] != nil && !_isExpandedMode) {
+		expectedHeight = [_options[@"normalModeHeight"] doubleValue];
 	} else if (preferredContentHeight == 0.0) {
 		NSUInteger numRows = [self numRows];
 		expectedHeight = 74 * numRows + (numRows >= 2 ? 34 * (numRows - 2) : 0); // backup values
@@ -372,34 +385,34 @@ static WGWidgetDiscoveryController *widgetDiscoveryController = nil;
 	}
 }
 
--(void)viewDidAppear:(BOOL)animated {
+/*-(void)viewDidAppear:(BOOL)animated {
 	[super viewDidAppear:animated];
 
-	if (_isNewlyAdded || !_isFirstLoadAfterRespring)
+	if (_isNewlyAddedToPage || !_isFirstLoadAfterRespring)
 		[self requestWidgetConnect];
 
 	[self.widgetViewController viewDidAppear:animated];
 
 	// speed up remote view display cycle (doesn't actually connect the remote view controller)
-	if (!_isNewlyAdded && _isFirstLoadAfterRespring) {
+	if (!_isNewlyAddedToPage && _isFirstLoadAfterRespring) {
 		[self.widgetViewController remoteViewControllerDidConnectForWidget:self.widgetViewController.widgetHost];
 		[self.widgetViewController remoteViewControllerViewDidAppearForWidget:self.widgetViewController.widgetHost];
 	}
 	
 	self.widgetViewController.view.frame = [self calculatedFrame]; // calculate size of widget view
-	_isNewlyAdded = NO;
+	_isNewlyAddedToPage = NO;
 	_isFirstLoadAfterRespring = NO;
 }
 
 -(void)viewDidDisappear:(BOOL)animated {
 	[super viewDidDisappear:animated];
 
-	[self.widgetViewController viewDidDisappear:animated];
+	// [self.widgetViewController viewDidDisappear:animated];
 
 	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(requestWidgetConnect) object:nil];
 	// [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(requestWidgetUpdate) object:nil];
 	_requestedWidgetUpdate = NO;
-}
+}*/
 
 -(void)dealloc {
 	[self.widgetViewController.view removeFromSuperview];

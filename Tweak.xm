@@ -86,7 +86,7 @@ typedef NS_ENUM(NSUInteger, PageType) {
 -(void)_animateUpdateOfIconDraggingWithCompletion:(void(^)(BOOL))completion;
 -(void)_animateRemoveOfIconExcludingCurrentIcon:(BOOL)excluded withCompletion:(void(^)(BOOL))completion;
 -(void)_updateWidgetDrag;
--(void)_updateWidgetsWithAvailableRows:(HSWidgetAvailableSpace)space;
+-(void)_enumerateWidgetsWithBlock:(void(^)(HSWidgetViewController *widgetViewController))block;
 @end
 
 @interface SBIconController : UIViewController // iOS 3 - 12
@@ -101,10 +101,10 @@ typedef NS_ENUM(NSUInteger, PageType) {
 -(id)_rootFolderController; // iOS 7 - 12
 @end
 
-@interface SBFolderController // iOS 7 - 12
+@interface SBFolderController : UIViewController // iOS 7 - 12
 @property (nonatomic, assign) BOOL animatingIconListViewDragLocationChange;
 @property (nonatomic, copy, readonly) NSArray *iconListViews; // iOS 7 - 12
-@property (nonatomic,readonly) NSUInteger iconListViewCount; // iOS 7 - 12
+@property (nonatomic, readonly) NSUInteger iconListViewCount; // iOS 7 - 12
 -(id)currentIconListView; // iOS 7 - 12
 -(BOOL)isEditing; // iOS 7 - 12
 @end
@@ -298,7 +298,7 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 }
 
 -(id)model {
-	// reduce limit of icons for this page as clock takes up 2 rows
+	// reduce limit of icons for this page as widgets takes up rows
 	SBIconListModel *result = %orig;
 	if (result.pageLayoutType != kNone) {
 		NSUInteger numRowsToRemove = 0;
@@ -514,7 +514,9 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 		} else {
 			[self.addNewWidgetView setAvailableSpace:availableSpace];
 		}
-		[self _updateWidgetsWithAvailableRows:availableSpace];
+		[self _enumerateWidgetsWithBlock:^(HSWidgetViewController *widget) {
+			[widget _updateAvailableSpace:availableSpace];
+		}];
 
 		// widget removal animation
 		CGPoint startingCenter = CGPointMake(widgetViewController.view.center.x, widgetViewController.view.frame.origin.y);
@@ -692,7 +694,9 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 	if (isAddNewWidgetViewVisible)
 		[self.addNewWidgetView setAvailableSpace:availableSpace];
 	CGSize finalSize = [self sizeForWidgetWithNumRows:[widgetViewController numRows]];
-	[self _updateWidgetsWithAvailableRows:availableSpace];
+	[self _enumerateWidgetsWithBlock:^(HSWidgetViewController *widget) {
+		[widgetViewController _updateAvailableSpace:availableSpace];
+	}];
 	[UIView animateWithDuration:kAnimationDuration animations:^{
 		widgetViewController.requestedSize = finalSize;
 		[self layoutIconsNow];
@@ -751,7 +755,9 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 	HSWidgetAvailableSpace availableSpace = [self maxAvailableSpace];
 	if (isAddNewWidgetViewVisible)
 		[self.addNewWidgetView setAvailableSpace:availableSpace];
-	[self _updateWidgetsWithAvailableRows:availableSpace];
+	[self _enumerateWidgetsWithBlock:^(HSWidgetViewController *widget) {
+		[widget _updateAvailableSpace:availableSpace];
+	}];
 	[UIView animateWithDuration:kAnimationDuration animations:^{
 		[self layoutIconsNow];
 		if (isAddNewWidgetViewVisible)
@@ -803,7 +809,7 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 		NSMutableArray *widgetsForCurrentClass = [widgetsToExclude objectForKey:currentKey];
 		if (widgetsForCurrentClass == nil)
 			widgetsForCurrentClass = [NSMutableArray array];
-		[widgetsForCurrentClass addObject:[widgetViewController options] ?:[NSDictionary dictionary]];
+		[widgetsForCurrentClass addObject:[widgetViewController options] ?: [NSDictionary dictionary]];
 		[widgetsToExclude setObject:widgetsForCurrentClass forKey:currentKey];
 	}
 	hsWidgetPickerTableViewController.widgetsToExclude = widgetsToExclude;
@@ -846,7 +852,9 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 	self.isWidgetsAvailableForCurrentEmptySpace = [availableWidgetControllerClassesForAvailableRows(maxAvailableSpace.numRows) count] > 0;
 	if (self.isWidgetsAvailableForCurrentEmptySpace)
 		[self.addNewWidgetView setAvailableSpace:maxAvailableSpace];
-	[self _updateWidgetsWithAvailableRows:maxAvailableSpace];
+	[self _enumerateWidgetsWithBlock:^(HSWidgetViewController *widget) {
+		[widget _updateAvailableSpace:maxAvailableSpace];
+	}];
 
 	void (^animateWidgetAddition)()  = ^{
 		[self addSubview:widgetViewController.view];
@@ -962,7 +970,9 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 		if (startIndex <= maxIconCountForPage) {
 			HSWidgetAvailableSpace availableSpace = [self maxAvailableSpace];
 			self.isWidgetsAvailableForCurrentEmptySpace = [availableWidgetControllerClassesForAvailableRows(availableSpace.numRows) count] > 0;
-			[self _updateWidgetsWithAvailableRows:availableSpace];
+			[self _enumerateWidgetsWithBlock:^(HSWidgetViewController *widget) {
+				[widget _updateAvailableSpace:availableSpace];
+			}];
 			if (self.isWidgetsAvailableForCurrentEmptySpace) {
 				if (self.addNewWidgetView != nil) {
 					[UIView animateWithDuration:kAnimationDuration animations:^{
@@ -1024,7 +1034,10 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 				[CATransaction commit];
 			}
 		} else {
-			[self _updateWidgetsWithAvailableRows:[self maxAvailableSpace]];
+			HSWidgetAvailableSpace availableSpace = [self maxAvailableSpace];
+			[self _enumerateWidgetsWithBlock:^(HSWidgetViewController *widget) {
+				[widget _updateAvailableSpace:availableSpace];
+			}];
 		}
 	} else if (completion != nil) {
 		completion(NO);
@@ -1032,20 +1045,20 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 }
 
 %new
--(void)_updateWidgetsWithAvailableRows:(HSWidgetAvailableSpace)space {
+-(void)_enumerateWidgetsWithBlock:(void(^)(HSWidgetViewController *widgetViewController))block {
 	SBIconListModel *model = MSHookIvar<SBIconListModel *>(self, "_model");
 	for (HSWidgetViewController *widgetViewController in model.widgetViewControllers)
-		[widgetViewController _updateAvailableSpace:space];
+		block(widgetViewController);
 }
 %end
 
 // disable homescreen rotation
 %hook SpringBoard
--(BOOL)homeScreenSupportsRotation { // iOS 8 - 11
+-(BOOL)homeScreenSupportsRotation { // iOS 8 - 12
 	return NO;
 }
 
--(NSInteger)homeScreenRotationStyle { // iOS 8 - 11
+-(NSInteger)homeScreenRotationStyle { // iOS 8 - 12
 	return 0;
 }
 %end
@@ -1070,6 +1083,66 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 	%orig;
   
 	[[NSNotificationCenter defaultCenter] postNotificationName:kEditingStateChangedNotification object:nil userInfo:nil];
+}
+
+-(void)viewWillAppear:(BOOL)arg1 {
+	%orig;
+
+	SBRootFolderController *rootFolderController = [self _rootFolderController];
+	for (SBIconListView *iconListView in rootFolderController.iconListViews) {
+		if (iconListView != nil && [iconListView isKindOfClass:%c(SBRootIconListView)]) {
+			[(SBRootIconListView *)iconListView _enumerateWidgetsWithBlock:^(HSWidgetViewController *widget) {
+				// need to manually call the method because apple seems to block calls on respring
+				[widget viewWillAppear:arg1];
+				// [widget beginAppearanceTransition:YES animated:arg1];
+			}];
+		}
+	}
+}
+
+-(void)viewDidAppear:(BOOL)arg1 {
+	%orig;
+
+	SBRootFolderController *rootFolderController = [self _rootFolderController];
+	for (SBIconListView *iconListView in rootFolderController.iconListViews) {
+		if (iconListView != nil && [iconListView isKindOfClass:%c(SBRootIconListView)]) {
+			[(SBRootIconListView *)iconListView _enumerateWidgetsWithBlock:^(HSWidgetViewController *widget) {
+				// need to manually call the method because apple seems to block calls on respring
+				[widget viewDidAppear:arg1];
+				// [widget endAppearanceTransition];
+			}];
+		}
+	}
+}
+
+-(void)viewWillDisappear:(BOOL)arg1 {
+	%orig;
+
+	SBRootFolderController *rootFolderController = [self _rootFolderController];
+	for (SBIconListView *iconListView in rootFolderController.iconListViews) {
+		if (iconListView != nil && [iconListView isKindOfClass:%c(SBRootIconListView)]) {
+			[(SBRootIconListView *)iconListView _enumerateWidgetsWithBlock:^(HSWidgetViewController *widget) {
+				// need to manually call the method because apple seems to block calls on respring
+				[widget viewWillDisappear:arg1];
+				// [widget beginAppearanceTransition:NO animated:arg1];
+			}];
+		}
+	}
+}
+
+-(void)viewDidDisappear:(BOOL)arg1 {
+	%orig;
+
+	SBRootFolderController *rootFolderController = [self _rootFolderController];
+	for (SBIconListView *iconListView in rootFolderController.iconListViews) {
+		if (iconListView != nil && [iconListView isKindOfClass:%c(SBRootIconListView)]) {
+			[(SBRootIconListView *)iconListView _enumerateWidgetsWithBlock:^(HSWidgetViewController *widget) {
+				// need to manually call the method because apple seems to block calls on respring
+				[widget viewDidDisappear:arg1];
+				// [widget endAppearanceTransition];
+			}];
+		}
+	}
 }
 %end
 
@@ -1367,21 +1440,26 @@ static void loadHSWidgets() {
 	if (error != nil)
 		return;
 
-	availableHSWidgetClasses = [NSMutableArray array];
-	availableHSWidgetHandlers = [NSPointerArray pointerArrayWithOptions:NSPointerFunctionsOpaqueMemory];
+	[availableHSWidgetClasses release];
+	[availableHSWidgetHandlers release];
+
+	availableHSWidgetClasses = [NSMutableArray new];
+	availableHSWidgetHandlers = [[NSPointerArray alloc] initWithOptions:NSPointerFunctionsOpaqueMemory];
 	for (NSString *widgetDirectoryName in widgetsDirectories) {
 		NSString *widgetDirectoryPath = [prefix stringByAppendingPathComponent:widgetDirectoryName];
 		NSString *infoPath = [NSString stringWithFormat:@"%@/%@.plist", widgetDirectoryPath, widgetDirectoryName];
 		NSString *dylibPath = [NSString stringWithFormat:@"%@/%@.dylib", widgetDirectoryPath, widgetDirectoryName];
 		NSDictionary *info = [NSDictionary dictionaryWithContentsOfFile:infoPath];
-		void *handler = dlopen([dylibPath UTF8String], RTLD_LAZY);
-		if (info != nil && handler != NULL) {
-			Class newWidgetClass = NSClassFromString(info[@"HSPrincipalClass"]);
-			if (newWidgetClass != nil) {
-				[availableHSWidgetClasses addObject:newWidgetClass];
-				[availableHSWidgetHandlers addPointer:handler];
-			} else {
-				dlclose(handler);
+		if (info != nil && info[@"HSPrincipalClass"] != nil) {
+			void *handler = dlopen([dylibPath UTF8String], RTLD_LAZY);
+			if (handler != NULL) {
+				Class newWidgetClass = NSClassFromString(info[@"HSPrincipalClass"]);
+				if (newWidgetClass != nil) {
+					[availableHSWidgetClasses addObject:newWidgetClass];
+					[availableHSWidgetHandlers addPointer:handler];
+				} else {
+					dlclose(handler);
+				}
 			}
 		}
 	}
@@ -1390,6 +1468,7 @@ static void loadHSWidgets() {
 static void unloadHSWidgets() {
 	for (NSInteger i = 0; i < [availableHSWidgetHandlers count]; ++i)
 		dlclose([availableHSWidgetHandlers pointerAtIndex:i]);
+	[availableHSWidgetHandlers release];
 	availableHSWidgetHandlers = nil;
 }
 
@@ -1403,13 +1482,19 @@ static void unloadHSWidgets() {
 		[[%c(ISIconSupport) sharedInstance] addExtension:@"com.dgh0st.hswidgets"];
 
 	loadHSWidgets();
-	allPagesWidgetLayouts = [NSMutableDictionary dictionaryWithContentsOfFile:kWidgetLayoutPreferencesPath];
-	if (allPagesWidgetLayouts == nil)
-		allPagesWidgetLayouts = [NSMutableDictionary dictionary];
+
+	if ([[NSFileManager defaultManager] fileExistsAtPath:kWidgetLayoutPreferencesPath])
+		allPagesWidgetLayouts = [[NSMutableDictionary alloc] initWithContentsOfFile:kWidgetLayoutPreferencesPath];
+	else
+		allPagesWidgetLayouts = [NSMutableDictionary new];
 }
 
 %dtor {
 	unloadHSWidgets();
+
+	[availableHSWidgetClasses release];
 	availableHSWidgetClasses = nil;
+
+	[allPagesWidgetLayouts release];
 	allPagesWidgetLayouts = nil;
 }

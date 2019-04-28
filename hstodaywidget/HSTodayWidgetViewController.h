@@ -9,6 +9,9 @@
 +(CGFloat)maximumContentHeightForCompactDisplayMode; // iOS 10 - 12
 @end
 
+@interface _WGWidgetRemoteViewController : UIViewController // iOS 10 - 12
+@end
+
 @interface WGWidgetHostingViewController : UIViewController // iOS 10 - 12
 -(void)_updateWidgetWithCompletionHandler:(id)arg1; // iOS 10 - 12
 -(void)setActiveDisplayMode:(NSInteger)arg1; // iOS 10 - 12
@@ -19,8 +22,8 @@
 -(void)_requestInsertionOfRemoteViewAfterViewWillAppearForSequence:(id)arg1 completionHandler:(id)arg2 ; // iOS 10 - 12
 -(id)_activeLifeCycleSequence; // iOS 10 - 12
 -(void)_initiateNewSequenceIfNecessary; // iOS 10 - 12
--(BOOL)isRemoteViewVisible; // iOS 10 - 12
 -(id)host; // iOS 10 - 12
+-(id)_remoteViewController; // iOS 10 - 12
 @end
 
 @interface WGWidgetViewController : UIViewController // iOS 10 - 12
@@ -58,6 +61,11 @@
 +(id)materialViewWithStyleOptions:(NSUInteger)arg1 materialSettings:(id)arg2; // iOS 10
 @end
 
+@interface MTMaterialView : UIView // iOS 11 - 12
++(id)materialViewWithRecipe:(NSInteger)arg1 options:(NSUInteger)arg2;
+-(void)_setCornerRadius:(CGFloat)arg1;
+@end
+
 @interface NCMaterialSettings : NSObject // iOS 10
 -(void)setDefaultValues; // iOS 10
 @end
@@ -66,7 +74,7 @@
 	BOOL _didAddMaterialView;
 	BOOL _isExpandedMode;
 	BOOL _requestedWidgetUpdate;
-	BOOL _isNewlyAdded;
+	BOOL _isNewlyAddedToPage;
 	BOOL _isFirstLoadAfterRespring;
 	BOOL _didViewFinishAppearing;
 }
