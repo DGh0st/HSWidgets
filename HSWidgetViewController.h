@@ -56,6 +56,7 @@
 -(void)updateForExpandOrShrinkFromRows:(NSUInteger)rows;
 -(UIView *)zoomAnimatingView;
 -(void)clearZoomAnimatingView;
+-(void)updateWidgetAfterRespring;
 -(BOOL)canExpandWidget;
 -(BOOL)canShrinkWidget;
 -(BOOL)shouldUseCustomViewForAnimation;

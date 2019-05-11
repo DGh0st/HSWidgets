@@ -6,6 +6,7 @@
 #define kDisplayName @"Today Widgets"
 #define kIconImageName @"HSCustom"
 #define kReupdateWaitTime 3.0 // wait for 3 seconds before reattempting to update
+// #define kUpdateAfterRespringWaitTime 1.0 // wait for 1 second before attempting to update after respring
 #define kHeaderHeight 36 // height of the header bar
 
 @interface WGWidgetInfo (Private) // iOS 10 - 12
@@ -332,6 +333,12 @@ static WGWidgetDiscoveryController *widgetDiscoveryController = nil;
 	[self requestWidgetConnect];
 	[super clearZoomAnimatingView];
 }
+
+/*-(void)updateWidgetAfterRespring {
+	// fix widget not loading correctly after respring
+	[super updateWidgetAfterRespring];
+	[self performSelector:@selector(requestWidgetConnect) withObject:nil afterDelay:kUpdateAfterRespringWaitTime];
+}*/
 
 -(void)_setDelegate:(id<HSWidgetDelegate>)delegate {
 	BOOL didDelegateChange = delegate != _delegate;

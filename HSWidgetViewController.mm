@@ -205,6 +205,10 @@ typedef NS_ENUM(NSInteger, BoxViewButtonStyle) {
 	_zoomAnimatingView = nil;
 }
 
+-(void)updateWidgetAfterRespring {
+	// do nothing
+}
+
 -(void)_setDelegate:(id<HSWidgetDelegate>)delegate {
 	_delegate = delegate;
 }

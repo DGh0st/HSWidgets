@@ -9,8 +9,9 @@
 -(id)initForOriginRow:(NSUInteger)originRow withOptions:(NSDictionary *)options {
 	self = [super initForOriginRow:originRow withOptions:options];
 	if (self != nil) {
-		self.dateViewController = [[%c(SBLockScreenDateViewController) alloc] initWithNibName:nil bundle:[NSBundle mainBundle]];
+		self.dateView = nil;
 		_numRows = options[@"NumRows"] ? [options[@"NumRows"] integerValue] : kNumRows;
+		_legibilitySettings = nil; // TODO: add legibilitySettings
 	}
 	return self;
 }
@@ -52,22 +53,116 @@
 -(void)setRequestedSize:(CGSize)requestedSize {
 	[super setRequestedSize:requestedSize];
 
-	if (self.dateViewController != nil) {
+	if (self.dateView != nil) {
 		CGFloat twoRowHeight = 74 * kNumRows;
-		[self.dateViewController dateView].frame = CGRectMake(0, (self.requestedSize.height - twoRowHeight) / 2, self.requestedSize.width, twoRowHeight);
+		self.dateView.frame = CGRectMake(0, (self.requestedSize.height - twoRowHeight) / 2, self.requestedSize.width, twoRowHeight);
+	}
+}
+
+-(void)createDateViewIfNeeded {
+	if (self.dateView == nil) {
+		CGFloat twoRowHeight = 74 * kNumRows;
+		self.dateView = [[%c(SBFLockScreenDateView) alloc] initWithFrame:CGRectMake(0, (self.requestedSize.height - twoRowHeight) / 2, self.requestedSize.width, twoRowHeight)];
+		[self.dateView setUserInteractionEnabled:NO];
+		[self.dateView setLegibilitySettings:_legibilitySettings];
+		[self.view addSubview:self.dateView];
 	}
 }
 
 -(void)loadView {
 	[super loadView];
 
-	[self addChildViewController:self.dateViewController];
-	MSHookIvar<BOOL>(self.dateViewController, "_disablesUpdates") = NO;
-	CGFloat twoRowHeight = 74 * kNumRows;
-	[self.dateViewController dateView].frame = CGRectMake(0, (self.requestedSize.height - twoRowHeight) / 2, self.requestedSize.width, twoRowHeight);
-	[self.view addSubview:[self.dateViewController dateView]];
-	[self.dateViewController didMoveToParentViewController:self];
-	[self.dateViewController _updateView];
+	SBDateTimeController *dateTimeController = [%c(SBDateTimeController) sharedInstance];
+	[dateTimeController addObserver:self];
+
+	[self createDateViewIfNeeded];
+
+	[self _updateLegibilityStrength];
+	[self updateTimeNow];
+	[self _addObservers];
+}
+
+-(void)updateTimeNow {
+	NSDate *overrideDate = [[%c(SBDateTimeController) sharedInstance] overrideDate];
+	if (overrideDate != nil) {
+		[self.dateView setDate:overrideDate];
+	} else {
+		Class PreciseClockTimer = %c(SBUIPreciseClockTimer) ?: %c(SBPreciseClockTimer);
+		[self.dateView setDate:[PreciseClockTimer now]];
+	}
+}
+
+-(void)_updateFormat {
+	[self.dateView updateFormat];
+	[self updateTimeNow];
+}
+
+-(void)_updateLegibilityStrength {
+	SBLegibilitySettings *settings = [[[%c(SBPrototypeController) sharedInstance] rootSettings] legibilitySettings];
+	CGFloat style = [_legibilitySettings style];
+	[self.dateView setTimeLegibilityStrength:[settings timeStrengthForStyle:style]];
+	[self.dateView setSubtitleLegibilityStrength:[settings dateStrengthForStyle:style]];
+}
+
+-(void)controller:(id)arg1 didChangeOverrideDateFromDate:(id)arg2 {
+	[self _updateFormat];
+}
+
+-(void)settings:(id)arg1 changedValueForKey:(id)arg2 {
+	if ([arg1 isMemberOfClass:%c(SBLegibilitySettings)])
+		[self _updateLegibilityStrength];
+}
+
+-(void)_addObservers {
+	NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+	[defaultCenter addObserver:self selector:@selector(_updateFormat) name:@"BSDateTimeCacheChangedNotification" object:nil];
+	[defaultCenter addObserver:self selector:@selector(updateTimeNow) name:UIContentSizeCategoryDidChangeNotification object:nil];
+	[defaultCenter addObserver:self selector:@selector(updateTimeNow) name:@"UIAccessibilityLargeTextChangedNotification" object:nil];
+
+	[[[[%c(SBPrototypeController) sharedInstance] rootSettings] legibilitySettings] addKeyObserverIfPrototyping:self];
+}
+
+-(void)_removeObservers {
+	[[%c(SBDateTimeController) sharedInstance] removeObserver:self];
+	[[[[%c(SBPrototypeController) sharedInstance] rootSettings] legibilitySettings] removeKeyObserver:self];
+}
+
+-(void)updateWidgetAfterRespring {
+	// fix clock widget not starting to update after respring
+	[super updateWidgetAfterRespring];
+
+	[self updateTimeNow];
+
+	if (_timerToken == nil) {
+		Class PreciseClockTimer = %c(SBUIPreciseClockTimer) ?: %c(SBPreciseClockTimer);
+		_timerToken = [[[PreciseClockTimer sharedInstance] startMinuteUpdatesWithHandler:^{
+			[self updateTimeNow];
+		}] retain];
+	}
+}
+
+-(void)viewWillAppear:(BOOL)animated {
+	[super viewWillAppear:animated];
+	
+	[self updateTimeNow];
+
+	if (_timerToken == nil) {
+		Class PreciseClockTimer = %c(SBUIPreciseClockTimer) ?: %c(SBPreciseClockTimer);
+		_timerToken = [[[PreciseClockTimer sharedInstance] startMinuteUpdatesWithHandler:^{
+			[self updateTimeNow];
+		}] retain];
+	}
+}
+
+-(void)viewDidDisappear:(BOOL)animated {
+	[super viewDidDisappear:animated];
+
+	if (_timerToken != nil) {
+		Class PreciseClockTimer = %c(SBUIPreciseClockTimer) ?: %c(SBPreciseClockTimer);
+		[[PreciseClockTimer sharedInstance] stopMinuteUpdatesForToken:_timerToken];
+		[_timerToken release];
+		_timerToken = nil;
+	}
 }
 
 -(BOOL)canExpandWidget {
@@ -93,16 +188,24 @@
 }
 
 -(void)dealloc {
-	if (self.dateViewController != nil) {
-		[self.dateViewController release];
-		self.dateViewController = nil;
+	[self _removeObservers];
+
+	if (_timerToken != nil) {
+		Class PreciseClockTimer = %c(SBUIPreciseClockTimer) ?: %c(SBPreciseClockTimer);
+		[[PreciseClockTimer sharedInstance] stopMinuteUpdatesForToken:_timerToken];
+		[_timerToken release];
+		_timerToken = nil;
 	}
+
+	[self.dateView removeFromSuperview];
+	[self.dateView release];
+	self.dateView = nil;
 
 	[super dealloc];
 }
 @end
 
-%hook SBFLockscreenDateView
+%hook SBFLockScreenDateView
 -(void)layoutSubviews {
 	%orig;
 	

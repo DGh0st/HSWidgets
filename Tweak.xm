@@ -141,12 +141,12 @@ static NSMutableDictionary *allPagesWidgetLayouts = nil;
 			id iconListView = self.iconListViews[listViewIndex];
 			if (iconListView != nil && [iconListView isKindOfClass:%c(SBRootIconListView)]) {
 				SBRootIconListView *rootIconListView = (SBRootIconListView *)iconListView;
-				if (rootIconListView.requiresSaveToFileForWidgetChanges) {
+				NSString *pageKey = [NSString stringWithFormat:@"%zd", listViewIndex];
+				if (rootIconListView.requiresSaveToFileForWidgetChanges || [allPagesWidgetLayouts[pageKey] count] != rootIconListView.model.widgetViewControllers.count) {
 					rootIconListView.requiresSaveToFileForWidgetChanges = NO;
 					wereAnyChangesMade = YES;
 
 					// save changes to dictionary
-					NSString *pageKey = [NSString stringWithFormat:@"%zd", listViewIndex];
 					if (rootIconListView.model.widgetViewControllers != nil && [rootIconListView.model.widgetViewControllers count] > 0) {
 						NSMutableArray *currentPageWidgetLayout = [NSMutableArray array];
 						for (HSWidgetViewController *widgetViewController in rootIconListView.model.widgetViewControllers) {
@@ -1290,8 +1290,24 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 	%orig;
 
 	if ([self.iconListView isKindOfClass:%c(SBRootIconListView)]) {
+		static BOOL isFirstZoomAnimationAfterRespring = YES;
+		if (isFirstZoomAnimationAfterRespring) {
+			SBIconController *iconController = [%c(SBIconController) sharedInstance];
+			SBRootFolderController *rootFolderController = [iconController _rootFolderController];
+			// for (SBIconListView *iconListView in rootFolderController.iconListViews) {
+			for (NSInteger listViewIndex = 0; listViewIndex < rootFolderController.iconListViewCount; ++listViewIndex) {
+				SBIconListView *iconListView = rootFolderController.iconListViews[listViewIndex];
+				if (iconListView != nil && [iconListView isKindOfClass:%c(SBRootIconListView)]) {
+					[(SBRootIconListView *)iconListView configureWidgetsIfNeededWithIndex:listViewIndex];
+					[(SBRootIconListView *)iconListView _enumerateWidgetsWithBlock:^(HSWidgetViewController *widget) {
+						[widget updateWidgetAfterRespring];
+					}];
+				}
+			}
+			isFirstZoomAnimationAfterRespring = NO;
+		}
+
 		SBRootIconListView *rootIconListView = (SBRootIconListView *)self.iconListView;
-		[rootIconListView configureWidgetsIfNeededWithIndex:[[%c(SBIconController) sharedInstance] currentIconListIndex]]; // not really required
 		for (HSWidgetViewController *widgetViewController in MSHookIvar<SBIconListModel *>(rootIconListView, "_model").widgetViewControllers)
 			[self.zoomView addSubview:[widgetViewController zoomAnimatingView]];
 	}
