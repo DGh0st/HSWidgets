@@ -6,8 +6,6 @@ Add options to display widgets right on your homescreen.
 
 [Theos](https://github.com/theos/theos) is required for building this project.
 
-Currently it is also dependent on iOS 8.1 sdk as it includes c++ header files (which also reduces environmental dependencies).
-
 ## Layout Customization
 
 The layout of the hswidgets is saved in `/var/mobile/Library/Preferences/com.dgh0st.hswidget.widgetlayouts.plist` file which can be modified manually to enable certain features that are currently buggy. Features such as expanded today widgets, which are disabled due to there not being a good/easy way to figure out the space an expanded widget should take up. The optional configurations like `normalModeRows`, `expandedModeRows`, `expandedModeHeight` and `isExpandedMode` can be used to enable the expanded widget and get consistent height for each widget separately. The plist file has the following format:
@@ -34,6 +32,12 @@ The layout of the hswidgets is saved in `/var/mobile/Library/Preferences/com.dgh
 				<integer>256</integer><!-- Specify a custom height for expanded mode -->
 				<key>isExpandedMode</key>
 				<true/><!-- enable expanded mode for the today widget -->
+				<key>offsetX</key>
+				<integer>0</integer><!-- Specify a custom number to move the widget by in the x direction -->
+				<key>offsetY</key>
+				<integer>0</integer><!-- Specify a custom number to move the widget by in the y direction -->
+				<key>forceDisconnectWhenNotVisible</key>
+				<false/><!-- enable force disconnect widget on leaving homescreen -->
 				<key>widgetIdentifier</key>
 				<string>com.apple.weather.WeatherAppTodayWidget</string><!-- the identifier for the today widget used by apple -->
 			</dict>
@@ -50,6 +54,8 @@ The layout of the hswidgets is saved in `/var/mobile/Library/Preferences/com.dgh
 			<dict>
 				<key>NumRows</key>
 				<integer>2</integer><!-- Specify the number of rows this clock should take up -->
+				<key>AlignmentPercent</key>
+				<integer>0</integer><!-- Specify the number that you want to align the widget by (-1.0 to 1.0) -->
 			</dict>
 			<key>WidgetOriginRow</key>
 			<integer>0</integer>
