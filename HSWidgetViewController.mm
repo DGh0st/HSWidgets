@@ -111,44 +111,46 @@ typedef NS_ENUM(NSInteger, BoxViewButtonStyle) {
 -(void)viewDidLoad {
 	[super viewDidLoad];
 
-	CGRect frame = [self calculatedFrame];
-	_editingView = [[UIView alloc] initWithFrame:frame];
-	_editingView.layer.cornerRadius = [self _cornerRadius];
-	[self.view addSubview:_editingView];
-	_editingView.hidden = YES;
+	@autoreleasepool {
+		CGRect frame = [self calculatedFrame];
+		_editingView = [[UIView alloc] initWithFrame:frame];
+		_editingView.layer.cornerRadius = [self _cornerRadius];
+		[self.view addSubview:_editingView];
+		_editingView.hidden = YES;
 
-	_closeBoxView = [self _createCloseBoxView:@selector(_closeBoxTapped) withStyle:kClose];
-	_closeBoxView.center = CGPointMake(_closeBoxView.frame.size.width, _closeBoxView.frame.size.height);
-	[_editingView addSubview:_closeBoxView];
+		_closeBoxView = [self _createCloseBoxView:@selector(_closeBoxTapped) withStyle:kClose];
+		_closeBoxView.center = CGPointMake(_closeBoxView.frame.size.width, _closeBoxView.frame.size.height);
+		[_editingView addSubview:_closeBoxView];
 
-	_expandBoxView = [self _createCloseBoxView:@selector(expandBoxTapped) withStyle:kExpand];
-	UIImage *expandImage = [UIImage imageNamed:kExpandImageName inBundle:[NSBundle bundleWithPath:kBundlePath] compatibleWithTraitCollection:nil];
-	if (![_expandBoxView isKindOfClass:objc_getClass("SBXCloseBoxView")]) {
-		((UIImageView *)[_expandBoxView valueForKey:@"xColorBurnView"]).image = expandImage;
-		((UIImageView *)[_expandBoxView valueForKey:@"xPlusDView"]).image = expandImage;
+		_expandBoxView = [self _createCloseBoxView:@selector(expandBoxTapped) withStyle:kExpand];
+		UIImage *expandImage = [UIImage imageNamed:kExpandImageName inBundle:[NSBundle bundleWithPath:kBundlePath] compatibleWithTraitCollection:nil];
+		if (![_expandBoxView isKindOfClass:objc_getClass("SBXCloseBoxView")]) {
+			((UIImageView *)[_expandBoxView valueForKey:@"xColorBurnView"]).image = expandImage;
+			((UIImageView *)[_expandBoxView valueForKey:@"xPlusDView"]).image = expandImage;
+		}
+		_expandBoxView.center = CGPointMake(_editingView.frame.size.width - _expandBoxView.frame.size.width, _expandBoxView.frame.size.height);
+		_expandBoxView.layer.cornerRadius = [self _cornerRadius] / _expandBoxView.frame.size.width;
+		[_editingView addSubview:_expandBoxView];
+
+		_shrinkBoxView = [self _createCloseBoxView:@selector(shrinkBoxTapped) withStyle:kShrink];
+		UIImage *shrinkImage = [UIImage imageNamed:kShrinkImageName inBundle:[NSBundle bundleWithPath:kBundlePath] compatibleWithTraitCollection:nil];
+		if (![_expandBoxView isKindOfClass:objc_getClass("SBXCloseBoxView")]) {
+			((UIImageView *)[_shrinkBoxView valueForKey:@"xColorBurnView"]).image = shrinkImage;
+			((UIImageView *)[_shrinkBoxView valueForKey:@"xPlusDView"]).image = shrinkImage;
+		}
+		_shrinkBoxView.center = CGPointMake(_editingView.frame.size.width - _expandBoxView.frame.size.width * 3.0 / 2.0 - _shrinkBoxView.frame.size.width, _shrinkBoxView.frame.size.height);
+		_shrinkBoxView.layer.cornerRadius = [self _cornerRadius] / _shrinkBoxView.frame.size.width;
+		[_editingView addSubview:_shrinkBoxView];
+
+		UILongPressGestureRecognizer  *pan = [[UILongPressGestureRecognizer  alloc] initWithTarget:self action:@selector(_editingWidgetMoved:)];
+		pan.minimumPressDuration = kLongPressDelay;
+		pan.allowableMovement = INFINITY;
+		[_editingView addGestureRecognizer:pan];
+		[pan release];
+
+		[self _editingStateChanged];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_editingStateChanged) name:kEditingStateChangedNotification object:nil];
 	}
-	_expandBoxView.center = CGPointMake(_editingView.frame.size.width - _expandBoxView.frame.size.width, _expandBoxView.frame.size.height);
-	_expandBoxView.layer.cornerRadius = [self _cornerRadius] / _expandBoxView.frame.size.width;
-	[_editingView addSubview:_expandBoxView];
-
-	_shrinkBoxView = [self _createCloseBoxView:@selector(shrinkBoxTapped) withStyle:kShrink];
-	UIImage *shrinkImage = [UIImage imageNamed:kShrinkImageName inBundle:[NSBundle bundleWithPath:kBundlePath] compatibleWithTraitCollection:nil];
-	if (![_expandBoxView isKindOfClass:objc_getClass("SBXCloseBoxView")]) {
-		((UIImageView *)[_shrinkBoxView valueForKey:@"xColorBurnView"]).image = shrinkImage;
-		((UIImageView *)[_shrinkBoxView valueForKey:@"xPlusDView"]).image = shrinkImage;
-	}
-	_shrinkBoxView.center = CGPointMake(_editingView.frame.size.width - _expandBoxView.frame.size.width * 3.0 / 2.0 - _shrinkBoxView.frame.size.width, _shrinkBoxView.frame.size.height);
-	_shrinkBoxView.layer.cornerRadius = [self _cornerRadius] / _shrinkBoxView.frame.size.width;
-	[_editingView addSubview:_shrinkBoxView];
-
-	UILongPressGestureRecognizer  *pan = [[UILongPressGestureRecognizer  alloc] initWithTarget:self action:@selector(_editingWidgetMoved:)];
-	pan.minimumPressDuration = kLongPressDelay;
-	pan.allowableMovement = INFINITY;
-	[_editingView addGestureRecognizer:pan];
-	[pan release];
-
-	[self _editingStateChanged];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_editingStateChanged) name:kEditingStateChangedNotification object:nil];
 }
 
 -(void)_updateAvailableSpace:(HSWidgetAvailableSpace)space {
@@ -351,22 +353,24 @@ typedef NS_ENUM(NSInteger, BoxViewButtonStyle) {
 					_expandBoxView.transform = CGAffineTransformMakeScale(0.1, 0.1);
 				if (_shrinkBoxView != nil)
 					_shrinkBoxView.transform = CGAffineTransformMakeScale(0.1, 0.1);
-				_editingView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0];
-				[UIView animateWithDuration:kAnimationDuration animations:^{
-					_closeBoxView.transform = CGAffineTransformMakeScale(1, 1);
-					if (_expandBoxView != nil)
-						_expandBoxView.transform = CGAffineTransformMakeScale(1, 1);
-					if (_shrinkBoxView != nil)
-						_shrinkBoxView.transform = CGAffineTransformMakeScale(1, 1);
-					_editingView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.25];
-				} completion:^(BOOL finished) {
-					_closeBoxView.transform = CGAffineTransformMakeScale(1, 1);
-					if (_expandBoxView != nil)
-						_expandBoxView.transform = CGAffineTransformMakeScale(1, 1);
-					if (_shrinkBoxView != nil)
-						_shrinkBoxView.transform = CGAffineTransformMakeScale(1, 1);
-					_editingView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.25];
-				}];
+				@autoreleasepool {
+					_editingView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0];
+					[UIView animateWithDuration:kAnimationDuration animations:^{
+						_closeBoxView.transform = CGAffineTransformMakeScale(1, 1);
+						if (_expandBoxView != nil)
+							_expandBoxView.transform = CGAffineTransformMakeScale(1, 1);
+						if (_shrinkBoxView != nil)
+							_shrinkBoxView.transform = CGAffineTransformMakeScale(1, 1);
+						_editingView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.25];
+					} completion:^(BOOL finished) {
+						_closeBoxView.transform = CGAffineTransformMakeScale(1, 1);
+						if (_expandBoxView != nil)
+							_expandBoxView.transform = CGAffineTransformMakeScale(1, 1);
+						if (_shrinkBoxView != nil)
+							_shrinkBoxView.transform = CGAffineTransformMakeScale(1, 1);
+						_editingView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.25];
+					}];
+				}
 			}
 		} else {
 			[self _removeEditingAnimations];
@@ -377,23 +381,25 @@ typedef NS_ENUM(NSInteger, BoxViewButtonStyle) {
 					_expandBoxView.transform = CGAffineTransformMakeScale(1, 1);
 				if (_shrinkBoxView != nil)
 					_shrinkBoxView.transform = CGAffineTransformMakeScale(1, 1);
-				_editingView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.25];
-				[UIView animateWithDuration:kAnimationDuration animations:^{
-					_closeBoxView.transform = CGAffineTransformMakeScale(0.1, 0.1);
-					if (_expandBoxView != nil)
-						_expandBoxView.transform = CGAffineTransformMakeScale(0.1, 0.1);
-					if (_shrinkBoxView != nil)
-						_shrinkBoxView.transform = CGAffineTransformMakeScale(0.1, 0.1);
-					_editingView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0];
-				} completion:^(BOOL finished) {
-					_editingView.hidden = YES;
-					_closeBoxView.transform = CGAffineTransformMakeScale(1, 1);
-					if (_expandBoxView != nil)
-						_expandBoxView.transform = CGAffineTransformMakeScale(1, 1);
-					if (_shrinkBoxView != nil)
-						_shrinkBoxView.transform = CGAffineTransformMakeScale(1, 1);
+				@autoreleasepool {
 					_editingView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.25];
-				}];
+					[UIView animateWithDuration:kAnimationDuration animations:^{
+						_closeBoxView.transform = CGAffineTransformMakeScale(0.1, 0.1);
+						if (_expandBoxView != nil)
+							_expandBoxView.transform = CGAffineTransformMakeScale(0.1, 0.1);
+						if (_shrinkBoxView != nil)
+							_shrinkBoxView.transform = CGAffineTransformMakeScale(0.1, 0.1);
+						_editingView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0];
+					} completion:^(BOOL finished) {
+						_editingView.hidden = YES;
+						_closeBoxView.transform = CGAffineTransformMakeScale(1, 1);
+						if (_expandBoxView != nil)
+							_expandBoxView.transform = CGAffineTransformMakeScale(1, 1);
+						if (_shrinkBoxView != nil)
+							_shrinkBoxView.transform = CGAffineTransformMakeScale(1, 1);
+						_editingView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.25];
+					}];
+				}
 			}
 		}
 	}

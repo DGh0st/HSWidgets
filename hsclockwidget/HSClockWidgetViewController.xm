@@ -65,6 +65,10 @@
 		self.dateView = [[%c(SBFLockScreenDateView) alloc] initWithFrame:CGRectMake(0, (self.requestedSize.height - twoRowHeight) / 2, self.requestedSize.width, twoRowHeight)];
 		[self.dateView setUserInteractionEnabled:NO];
 		[self.dateView setLegibilitySettings:_legibilitySettings];
+		if ([[NSFileManager defaultManager] fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/Jellyfish.dylib"])
+			[self.dateView setAlignmentPercent:1.0];
+		else if (_options[@"AlignmentPercent"] != nil)
+			[self.dateView setAlignmentPercent:[_options[@"AlignmentPercent"] doubleValue]];
 		[self.view addSubview:self.dateView];
 	}
 }

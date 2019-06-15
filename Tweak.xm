@@ -48,7 +48,7 @@ typedef NS_ENUM(NSUInteger, PageType) {
 
 @interface SBIconListView : UIView // iOS 4 - 12
 @property (nonatomic, assign) UIInterfaceOrientation orientation; // iOS 7 - 12
-+(NSUInteger)maxIcons; // iOS 4 - 12
+// +(NSUInteger)maxIcons; // iOS 4 - 12
 +(NSUInteger)maxVisibleIconRowsInterfaceOrientation:(UIInterfaceOrientation)arg1; // iOS 5 - 12
 -(SBIconCoordinate)coordinateForIcon:(id)arg1; // iOS 7 - 12
 -(CGPoint)originForIconAtCoordinate:(SBIconCoordinate)arg1; // iOS 7 - 12
@@ -141,7 +141,7 @@ static NSMutableDictionary *allPagesWidgetLayouts = nil;
 			id iconListView = self.iconListViews[listViewIndex];
 			if (iconListView != nil && [iconListView isKindOfClass:%c(SBRootIconListView)]) {
 				SBRootIconListView *rootIconListView = (SBRootIconListView *)iconListView;
-				NSString *pageKey = [NSString stringWithFormat:@"%zd", listViewIndex];
+				NSString *pageKey = [@(listViewIndex) stringValue];
 				if (rootIconListView.requiresSaveToFileForWidgetChanges || [allPagesWidgetLayouts[pageKey] count] != rootIconListView.model.widgetViewControllers.count) {
 					rootIconListView.requiresSaveToFileForWidgetChanges = NO;
 					wereAnyChangesMade = YES;
@@ -304,7 +304,9 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 		NSUInteger numRowsToRemove = 0;
 		for (HSWidgetViewController *widgetViewController in result.widgetViewControllers)
 			numRowsToRemove += [widgetViewController numRows];
-		MSHookIvar<NSUInteger>(result, "_maxIconCount") = [%c(SBRootIconListView) maxIcons] - numRowsToRemove * [[%c(SBIconController) sharedInstance] maxColCountForListInRootFolderWithInterfaceOrientation:self.orientation]; // original - numRows * iconsPerRow
+		NSUInteger maxRows = [%c(SBIconListView) maxVisibleIconRowsInterfaceOrientation:self.orientation];
+		NSUInteger maxCols = [[%c(SBIconController) sharedInstance] maxColCountForListInRootFolderWithInterfaceOrientation:self.orientation];
+		MSHookIvar<NSUInteger>(result, "_maxIconCount") = (maxRows * maxCols) - (numRowsToRemove * maxCols); // original - numRows * iconsPerRow
 	}
 	return result;
 }
@@ -420,7 +422,7 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 	if (model.pageLayoutType == kNone && ![self isKindOfClass:%c(SBDockIconListView)] && model.widgetViewControllers == nil) {
 		// confirm correct icon list view index
 		if ([self isEqual:[[%c(SBIconController) sharedInstance] rootIconListAtIndex:index]]) {
-			NSArray *currentPageWidgetLayout = allPagesWidgetLayouts[[NSString stringWithFormat:@"%zd", index]];
+			NSArray *currentPageWidgetLayout = allPagesWidgetLayouts[[@(index) stringValue]];
 			if (currentPageWidgetLayout != nil && [currentPageWidgetLayout count] > 0) {
 				model.pageLayoutType = kWidgetPage;
 				model.widgetViewControllers = [NSMutableArray array];
@@ -668,10 +670,10 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 		if ([widgetViewController availableStartRow] < widgetViewController.originRow) {
 			widgetViewController.originRow -= numRowsToRemove;
 			for (HSWidgetViewController *currentWidgetViewController in model.widgetViewControllers) {
-				NSUInteger originRow = currentWidgetViewController.originRow;
-				NSUInteger numRows = [currentWidgetViewController numRows];
 				if ([widgetViewController isEqual:currentWidgetViewController])
 					continue;
+				NSUInteger originRow = currentWidgetViewController.originRow;
+				NSUInteger numRows = [currentWidgetViewController numRows];
 				if (originRow < widgetViewController.originRow && originRow + numRows > widgetViewController.originRow) {
 					currentWidgetViewController.originRow -= numRowsToRemove;
 					break;
@@ -695,7 +697,7 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 		[self.addNewWidgetView setAvailableSpace:availableSpace];
 	CGSize finalSize = [self sizeForWidgetWithNumRows:[widgetViewController numRows]];
 	[self _enumerateWidgetsWithBlock:^(HSWidgetViewController *widget) {
-		[widgetViewController _updateAvailableSpace:availableSpace];
+		[widget _updateAvailableSpace:availableSpace];
 	}];
 	[UIView animateWithDuration:kAnimationDuration animations:^{
 		widgetViewController.requestedSize = finalSize;
@@ -1479,6 +1481,17 @@ static void loadHSWidgets() {
 			}
 		}
 	}
+
+	// sort them alphabetically by name
+	[availableHSWidgetClasses sortUsingComparator:^NSComparisonResult(Class firstClass, Class secondClass) {
+		if (firstClass == nil || secondClass == nil)
+			return NSOrderedSame;
+		NSString *firstName = [firstClass displayName];
+		NSString *secondName = [secondClass displayName];
+		if (firstName == nil || secondName == nil)
+			return NSOrderedSame;
+		return [firstName compare:secondName];
+	}];
 }
 
 static void unloadHSWidgets() {

@@ -5,57 +5,59 @@
 -(void)viewDidLoad {
 	[super viewDidLoad];
 
-	// set the title for back button and make it invisible for current view controller
-	self.navigationItem.title = @"HSWidgets";
-	UIView *invisibleTitleView = [[UIView alloc] init];
-	invisibleTitleView.hidden = YES;
-	self.navigationItem.titleView = invisibleTitleView;
-	[invisibleTitleView release];
+	@autoreleasepool { // only need it for colors
+		// set the title for back button and make it invisible for current view controller
+		self.navigationItem.title = @"HSWidgets";
+		UIView *invisibleTitleView = [[UIView alloc] init];
+		invisibleTitleView.hidden = YES;
+		self.navigationItem.titleView = invisibleTitleView;
+		[invisibleTitleView release];
 
-	UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(_dismissAddWidget)];
-	self.navigationItem.rightBarButtonItems = @[cancelButton];
-	[cancelButton release];
+		UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(_dismissAddWidget)];
+		self.navigationItem.rightBarButtonItems = @[cancelButton];
+		[cancelButton release];
 
-	// title/section name label
-	UILabel *sectionName = [[UILabel alloc] initWithFrame:(CGRect){{32.0f, 24.0f}, {self.view.frame.size.width - 64.0f, 0}}];
-	sectionName.text = @"Add HSWidgets"; // totally isn't copied from apple's add widgets description
-	sectionName.font = [UIFont systemFontOfSize:28];
-	sectionName.numberOfLines = 1;
-	sectionName.adjustsFontSizeToFitWidth = YES;
-	sectionName.clipsToBounds = YES;
-	sectionName.backgroundColor = [UIColor clearColor];
-	sectionName.textColor = [UIColor blackColor];
-	sectionName.textAlignment = NSTextAlignmentCenter;
-	[sectionName sizeToFit];
+		// title/section name label
+		UILabel *sectionName = [[UILabel alloc] initWithFrame:(CGRect){{32.0f, 24.0f}, {self.view.frame.size.width - 64.0f, 0}}];
+		sectionName.text = @"Add HSWidgets"; // totally isn't copied from apple's add widgets description
+		sectionName.font = [UIFont systemFontOfSize:28];
+		sectionName.numberOfLines = 1;
+		sectionName.adjustsFontSizeToFitWidth = YES;
+		sectionName.clipsToBounds = YES;
+		sectionName.backgroundColor = [UIColor clearColor];
+		sectionName.textColor = [UIColor blackColor];
+		sectionName.textAlignment = NSTextAlignmentCenter;
+		[sectionName sizeToFit];
 
-	// fix size
-	CGRect frame = sectionName.frame;
-	frame.size.width = self.view.frame.size.width - 64.0f;
-	sectionName.frame = frame;
+		// fix size
+		CGRect frame = sectionName.frame;
+		frame.size.width = self.view.frame.size.width - 64.0f;
+		sectionName.frame = frame;
 
-	// subtitle/section description label
-	UILabel *sectionDescription = [[UILabel alloc] initWithFrame:(CGRect){{32.0f, sectionName.frame.origin.y + sectionName.frame.size.height + 8.0f}, {self.view.frame.size.width - 64.0f, 0}}];
-	sectionDescription.text = @"Get timely information from your favorite apps, on your homescreen. Select your HSWidget below."; // totally isn't copied from apple's add widgets description
-	sectionDescription.font = [UIFont systemFontOfSize:18];
-	sectionDescription.numberOfLines = 3;
-	sectionDescription.adjustsFontSizeToFitWidth = YES;
-	sectionDescription.clipsToBounds = YES;
-	sectionDescription.backgroundColor = [UIColor clearColor];
-	sectionDescription.textColor = [UIColor blackColor];
-	sectionDescription.textAlignment = NSTextAlignmentCenter;
-	[sectionDescription sizeToFit];
+		// subtitle/section description label
+		UILabel *sectionDescription = [[UILabel alloc] initWithFrame:(CGRect){{32.0f, sectionName.frame.origin.y + sectionName.frame.size.height + 8.0f}, {self.view.frame.size.width - 64.0f, 0}}];
+		sectionDescription.text = @"Get timely information from your favorite apps, on your homescreen. Select your HSWidget below."; // totally isn't copied from apple's add widgets description
+		sectionDescription.font = [UIFont systemFontOfSize:18];
+		sectionDescription.numberOfLines = 3;
+		sectionDescription.adjustsFontSizeToFitWidth = YES;
+		sectionDescription.clipsToBounds = YES;
+		sectionDescription.backgroundColor = [UIColor clearColor];
+		sectionDescription.textColor = [UIColor blackColor];
+		sectionDescription.textAlignment = NSTextAlignmentCenter;
+		[sectionDescription sizeToFit];
 
-	// header view
-	UIView *headerView = [[UIView alloc] initWithFrame:(CGRect){{0, 0}, {self.view.frame.size.width, 24.0f + sectionName.frame.size.height + 8.0f + sectionDescription.frame.size.height}}];
-	headerView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
-	[headerView addSubview:sectionName];
-	[headerView addSubview:sectionDescription];
+		// header view
+		UIView *headerView = [[UIView alloc] initWithFrame:(CGRect){{0, 0}, {self.view.frame.size.width, 24.0f + sectionName.frame.size.height + 8.0f + sectionDescription.frame.size.height}}];
+		headerView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
+		[headerView addSubview:sectionName];
+		[headerView addSubview:sectionDescription];
 
-	self.tableView.tableHeaderView = headerView;
+		self.tableView.tableHeaderView = headerView;
 
-	[sectionName release];
-	[sectionDescription release];
-	[headerView release];
+		[sectionName release];
+		[sectionDescription release];
+		[headerView release];
+	}
 }
 
 -(void)_dismissAddWidget {

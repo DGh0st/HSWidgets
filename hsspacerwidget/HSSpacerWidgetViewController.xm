@@ -48,7 +48,7 @@
 }
 
 -(BOOL)canExpandWidget {
-	return [super availableRows] >= 1;
+	return [self availableRows] >= 1;
 }
 
 -(BOOL)canShrinkWidget {

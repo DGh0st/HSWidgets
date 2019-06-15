@@ -8,6 +8,7 @@
 -(void)setSubtitleLegibilityStrength:(CGFloat)arg1; // iOS 10 - 12
 -(void)setLegibilitySettings:(id)arg1; // iOS 7 - 12
 -(void)setDate:(NSDate *)arg1; // iOS 7 - 12
+-(void)setAlignmentPercent:(CGFloat)arg1; // iOS 10 - 12
 @end
 
 @interface SBLockScreenDateViewController : UIViewController // iOS 7 - 12
