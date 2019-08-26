@@ -9,6 +9,7 @@
 // #define kUpdateAfterRespringWaitTime 1.0 // wait for 1 second before attempting to update after respring
 #define kHeaderHeight 36 // height of the header bar
 #define kScreenPadding 16 // padding on the sides of the width
+#define kForceDisconnectionInterval 43200 // time in seconds before widget is force disconnected/reconnected on next launch
 
 // display modes
 #define kDisplayModeCompact 0
@@ -171,6 +172,7 @@ static WGWidgetDiscoveryController *widgetDiscoveryController = nil;
 		_isExpandedMode = options[@"isExpandedMode"] ? [options[@"isExpandedMode"] boolValue] : NO;
 		_requestedWidgetUpdate = NO;
 		_shouldRequestWidgetRemoteViewController = NO;
+		self.connectionTime = nil;
 	}
 	return self;
 }
@@ -442,6 +444,8 @@ static WGWidgetDiscoveryController *widgetDiscoveryController = nil;
 				[self.hostingViewController _requestInsertionOfRemoteViewAfterViewWillAppearForSequence:[self.hostingViewController _activeLifeCycleSequence] completionHandler:^{
 					self.widgetView.frame = [self calculatedFrame];
 				}];
+				if (self.connectionTime == nil)
+					self.connectionTime = [NSDate date];
 			}];
 		}];
 	}
@@ -452,11 +456,20 @@ static WGWidgetDiscoveryController *widgetDiscoveryController = nil;
 		_requestedWidgetUpdate = YES;
 		[self.hostingViewController _disconnectRemoteViewControllerForSequence:[self.hostingViewController _activeLifeCycleSequence] completion:^{
 			_requestedWidgetUpdate = NO;
+			self.connectionTime = nil;
 
 			if (completion != nil)
 				completion();
 		}];
 	}
+}
+
+-(void)updateWidgetAfterRespring {
+	// fix today widget not starting to update after respring on iOS 11+
+	[super updateWidgetAfterRespring];
+
+	if (%c(WGWidgetPlatterView))
+		[self requestWidgetConnect];
 }
 
 -(void)viewDidAppear:(BOOL)animated {
@@ -480,7 +493,7 @@ static WGWidgetDiscoveryController *widgetDiscoveryController = nil;
 	// [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(requestWidgetUpdate) object:nil];
 	_requestedWidgetUpdate = NO;
 
-	if (_options[@"forceDisconnectWhenNotVisible"] != nil &&  [_options[@"forceDisconnectWhenNotVisible"] boolValue])
+	if ((_options[@"forceDisconnectWhenNotVisible"] && [_options[@"forceDisconnectWhenNotVisible"] boolValue]) || [self.connectionTime timeIntervalSinceNow] > kForceDisconnectionInterval)
 		[self disconnectRemoteViewControllerWithCompletion:nil];
 }
 

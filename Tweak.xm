@@ -1435,14 +1435,15 @@ static NSMutableArray *availableWidgetControllerClassesForAvailableRows(NSUInteg
 		NSInteger totalIncrements = floorf(fabs(widgetCenterRow - MSHookIvar<CGFloat>(self, "_centerRow")));
 		CGFloat currentIncrement = [self.settings firstHopIncrement];
 		CGFloat currentMass = animationSettings.mass;
-		if (currentIncrement <= 0.0 || totalIncrements == 0) {
+		if (currentIncrement > 0.0 && totalIncrements != 0) {
 			NSInteger i = 1;
 			do {
 				currentMass += currentIncrement * distanceEffect;
 				currentIncrement += [self.settings hopIncrementAcceleration];
-			} while (currentIncrement <= 0.0 || i < totalIncrements);
+				++i;
+			} while (currentIncrement > 0.0 && i < totalIncrements);
 		}
-		CGFloat newMass = MAX(distanceEffect, 0.1);
+		CGFloat newMass = MAX(currentMass, 0.1);
 		if (newMass != animationSettings.mass)
 			animationSettings.mass = newMass;
 	}

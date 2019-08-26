@@ -114,6 +114,7 @@
 @property (nonatomic, retain) UIView *widgetView;
 @property (nonatomic, retain) WGWidgetHostingViewController *hostingViewController;
 @property (nonatomic, retain, readonly) NSString *widgetIdentifier;
+@property (nonatomic, retain) NSDate *connectionTime;
 -(void)requestWidgetConnect;
 // -(void)requestWidgetUpdate;
 -(void)connectRemoteViewController;
