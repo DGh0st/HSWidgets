@@ -17,10 +17,10 @@ static inline BOOL HSWidgetPositionEqualsPosition(HSWidgetPosition first, HSWidg
 	return first.row == second.row && first.col == second.col;
 }
 
-static inline HSWidgetPosition HSWidgetPositionAdd(HSWidgetPosition position, NSInteger row, NSInteger col) {
+static inline HSWidgetPosition HSWidgetPositionAdd(HSWidgetPosition position, NSInteger rows, NSInteger cols) {
 	HSWidgetPosition widgetPosition;
-	widgetPosition.row = position.row + row;
-	widgetPosition.col = position.col + col;
+	widgetPosition.row = position.row + rows;
+	widgetPosition.col = position.col + cols;
 	return widgetPosition;
 }
 
@@ -32,9 +32,9 @@ static inline BOOL HSWidgetPositionIsValid(HSWidgetPosition position, NSUInteger
 typedef NS_OPTIONS(NSUInteger, HSWidgetDirection) {
 	HSWidgetDirectionNone = 0,
 	HSWidgetDirectionLeft = 1 << 0,
-	HSWidgetDirectionUp = 1 << 2,
-	HSWidgetDirectionRight = 1 << 3,
-	HSWidgetDirectionDown = 1 << 4
+	HSWidgetDirectionUp = 1 << 1,
+	HSWidgetDirectionRight = 1 << 2,
+	HSWidgetDirectionDown = 1 << 3
 };
 
 static inline BOOL HSWidgetPositionIsAdjacent(HSWidgetPosition first, HSWidgetDirection direction, HSWidgetPosition second) {
