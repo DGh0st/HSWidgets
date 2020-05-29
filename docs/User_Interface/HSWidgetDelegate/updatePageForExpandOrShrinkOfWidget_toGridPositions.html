@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width"/>
+		<title>HSWidgetDelegate - updatePageForExpandOrShrinkOfWidget:toGridPositions:</title>
+		<link rel="icon" href="https://dgh0st.github.io/img/favicon.ico">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/all.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/navigation-bar.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/documentation_all.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/syntax_highlighting.css">
+		<script src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/navigation.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/all.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/documentation.js"></script>
+	</head>
+	<body>
+		<!-- NAVIGATION BAR -->
+		<div class="nav-bar unselectable">
+			<a href="../../index.html" class="title">HSWidgets Docs</a>
+			<div class="pages">
+				<li><a href="https://github.com/DGh0st/HSWidgets"><i style="color: white;" class="fab fa-github fa-lg fa-fw"></i>GitHub</a></li>
+			</div>
+		</div>
+
+		<!-- CONTENT -->
+		<div class="content">
+			<div class="content-nav-links">
+				<p><a href="../../index.html" class="home"></a></p>
+				<p><i class="fas fa-angle-right"></i></p>
+				<p><a href="../HSWidgetDelegate.html">HSWidgetDelegate</a></p>
+				<p><i class="fas fa-angle-right"></i></p>
+				<p class="current">updatePageForExpandOrShrinkOfWidget:toGridPositions:</p>
+			</div>
+
+			<!-- API INFO -->
+			<div class="sectionInfo">
+				<h2 class="fakeReferenceName api-type"><i class="fas fa-link fakeReferenceCopy"></i> Instance Method</h2>
+				<h1 class="referenceName api-name"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>updatePageForExpandOrShrinkOfWidget:toGridPositions:</span></h1>
+				<div class="referenceInfo">
+					<p>Expand or shrink widget to the specified widget positions.</p>
+					<hr class="api-separator">
+				</div>
+			</div>
+
+			<!-- DECLARATION -->
+			<div class="sectionInfo">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Declaration</span></h1>
+				<div class="referenceInfo">
+					<div class="codeblock objectivec">
+<pre><code>
+-(<span class="primitive">void</span>)<span class="methodsignature">updatePageForExpandOrShrinkOfWidget:</span>(<span class="classname"><a href="../HSWidgetViewController.html">HSWidgetViewController</a></span> *)<span class="signatureargument">widgetViewController</span> <span class="methodsignature">toGridPositions:</span>(<span class="classname">NSArray</span> *)<span class="signatureargument">positions;
+</code></pre>
+					</div>
+				</div>
+			</div>
+
+			<!-- PARAMETERS -->
+			<div class="sectionInfo">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Parameters</span></h1>
+				<ul class="referenceInfo">
+					<li>
+						<h3>widgetViewController</h3>
+						<p>widget view controller to expand/shrink</p>
+					</li>
+					<li>
+						<h3>positions</h3>
+						<p>array of grid positions that widget will occupy after expand/shrink</p>
+					</li>
+				</ul>
+			</div>
+
+			<!-- DESCRIPTION -->
+			<div class="sectionInfo">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Description</span></h1>
+				<div class="referenceInfo">
+					<p>The widget should send this message to the delegate when it wants to perform the expanding or shrinking accessory events. The delegate is responsible for animating only the container view changes.</p>
+				</div>
+			</div>
+
+			<!-- RELATED LINKS -->
+			<div class="sectionInfo containerReferenceSection">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Related Links</span></h1>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="fakeReferenceName"><i class="fas fa-link fakeReferenceCopy"></i> <span>Widget Sizing</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="canWidget_expandOrShrinkToGridPositions.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;canWidget:expandOrShrinkToGridPositions:</a>
+							<p>Return whether widget can expand or shrink to the specified widget positions.</p>
+						</li>
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="fakeReferenceName"><i class="fas fa-link fakeReferenceCopy"></i> <span>Positions</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="../../Core/HSWidgetPositionObject.html">HSWidgetPositionObject</a>
+							<p>An object wrapper for widget position structure.</p>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<!-- FOOTER -->
+		<div class="footer">
+			<hr class="footer-separator">
+			<div class="footer-content">
+				<p>Copyright © 2020 <a href="https://dgh0st.github.io">DGh0st</a>. All rights reserved.</p>
+			</div>
+		</div>
+
+		<!-- BACK TO TOP -->
+		<div class="backToTop unselectable">
+			<h1 onclick="backToTop()"><i style="color: white;" class="fas fa-arrow-circle-up" aria-hidden="true"></i></h1>
+		</div>
+	</body>
+</html>

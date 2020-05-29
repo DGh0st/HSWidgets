@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width"/>
+		<title>HSWidgetFrame</title>
+		<link rel="icon" href="https://dgh0st.github.io/img/favicon.ico">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/all.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/navigation-bar.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/documentation_all.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/syntax_highlighting.css">
+		<link rel="stylesheet" href="css/HSWidgetFrame.css">
+		<script src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/navigation.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/all.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/documentation.js"></script>
+	</head>
+	<body>
+		<!-- NAVIGATION BAR -->
+		<div class="nav-bar unselectable">
+			<a href="../index.html" class="title">HSWidgets Docs</a>
+			<div class="pages">
+				<li><a href="https://github.com/DGh0st/HSWidgets"><i style="color: white;" class="fab fa-github fa-lg fa-fw"></i>GitHub</a></li>
+			</div>
+		</div>
+
+		<!-- CONTENT -->
+		<div class="content">
+			<div class="content-nav-links">
+				<p><a href="../index.html" class="home"></a></p>
+				<p><i class="fas fa-angle-right"></i></p>
+				<p class="current">HSWidgetFrame</p>
+			</div>
+
+			<!-- API INFO -->
+			<div class="sectionInfo">
+				<h2 class="fakeReferenceName api-type"><i class="fas fa-link fakeReferenceCopy"></i> Structure</h2>
+				<h1 class="referenceName api-name"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>HSWidgetFrame</span></h1>
+				<div class="referenceInfo">
+					<p>A structure that contains location and dimensions of widget in grid positions.</p>
+					<hr class="api-separator">
+				</div>
+			</div>
+
+			<!-- DECLARATION -->
+			<div class="sectionInfo">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Declaration</span></h1>
+				<div class="referenceInfo">
+					<div class="codeblock objectivec">
+<pre><code>
+<span class="reservedidentifier">typedef struct</span> HSWidgetFrame {
+	<span style="line-height: 200%;">...</span>
+} <span class="classidentifier">HSWidgetFrame</span>;
+</code></pre>
+					</div>
+				</div>
+			</div>
+
+			<!-- OVERVIEW -->
+			<div class="sectionInfo">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Overview</span></h1>
+				<div class="referenceInfo">
+					<p>Frames are a combination of location and dimensions. Location being grid position that follow iOS coordinate space where the origin is upper-left corner and positive extends towards the lower-right corner. While dimensions are number of grid positions that will be occupied. For instance a frame with origin of (2, 2) and size of (3, 2) would represent:</p>
+					<div class="frameGraph unselectable">
+						<div><span>(1, 1)</span></div>
+						<div><span>(1, 2)</span></div>
+						<div><span>(1, 3)</span></div>
+						<div><span>(1, 4)</span></div>
+						<div><span>(2, 1)</span></div>
+						<div class="widgetframe">
+							<span>
+								<span>Widget Frame</span>
+								<br>
+								<small>Origin (2, 2)</small>
+								<br>
+								<small>Size (3, 2)</small>
+							</span>
+						</div>
+						<div><span>(2, 4)</span></div>
+						<div><span>(3, 1)</span></div>
+						<div><span>(3, 4)</span></div>
+						<div><span>(4, 1)</span></div>
+						<div><span>(4, 4)</span></div>
+						<div><span>(5, 1)</span></div>
+						<div><span>(5, 2)</span></div>
+						<div><span>(5, 3)</span></div>
+						<div><span>(5, 4)</span></div>
+					</div>
+				</div>
+			</div>
+
+			<!-- TOPICS -->
+			<div class="sectionInfo containerReferenceSection">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Topics</span></h1>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Constants</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetFrame/HSWidgetFrameZero.html">HSWidgetFrameZero</a>
+							<p>A frame constant with location (0, 0), and dimension containg 0 width and height.</p>
+						</li>
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Member Fields</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetFrame/origin.html">origin</a>
+							<p>A grid position that specifies the frame's origin.</p>
+						</li>
+						<li>
+							<a href="HSWidgetFrame/size.html">size</a>
+							<p>A size that specifies the number of rows and columns of the frame.</p>
+						</li>
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Creating Frame</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetFrame/HSWidgetFrameMake.html">HSWidgetFrameMake</a>
+							<p>Make a widget frame using the specified row, column, number of rows and number of columns.</p>
+						</li>
+						<li>
+							<a href="HSWidgetFrame/HSWidgetFrameMake_cpp.html">HSWidgetFrameMake (c++)</a>
+							<p>Make a widget frame using the specified origin and size.</p>
+						</li>
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Checking Characteristics</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetFrame/HSWidgetFrameContainsPosition.html">HSWidgetFrameContainsPosition</a>
+							<p>Returns whether a frame contains a specified position.</p>
+						</li>
+						<li>
+							<a href="HSWidgetFrame/HSWidgetFrameEqualsFrame.html">HSWidgetFrameEqualsFrame</a>
+							<p>Return whether two frames are equal in size and position.</p>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<!-- RELATED LINKS -->
+			<div class="sectionInfo containerReferenceSection">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Related Links</span></h1>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="fakeReferenceName"><i class="fas fa-link fakeReferenceCopy"></i> <span>Position</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetPosition.html">HSWidgetPosition</a>
+							<p>A structure that contains location in grid positions.</p>
+						</li>
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="fakeReferenceName"><i class="fas fa-link fakeReferenceCopy"></i> <span>Size</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetSize.html">HSWidgetSize</a>
+							<p>A structure that contains dimensions in grid positions.</p>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<!-- FOOTER -->
+		<div class="footer">
+			<hr class="footer-separator">
+			<div class="footer-content">
+				<p>Copyright © 2020 <a href="https://dgh0st.github.io">DGh0st</a>. All rights reserved.</p>
+			</div>
+		</div>
+
+		<!-- BACK TO TOP -->
+		<div class="backToTop unselectable">
+			<h1 onclick="backToTop()"><i style="color: white;" class="fas fa-arrow-circle-up" aria-hidden="true"></i></h1>
+		</div>
+	</body>
+</html>

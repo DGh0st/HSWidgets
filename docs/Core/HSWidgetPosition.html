@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width"/>
+		<title>HSWidgetPosition</title>
+		<link rel="icon" href="https://dgh0st.github.io/img/favicon.ico">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/all.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/navigation-bar.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/documentation_all.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/syntax_highlighting.css">
+		<script src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/navigation.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/all.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/documentation.js"></script>
+	</head>
+	<body>
+		<!-- NAVIGATION BAR -->
+		<div class="nav-bar unselectable">
+			<a href="../index.html" class="title">HSWidgets Docs</a>
+			<div class="pages">
+				<li><a href="https://github.com/DGh0st/HSWidgets"><i style="color: white;" class="fab fa-github fa-lg fa-fw"></i>GitHub</a></li>
+			</div>
+		</div>
+
+		<!-- CONTENT -->
+		<div class="content">
+			<div class="content-nav-links">
+				<p><a href="../index.html" class="home"></a></p>
+				<p><i class="fas fa-angle-right"></i></p>
+				<p class="current">HSWidgetPosition</p>
+			</div>
+
+			<!-- API INFO -->
+			<div class="sectionInfo">
+				<h2 class="fakeReferenceName api-type"><i class="fas fa-link fakeReferenceCopy"></i> Structure</h2>
+				<h1 class="referenceName api-name"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>HSWidgetPosition</span></h1>
+				<div class="referenceInfo">
+					<p>A structure that contains location in grid positions.</p>
+					<hr class="api-separator">
+				</div>
+			</div>
+
+			<!-- DECLARATION -->
+			<div class="sectionInfo">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Declaration</span></h1>
+				<div class="referenceInfo">
+					<div class="codeblock objectivec">
+<pre><code>
+<span class="reservedidentifier">typedef struct</span> HSWidgetPosition {
+	<span style="line-height: 200%;">...</span>
+} <span class="classidentifier">HSWidgetPosition</span>;
+</code></pre>
+					</div>
+				</div>
+			</div>
+
+			<!-- OVERVIEW -->
+			<div class="sectionInfo">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Overview</span></h1>
+				<div class="referenceInfo">
+					<p>Positions are grid positions that follow iOS coordinate space where the origin is upper-left corner and positive extends towards the lower-right corner. These positions are represented using (row, column) format.</p>
+				</div>
+			</div>
+
+			<!-- TOPICS -->
+			<div class="sectionInfo containerReferenceSection">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Topics</span></h1>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Constants</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetPosition/HSWidgetPositionZero.html">HSWidgetPositionZero</a>
+							<p>A position constant with location (0, 0).</p>
+						</li>
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Member Fields</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetPosition/row.html">row</a>
+							<p>The row of the position.</p>
+						</li>
+						<li>
+							<a href="HSWidgetPosition/col.html">col</a>
+							<p>The column of the position.</p>
+						</li>
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Creating Position</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetPosition/HSWidgetPositionMake.html">HSWidgetPositionMake</a>
+							<p>Make a widget position using the specified row and column.</p>
+						</li>
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Arithmetic</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetPosition/HSWidgetPositionAdd.html">HSWidgetPositionAdd</a>
+							<p>Add the given row and column to the specified position.</p>
+						</li>
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Checking Characteristics</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetPosition/HSWidgetPositionIsValid.html">HSWidgetPositionIsValid</a>
+							<p>Returns whether the specified position is valid in given max range.</p>
+						</li>
+						<li>
+							<a href="HSWidgetPosition/HSWidgetPositionEqualsPosition.html">HSWidgetPositionEqualsPosition</a>
+							<p>Return whether two positions are equal.</p>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<!-- FOOTER -->
+		<div class="footer">
+			<hr class="footer-separator">
+			<div class="footer-content">
+				<p>Copyright © 2020 <a href="https://dgh0st.github.io">DGh0st</a>. All rights reserved.</p>
+			</div>
+		</div>
+
+		<!-- BACK TO TOP -->
+		<div class="backToTop unselectable">
+			<h1 onclick="backToTop()"><i style="color: white;" class="fas fa-arrow-circle-up" aria-hidden="true"></i></h1>
+		</div>
+	</body>
+</html>

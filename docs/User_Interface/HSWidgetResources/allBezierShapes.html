@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width"/>
+		<title>HSWidgetResources - allBezierShapes</title>
+		<link rel="icon" href="https://dgh0st.github.io/img/favicon.ico">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/all.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/navigation-bar.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/documentation_all.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/syntax_highlighting.css">
+		<script src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/navigation.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/all.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/documentation.js"></script>
+	</head>
+	<body>
+		<!-- NAVIGATION BAR -->
+		<div class="nav-bar unselectable">
+			<a href="../../index.html" class="title">HSWidgets Docs</a>
+			<div class="pages">
+				<li><a href="https://github.com/DGh0st/HSWidgets"><i style="color: white;" class="fab fa-github fa-lg fa-fw"></i>GitHub</a></li>
+			</div>
+		</div>
+
+		<!-- CONTENT -->
+		<div class="content">
+			<div class="content-nav-links">
+				<p><a href="../../index.html" class="home"></a></p>
+				<p><i class="fas fa-angle-right"></i></p>
+				<p><a href="../HSWidgetResources.html">HSWidgetResources</a></p>
+				<p><i class="fas fa-angle-right"></i></p>
+				<p class="current">allBezierShapes</p>
+			</div>
+
+			<!-- API INFO -->
+			<div class="sectionInfo">
+				<h2 class="fakeReferenceName api-type"><i class="fas fa-link fakeReferenceCopy"></i> Class Method</h2>
+				<h1 class="referenceName api-name"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>allBezierShapes</span></h1>
+				<div class="referenceInfo">
+					<p>Get information about all the provided bezier shapes.</p>
+					<hr class="api-separator">
+				</div>
+			</div>
+
+			<!-- DECLARATION -->
+			<div class="sectionInfo">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Declaration</span></h1>
+				<div class="referenceInfo">
+					<div class="codeblock objectivec">
+<pre><code>
+-(<span class="classname">NSArray</span> *)<span class="methodsignature">allBezierShapes</span>;
+</code></pre>
+					</div>
+				</div>
+			</div>
+
+			<!-- RETURN VALUE -->
+			<div class="sectionInfo">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Return Value</span></h1>
+				<div class="referenceInfo">
+					<p>An array of dictionaries that contain information about the provided bezier shapes. For instance, following is an example that may be returned:</p>
+					<div class="codeblock objectivec">
+<pre><code>
+@[
+	@{
+		HSWidgetBezierShapeEnumKey : @(<span class="enum">HSWidgetBezierShapeRoundedRect</span>),
+		HSWidgetBezierShapeDisplayNameKey : <span class="stringliteral">@"Rounded Rectangle (Default)"</span>
+	},
+	@{
+		HSWidgetBezierShapeEnumKey : @(<span class="enum">HSWidgetBezierShapeRect</span>),
+		HSWidgetBezierShapeDisplayNameKey : <span class="stringliteral">@"Rectangle"</span>
+	},
+	...
+]
+</code></pre>
+					</div>
+				</div>
+			</div>
+
+			<!-- TOPICS -->
+			<div class="sectionInfo containerReferenceSection">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Topics</span></h1>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Accessing Values</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="allBezierShapes/HSWidgetBezierShapeEnumKey.html">HSWidgetBezierShapeEnumKey</a>
+							<p>Key to access the enum value object.</p>
+						</li>
+						<li>
+							<a href="allBezierShapes/HSWidgetBezierShapeDisplayNameKey.html">HSWidgetBezierShapeDisplayNameKey</a>
+							<p>Key to access the display name object.</p>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<!-- RELATED LINKS -->
+			<div class="sectionInfo containerReferenceSection">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Related Links</span></h1>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="fakeReferenceName"><i class="fas fa-link fakeReferenceCopy"></i> <span>Bezier Shapes</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetBezierShape.html">HSWidgetBezierShape</a>
+							<p>Constants for specifying a bezier shape.</p>
+						</li>
+						<li>
+							<a href="bezierPathForRect_withShape_lineThickness.html"><span class="referencemethodtype">+</span>&nbsp;&nbsp;bezierPathForRect:withShape:lineThickness:</a>
+							<p>Get the bezier path for the specified bezier shape.</p>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<!-- FOOTER -->
+		<div class="footer">
+			<hr class="footer-separator">
+			<div class="footer-content">
+				<p>Copyright © 2020 <a href="https://dgh0st.github.io">DGh0st</a>. All rights reserved.</p>
+			</div>
+		</div>
+
+		<!-- BACK TO TOP -->
+		<div class="backToTop unselectable">
+			<h1 onclick="backToTop()"><i style="color: white;" class="fas fa-arrow-circle-up" aria-hidden="true"></i></h1>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,9 @@
+Package: com.dgh0st.hscustomwidget
+Name: HSCustomWidget
+Depends: mobilesubstrate, com.dgh0st.hswidgets
+Version: 1.0
+Architecture: iphoneos-arm
+Description: An awesome HSWidgets extension!
+Maintainer: DGh0st <deeppwnage@yahoo.com>
+Author: DGh0st <deeppwnage@yahoo.com>
+Section: Addons (HSWidgets)

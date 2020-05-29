@@ -1,0 +1,27 @@
+.frameGraph {
+	display: grid;
+	grid-template-columns: 80px 80px 80px 80px;
+	grid-template-rows: 80px 80px 80px 80px 80px;
+	grid-gap: 8px;
+
+	justify-content: center;
+}
+
+.frameGraph div {
+	background-color: #272822; /* gray */
+	opacity: 0.33;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	-moz-text-align: center;
+}
+
+div.widgetframe {
+	grid-row-start: 2;
+	grid-column-start: 2;
+	grid-row-end: 5;
+	grid-column-end: 4;
+	opacity: unset;
+}

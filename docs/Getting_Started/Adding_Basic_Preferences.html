@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width"/>
+		<title>Adding Basic Preferences</title>
+		<link rel="icon" href="https://dgh0st.github.io/img/favicon.ico">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/all.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/navigation-bar.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/documentation_all.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/syntax_highlighting.css">
+		<script src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/navigation.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/all.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/documentation.js"></script>
+	</head>
+	<body>
+		<!-- NAVIGATION BAR -->
+		<div class="nav-bar unselectable">
+			<a href="../index.html" class="title">HSWidgets Docs</a>
+			<div class="pages">
+				<li><a href="https://github.com/DGh0st/HSWidgets"><i style="color: white;" class="fab fa-github fa-lg fa-fw"></i>GitHub</a></li>
+			</div>
+		</div>
+
+		<!-- CONTENT -->
+		<div class="content">
+			<div class="content-nav-links">
+				<p><a href="../index.html" class="home"></a></p>
+				<p><i class="fas fa-angle-right"></i></p>
+				<p class="current">Adding Basic Preferences</p>
+			</div>
+			<div class="sectionInfo">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Preferences</span></h1>
+				<div class="referenceInfo">
+					<p>There are 2 types of user preferences provided, additional options that can be configured once when widgets are added to the page and settings options that can be configured anytime via settings accessory. Convenience classes are provided for both of these, including a class that can be shared for both cases, to make the process easier.</p>
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Additional Options</span></h3>
+					<p>Before digging into how to implement additional options, lets go over their lifecycle beginning with how they are constructed. When widget is tapped in HSWidgets' adding view is displayed, it'll initially check if the widget provides a valid additional options class. Valid class being a view controller that conforms to <span class="codeblockinline">HSWidgetAdditionalOptions</span>. Once it has determine the validiy of class, it 'll try to construct an instance of it using one of the initializers (in that order):</p>
+					<ol>
+						<li>Optional initializer of above mentioned protocol, <span class="codeblockinline">initWithWidgetsOptionsToExclude:withDelegate:availablePositions:</span></li>
+						<li>Initializer of <span class="codeblockinline">PSListController</span> (yes we can use any class from the Preference framework but we'll go more into that later), <span class="codeblockinline">initForContentSize:</span></li>
+						<li>Fallback to initializer of <span class="codeblockinline">UIViewController</span>, <span class="codeblockinline">init</span></li>
+					</ol>
+					<p>After construction, It'll be pushed onto navigation controller stack and go through the view controller life cycle. Additional options class is then responsible for setting up <span class="codeblockinline">widgetOptions</span> as options change. Once all options have been configured by the user, additional options class should call <span class="codeblockinline">additionalOptionsViewController:addWidgetForClass:</span> on its delegate. The implementation of this method will call <span class="codeblockinline">createOptionsFromController:withAvailableGridPosition:</span> on the widget to allow it to do any conversions to dictionary (that can be serialized). Finally, it'll construct widget view controller using the options dictionary.</p>
+					<p>These responsibilities become easier to manage with provided convenience classes. There are 2 classes available, <span class="codeblockinline">HSWidgetAdditionalOptionsViewController</span> (additonal options view controller) and <span class="codeblockinline">HSWidgetCombinedAdditionalOptionsAndPreferencesViewController</span> (combined additional options view controller), both useful under different circumstances. Additional options view controller is a table view controller so it should be used when user needs to select from a list, specially when that list is dynamic. Combined additional options view controller, on the other hand, is a <span class="codeblockinline">PSListController</span> and conforms to <span class="codeblockinline">HSWidgetPreferences</span>. This means we can use the same plist approach for generating the options as Preference framework. And because it conforms to <span class="codeblockinline">HSWidgetPreferences</span>, we can use the same class for settings options. For most cases, it is recommended to use the combined additional options view controller.</p>
+					<p>To add additional options to our widget, we would create a subclass of one of the above mentioned classes and then add <span class="codeblockinline">HSWidgetAddNewOptionsControllerClass</span> to <span class="codeblockinline">Resources/Info.plist</span>.</p>
+					<div class="codeblock xml">
+<pre><code>
+&lt;<span class="tag">key</span>&gt;HSWidgetAddNewOptionsControllerClass&lt;/<span class="tag">key</span>&gt;
+&lt;<span class="tag">string</span>&gt;SUBCLASSNAME&lt;/<span class="tag">string</span>&gt;
+</code></pre>
+					</div>
+					<div class="codeblockdescription">
+						<small><span class="descriptionHeader"></span>Replace SUBCLASSNAME with the name of subclass that you created for additional options.</small>
+					</div>
+					<p><!-- SPACING --></p>
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Settings</span></h3>
+					<p>Settings options should be used for adding user options that can be configured at anytime. It is preferred to use this over using preference bundles that are displayed in Settings app. This is because settings options are easier to access and provide individual customizability per widget instance via convenience classes. But before getting into the classes, lets go over their lifecycle. It begins with the tap event on the settings accessory. Since there are no restrictions on the type/inheritance of the class, HSWidgets does quite a bit of checking before constructing the preference view controller. It follows the following logic:</p>
+					<ol>
+						<li>If preference view controller conforms to <span class="codeblockinline">HSWidgetPreferences</span> then use initializer specified by the protocol, <span class="codeblockinline">initWithWidgetViewController:availablePositions:</span></li>
+						<li>Initializer of <span class="codeblockinline">PSListController</span> if implemented, <span class="codeblockinline">initForContentSize:</span></li>
+						<li>Fallback to initializer of <span class="codeblockinline">UIViewController</span>, <span class="codeblockinline">init</span></li>
+					</ol>
+					<p>This will then be pushed onto navigation controller stack and go through rest of the view controller lifecycle. The preference view controller is responsible for saving and updating the widget. However both of these become easier with the provided classes, <span class="codeblockinline">HSWidgetPreferencesListController</span> (preferences list controller) and before mentioned <span class="codeblockinline">HSWidgetCombinedAdditionalOptionsAndPreferencesViewController</span>. Since both of these are <span class="codeblockinline">PSListController</span> we can construct our preferences the same way we construct preference bundles by using plist approach.</p>
+					<p>So to enable settings options, we need to enable settings accessory which trigger them. By default this accessory is enabled when a valid class is set for <span class="codeblockinline">HSWidgetPreferencesControllerClass</span> in <span class="codeblockinline">Resources/Info.plist</span>.</p>
+					<div class="codeblock xml">
+<pre><code>
+&lt;<span class="tag">key</span>&gt;HSWidgetPreferencesControllerClass&lt;/<span class="tag">key</span>&gt;
+&lt;<span class="tag">string</span>&gt;SUBCLASSNAME&lt;/<span class="tag">string</span>&gt;
+</code></pre>
+					</div>
+					<div class="codeblockdescription">
+						<small><span class="descriptionHeader"></span>Replace SUBCLASSNAME with the name of subclass that you created for settings options.</small>
+					</div>
+					<p><!-- SPACING --></p>
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Adding Preferences to Square Widget</span></h3>
+					<p>Lets add simple preferences to our square widget. To keep things simple, we will add preferences for picking color from a list (segment cell). Lets allow the user to configure this when widget is being added and anytime via the settings accessory so lets subclass <span class="codeblockinline">HSWidgetCombinedAdditionalOptionsAndPreferencesViewController</span>. For the subclass we need header file with:</p>
+					<div class="codeblock objectivec">
+<pre><code>
+<span class="reservedkeyword">#import</span> <span class="stringliteral">&lt;HSWidgets/HSWidgetCombinedAdditionalOptionsAndPreferencesViewController.h&gt;</span>
+
+<span class="reservedidentifier">@interface</span> <span class="classidentifier">HSCustomWidgetPreferencesViewController</span> : <span class="subclassidentifier">HSWidgetCombinedAdditionalOptionsAndPreferencesViewController</span>
+<span class="reservedidentifier">@end</span>
+</code></pre>
+					</div>
+					<p>Then we need to implement the plist file that has the segment cell for picking the color, <span class="codeblockinline">Resources/Root.plist</span>:</p>
+					<div class="codeblock xml">
+<pre><code>
+&lt;?<span class="tag">xml</span> <span class="attribute">version</span>=<span class="stringliteral">"1.0"</span> <span class="attribute">encoding</span>=<span class="stringliteral">"UTF-8"</span>?&gt;
+&lt;!<span class="tag">DOCTYPE</span> plist PUBLIC <span class="stringliteral">"-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"</span>&gt;
+&lt;<span class="tag">plist</span> <span class="attribute">version</span>=<span class="stringliteral">"1.0"</span>&gt;
+&lt;<span class="tag">dict</span>&gt;
+	&lt;<span class="tag">key</span>&gt;items&lt;/<span class="tag">key</span>&gt;
+	&lt;<span class="tag">array</span>&gt;
+		&lt;<span class="tag">dict</span>&gt;
+			&lt;<span class="tag">key</span>&gt;cell&lt;/<span class="tag">key</span>&gt;
+			&lt;<span class="tag">string</span>&gt;PSGroupCell&lt;/<span class="tag">string</span>&gt;
+			&lt;<span class="tag">key</span>&gt;label&lt;/<span class="tag">key</span>&gt;
+			&lt;<span class="tag">string</span>&gt;Color&lt;/<span class="tag">string</span>&gt;
+			&lt;<span class="tag">key</span>&gt;footerText&lt;/<span class="tag">key</span>&gt;
+			&lt;<span class="tag">string</span>&gt;Pick the color of the square&lt;/<span class="tag">string</span>&gt;
+		&lt;/<span class="tag">dict</span>&gt;
+		&lt;<span class="tag">dict</span>&gt;
+			&lt;<span class="tag">key</span>&gt;cell&lt;/<span class="tag">key</span>&gt;
+			&lt;<span class="tag">string</span>&gt;PSSegmentCell&lt;/<span class="tag">string</span>&gt;
+			&lt;<span class="tag">key</span>&gt;key&lt;/<span class="tag">key</span>&gt;
+			&lt;<span class="tag">string</span>&gt;WidgetColor&lt;/<span class="tag">string</span>&gt;
+			&lt;<span class="tag">key</span>&gt;validTitles&lt;/<span class="tag">key</span>&gt;
+			&lt;<span class="tag">array</span>&gt;
+				&lt;<span class="tag">string</span>&gt;Red&lt;/<span class="tag">string</span>&gt;
+				&lt;<span class="tag">string</span>&gt;Green&lt;/<span class="tag">string</span>&gt;
+				&lt;<span class="tag">string</span>&gt;Blue&lt;/<span class="tag">string</span>&gt;
+			&lt;/<span class="tag">array</span>&gt;
+			&lt;<span class="tag">key</span>&gt;validValues&lt;/<span class="tag">key</span>&gt;
+			&lt;<span class="tag">array</span>&gt;
+				&lt;<span class="tag">integer</span>&gt;0&lt;/<span class="tag">integer</span>&gt;<span class="comment">&lt;-- Red --></span>
+				&lt;<span class="tag">integer</span>&gt;1&lt;/<span class="tag">integer</span>&gt;<span class="comment">&lt;-- Green --></span>
+				&lt;<span class="tag">integer</span>&gt;2&lt;/<span class="tag">integer</span>&gt;<span class="comment">&lt;-- Blue --></span>
+			&lt;/<span class="tag">array</span>&gt;
+			&lt;<span class="tag">key</span>&gt;default&lt;/<span class="tag">key</span>&gt;
+			&lt;<span class="tag">integer</span>&gt;0&lt;/<span class="tag">integer</span>&gt;
+		&lt;/<span class="tag">dict</span>&gt;
+	&lt;/<span class="tag">array</span>&gt;
+	&lt;<span class="tag">key</span>&gt;title&lt;/<span class="tag">key</span>&gt;
+	&lt;<span class="tag">string</span>&gt;Square&lt;/<span class="tag">string</span>&gt;
+&lt;/<span class="tag">dict</span>&gt;
+&lt;/<span class="tag">plist</span>&gt;
+</code></pre>
+					</div>
+					<p>This defines red color as <span class="codeblockinline">0</span>, green color as <span class="codeblockinline">1</span> and blue color as <span class="codeblockinline">2</span> which we will need later. Now that we have setup our plist, we need to load the specifiers in our view controller using <span class="codeblockinline">loadSpecifiersFromPlistName:</span>. So in our implementation of the subclass, we would have:</p>
+					<div class="codeblock objectivec">
+<pre><code>
+<span class="reservedkeyword">#import</span> <span class="stringliteral">"HSCustomWidgetPreferencesViewController.h"</span>
+
+<span class="reservedidentifier">@implementation</span> <span class="classidentifier">HSCustomWidgetPreferencesViewController</span>
+-(<span class="classname">NSArray</span> *)<span class="methodsignature">specifiers</span> {
+	if (!_specifiers) {
+		_specifiers = [<span class="reservedkeywordalt">self</span> <span class="methodcall">loadSpecifiersFromPlistName:</span><span class="stringliteral">@"Root"</span> <span class="methodcall">target:</span><span class="reservedkeywordalt">self</span>];
+	}
+	<span class="reservedkeyword">return</span> _specifiers;
+}
+<span class="reservedidentifier">@end</span>
+</code></pre>
+					</div>
+					<p>Then modify our makefile to also compile the new implementation file along with our main widget class.</p>
+					<div class="codeblock makefile">
+<pre><code>
+<span class="variable">HSCustomWidget_FILES</span> = HSCustomWidgetViewController.mm HSCustomWidgetPreferencesViewController.mm
+</code></pre>
+					</div>
+					<p>The final steps is to let HSWidgets know to use this class for additional options and then use the preference options in our widget. As mentioned above:</p>
+					<blockquote>
+						<p>To add additional options to our widget, we would create a subclass of one of the above mentioned classes and then add <span class="codeblockinline">HSWidgetAddNewOptionsControllerClass</span> to <span class="codeblockinline">Resources/Info.plist</span>.</p>
+					</blockquote>
+					<p>We have already subclassed it, we just need to add the class to <span class="codeblockinline">Info.plist</span>.</p>
+					<div class="codeblock xml">
+<pre><code>
+&lt;<span class="tag">key</span>&gt;HSWidgetAddNewOptionsControllerClass&lt;/<span class="tag">key</span>&gt;
+&lt;<span class="tag">string</span>&gt;HSCustomWidgetPreferencesViewController&lt;/<span class="tag">string</span>&gt;
+</code></pre>
+					</div>
+					<p>This will now make it so that our additional options view controller is displayed when Custom Widget is tapped in HSWidgets' adding view.</p>
+					<div class="imageContainer">
+						<img src="WidgetAdditionalOptions.png">
+					</div>
+					<p>But we still need to update our widget to use the value, so how do we access the user selected options? Well the options are passed into the widget's initializer and also stored into <span class="codeblockinline">widgetOptions</span> instance variable in the super class. Since we are creating our view after the initializer, we would use the instance variable to get the value. In <span class="codeblockinline">viewDidLoad</span>, we want to instead set the color using:</p>
+					<div class="codeblock objectivec">
+<pre><code>
+<span class="primitive">NSInteger</span> colorPicked = [widgetOptions[<span class="stringliteral">@"WidgetColor"</span>] <span class="methodcall">integerValue</span>];
+<span class="reservedkeyword">if</span> (colorPicked == <span class="literal">0</span>)
+	<span class="reservedkeywordalt">self</span>.square.backgroundColor = [[<span class="classname">UIColor</span> <span class="methodcall">redColor</span>] <span class="methodcall">colorWithAlphaComponent:</span><span class="literal">0.5</span>];
+<span class="reservedkeyword">else if</span> (colorPicked == <span class="literal">1</span>)
+	<span class="reservedkeywordalt">self</span>.square.backgroundColor = [[<span class="classname">UIColor</span> <span class="methodcall">greenColor</span>] <span class="methodcall">colorWithAlphaComponent:</span><span class="literal">0.5</span>];
+<span class="reservedkeyword">else if</span> (colorPicked == <span class="literal">2</span>)
+	<span class="reservedkeywordalt">self</span>.square.backgroundColor = [[<span class="classname">UIColor</span> <span class="methodcall">blueColor</span>] <span class="methodcall">colorWithAlphaComponent:</span><span class="literal">0.5</span>];
+</code></pre>
+					</div>
+					<p>Deploying it on device, we will now see the correct color being added. But what if the user wants to change the color? With our current approach they would need to delete the widget and re-add it with the new color which is horrible UX. We instead should enable settings options and update widget's color as options change.</p>
+					<blockquote>
+						<p>To enable settings options, we need to enable settings accessory which trigger them. By default this accessory is enabled when a valid class is set for <span class="codeblockinline">HSWidgetPreferencesControllerClass</span> in <span class="codeblockinline">Resources/Info.plist</span>.</p>
+					</blockquote>
+					<p>Since we subclassed the combined list view controller, we can use the same class for <span class="codeblockinline">HSWidgetAddNewOptionsControllerClass</span> and <span class="codeblockinline">HSWidgetPreferencesControllerClass</span>.</p>
+					<div class="codeblock xml">
+<pre><code>
+&lt;<span class="tag">key</span>&gt;HSWidgetPreferencesControllerClass&lt;/<span class="tag">key</span>&gt;
+&lt;<span class="tag">string</span>&gt;HSCustomWidgetPreferencesViewController&lt;/<span class="tag">string</span>&gt;
+</code></pre>
+					</div>
+					<p>The settings accessory will now be enabled and will show along with our other accessories.</p>
+					<div class="imageContainer">
+						<img src="WidgetSettingsAccessory.png">
+					</div>
+					<p>Before getting into updating our widget's color, we should look into how those values will be read/stored/updated by the conenience classes. Both <span class="codeblockinline">HSWidgetPreferencesListController</span> and <span class="codeblockinline">HSWidgetCombinedAdditionalOptionsAndPreferencesViewController</span> override the setter and getter method of the specifier (<span class="codeblockinline">setPreferenceValue:specifier:</span> and <span class="codeblockinline">readPreferenceValue:</span> respectively). The implementation of reading directly gets value from widget's <span class="codeblockinline">options</span>. For setting/updating, <span class="codeblockinline">setWidgetOptionValue:forKey:</span> is called on widget with the value being the NSNumber/NSString/etc and key being the specifier's key property value. This means that to update our content we can override this method in our widget view controller.</p>
+					<div class="codeblock objectivec">
+<pre><code>
+-(<span class="primitive">void</span>)<span class="methodsignature">setWidgetOptionValue:</span>(<span class="primitive">id</span>&lt;NSCoding&gt;)<span class="signatureargument">object</span> <span class="methodsignature">forKey:</span>(<span class="classname">NSString</span> *)<span class="signatureargument">key</span> {
+	[<span class="reservedkeywordalt">super</span> <span class="methodcall">setWidgetOptionValue:</span>object <span class="methodcall">forKey:</span>key];
+
+	<span class="reservedkeyword">if</span> ([key <span class="methodcall">isEqualToString:</span><span class="stringliteral">@"WidgetColor"</span>]) {
+		<span class="primitive">NSInteger</span> colorPicked = [widgetOptions[<span class="stringliteral">@"WidgetColor"</span>] <span class="methodcall">integerValue</span>];
+		<span class="reservedkeyword">if</span> (colorPicked == <span class="literal">0</span>)
+			<span class="reservedkeywordalt">self</span>.square.backgroundColor = [[<span class="classname">UIColor</span> <span class="methodcall">redColor</span>] <span class="methodcall">colorWithAlphaComponent:</span><span class="literal">0.5</span>];
+		<span class="reservedkeyword">else if</span> (colorPicked == <span class="literal">1</span>)
+			<span class="reservedkeywordalt">self</span>.square.backgroundColor = [[<span class="classname">UIColor</span> <span class="methodcall">greenColor</span>] <span class="methodcall">colorWithAlphaComponent:</span><span class="literal">0.5</span>];
+		<span class="reservedkeyword">else if</span> (colorPicked == <span class="literal">2</span>)
+			<span class="reservedkeywordalt">self</span>.square.backgroundColor = [[<span class="classname">UIColor</span> <span class="methodcall">blueColor</span>] <span class="methodcall">colorWithAlphaComponent:</span><span class="literal">0.5</span>];
+	}
+}
+</code></pre>
+					</div>
+					<p>Now we will be able to change the colors via the settings accessory.</p>
+					<div class="imageContainer">
+						<img src="WidgetSettings.png">
+						<img src="ExpandedWidgetColors.png">
+					</div>
+					<p><!-- SPACING --></p>
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Universal Settings</span></h3>
+					<p>You might have noticed that these settings are being applied individually per widget which is great but might not always be what we want. It could be helpful to instead have an option to have universal settings for all widgets. To do that, we would instead have to change setter/getter of the specifier to read/update a universally stored value. <span class="codeblockinline">HSWidgetPreferencesListController</span> provides a setter/getter for <span class="codeblockinline">NSUserDefaults</span> and for file that can be used. For most cases the provided methods should be enough so we only need to update the setter/getter of the specifier. The easiest way of doing this is to set them in our plist:</p>
+					<div class="codeblock xml">
+<pre><code>
+&lt;<span class="tag">key</span>&gt;get&lt;\<span class="tag">key</span>&gt;
+&lt;<span class="tag">string</span>&gt;readUserDefaultsValue:&lt;\<span class="tag">string</span>&gt;
+&lt;<span class="tag">key</span>&gt;set&lt;\<span class="tag">key</span>&gt;
+&lt;<span class="tag">string</span>&gt;setUserDefaultsValue:specifier:&lt;\<span class="tag">string</span>&gt;
+</code></pre>
+					</div>
+					<div class="codeblockdescription">
+						<small><span class="descriptionHeader"></span>Remember to also set defaults and PostNotification. PostNotifications are posted on default NSNotificationCenter instead of darwin notifications as they don't need to registered outside this process. This also makes it easier to use in Objective-C classes.</small>
+					</div>
+					<p>Now we would just need to register for the notification and update the content based on the value. I'll leave that up to you to pratice.</p>
+				</div>
+			</div>
+			<div class="sectionInfo continuation-links">
+				<a class="continuation-prev" href="Adding_Dynamic_Size.html"><i style="vertical-align: -25%; margin: 0px 5px 0px 5px;" class="fas fa-angle-left fa-2x"></i>Adding Dynamic Size</a>
+			</div>
+		</div>
+
+		<!-- FOOTER -->
+		<div class="footer">
+			<hr class="footer-separator">
+			<div class="footer-content">
+				<p>Copyright © 2020 <a href="https://dgh0st.github.io">DGh0st</a>. All rights reserved.</p>
+			</div>
+		</div>
+
+		<!-- BACK TO TOP -->
+		<div class="backToTop unselectable">
+			<h1 onclick="backToTop()"><i style="color: white;" class="fas fa-arrow-circle-up" aria-hidden="true"></i></h1>
+		</div>
+	</body>
+</html>

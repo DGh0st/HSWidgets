@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width"/>
+		<title>Theos Environment Setup</title>
+		<link rel="icon" href="https://dgh0st.github.io/img/favicon.ico">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/all.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/navigation-bar.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/documentation_all.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/syntax_highlighting.css">
+		<script src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/navigation.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/all.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/documentation.js"></script>
+	</head>
+	<body>
+		<!-- NAVIGATION BAR -->
+		<div class="nav-bar unselectable">
+			<a href="../index.html" class="title">HSWidgets Docs</a>
+			<div class="pages">
+				<li><a href="https://github.com/DGh0st/HSWidgets"><i style="color: white;" class="fab fa-github fa-lg fa-fw"></i>GitHub</a></li>
+			</div>
+		</div>
+
+		<!-- CONTENT -->
+		<div class="content">
+			<div class="content-nav-links">
+				<p><a href="../index.html" class="home"></a></p>
+				<p><i class="fas fa-angle-right"></i></p>
+				<p class="current">Theos Environment Setup</p>
+			</div>
+			<div class="sectionInfo">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Setup Theos Environment For Custom HSWidgets</span></h1>
+				<div class="referenceInfo">
+					<p>HSWidgets provides a Theos template that can be used for generating HSWidgets projects and a framework for compiling/linking. The files are available on GitHub repo (<a href="https://github.com/DGh0st/HSWidgets/tree/master/theos_template">HSWidgets/theos_template</a>). The framework (<span class="codeblockinline">HSWidgets.framework</span>) needs to be placed inside <span class="codeblockinline terminal"><span class="variable">$THEOS</span>/lib</span> directory and Theos template (<span class="codeblockinline">iphone_hswidget.nic.tar</span>) needs to be placed in <span class="codeblockinline terminal"><span class="variable">$THEOS</span>/templates/ios/dgh0st</span> directory. Note you will need to create the dgh0st directory, or you can place template file in one of the existing directory. The final file structure should look something like this:</p>
+					<div class="codeblock plaintext">
+<pre><code>
+<span>&lt;Theos Directory&gt;</span>
+<span>| lib</span>
+<span>| | <span class="highlight">HSWidgets.framework</span></span>
+<span>| templates</span>
+<span>| | ios</span>
+<span>| | | dgh0st</span>
+<span>| | | | <span class="highlight">iphone_hswidget.nic.tar</span></span>
+<span>...</span>
+</code></pre>
+					</div>
+					<p>Once we have setup the Theos template, running <span class="codeblockinline terminal"><span class="variable">$THEOS</span>/bin/nic.pl</span> should display <span class="codeblockinline">iphone/hswidget</span> as one of the options.</p>
+					<div class="codeblock plaintext">
+<pre><code>
+<span>NIC 2.0 - New Instance Creator</span>
+<span>------------------------------</span>
+<span>  [1.] iphone/activator_event</span>
+<span>  [2.] iphone/application_modern</span>
+<span>  [3.] iphone/application_swift</span>
+<span>  [4.] iphone/flipswitch_switch</span>
+<span>  [5.] iphone/framework</span>
+<span class="highlight">  [6.] iphone/hswidget</span>
+<span>  [7.] iphone/library</span>
+<span>  [8.] iphone/preference_bundle_modern</span>
+<span>  [9.] iphone/tool</span>
+<span>  [10.] iphone/tool_swift</span>
+<span>  [11.] iphone/tweak</span>
+<span>  [12.] iphone/xpc_service</span>
+<span>Choose a Template (required):</span>
+</code></pre>
+					</div>
+					<p>Make sure the HSWidgets class name prefix is unique when creating a new project, otherwise your widget class name will conflict with another widget leading to your widget not being loaded. If you do get a conflict, you can rename the custom widget view controller class and update the principal class in <span class="codeblockinline">Resources/Info.plist</span>.</p>
+				</div>
+			</div>
+			<div class="sectionInfo continuation-links">
+				<a class="continuation-next" href="Simple_Widget.html">Simple Widget<i style="vertical-align: -25%; margin: 0px 5px 0px 5px;" class="fas fa-angle-right fa-2x"></i></a>
+			</div>
+		</div>
+
+		<!-- FOOTER -->
+		<div class="footer">
+			<hr class="footer-separator">
+			<div class="footer-content">
+				<p>Copyright © 2020 <a href="https://dgh0st.github.io">DGh0st</a>. All rights reserved.</p>
+			</div>
+		</div>
+
+		<!-- BACK TO TOP -->
+		<div class="backToTop unselectable">
+			<h1 onclick="backToTop()"><i style="color: white;" class="fas fa-arrow-circle-up" aria-hidden="true"></i></h1>
+		</div>
+	</body>
+</html>

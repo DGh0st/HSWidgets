@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width"/>
+		<title>Simple Widget</title>
+		<link rel="icon" href="https://dgh0st.github.io/img/favicon.ico">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/all.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/navigation-bar.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/documentation_all.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/syntax_highlighting.css">
+		<script src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/navigation.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/all.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/documentation.js"></script>
+	</head>
+	<body>
+		<!-- NAVIGATION BAR -->
+		<div class="nav-bar unselectable">
+			<a href="../index.html" class="title">HSWidgets Docs</a>
+			<div class="pages">
+				<li><a href="https://github.com/DGh0st/HSWidgets"><i style="color: white;" class="fab fa-github fa-lg fa-fw"></i>GitHub</a></li>
+			</div>
+		</div>
+
+		<!-- CONTENT -->
+		<div class="content">
+			<div class="content-nav-links">
+				<p><a href="../index.html" class="home"></a></p>
+				<p><i class="fas fa-angle-right"></i></p>
+				<p class="current">Simple Widget</p>
+			</div>
+			<div class="sectionInfo">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Creating Project</span></h1>
+				<div class="referenceInfo">
+					<p>Lets begin with creating a very basic widget that displays a red square. Just something simple so we can test our Theos setup and also understand a little bit about how custom widgets work under the hood.</p>
+					<p>First we must create the project using Theos's NIC that we setup previously. If you are bored or aren't using Theos, you can try to create the project manually (the file structure and content is described in the <a href="#File_Structure">File Structure</a> section).</p>
+					<div class="codeblock plaintext">
+<pre><code>
+NIC 2.0 - New Instance Creator
+------------------------------
+  [1.] iphone/activator_event
+  [2.] iphone/application_modern
+  [3.] iphone/application_swift
+  [4.] iphone/flipswitch_switch
+  [5.] iphone/framework
+  [6.] iphone/hswidget
+  [7.] iphone/library
+  [8.] iphone/preference_bundle_modern
+  [9.] iphone/tool
+  [10.] iphone/tool_swift
+  [11.] iphone/tweak
+  [12.] iphone/xpc_service
+Choose a Template (required): <span class="highlight">6</span>
+Project Name (required): <span class="highlight">HSCustomWidget</span>
+Package Name [com.dgh0st.hscustomwidget]: <span class="highlight">com.dgh0st.hscustomwidget</span>
+[iphone/hswidget] HSWidgets class name prefix (needs to be unique) [HSCustomWidget]: <span class="highlight">HSCustomWidget</span>
+[iphone/hswidget] HSWidgets display name [Custom Widget]: <span class="highlight">Custom Widget</span>
+[iphone/hswidget] HSWidgets creator [Unknown]: <span class="highlight">DGh0st</span>
+Instantiating iphone/hswidget in hscustomwidget/...
+Done.
+</code></pre>
+					</div>
+					<p>Just to reiterate:</p>
+					<blockquote>
+						<p>Make sure the HSWidgets class name prefix is unique when creating a new project, otherwise your widget class name will conflict with another widget leading to your widget not being loaded. If you do get a conflict, you can rename the custom widget view controller class and update the principal class in <span class="codeblockinline">Resources/Info.plist</span>.</p>
+					</blockquote>
+					<p>HSWidgets widget follow a similar design as iOS extensions, as in they are bundles that get loaded at runtime. HSWidgets loads these bundles at runtime, specifically all bundles that are installed to a specific directory. It'll then look for the principal class of the bundle to figure out what class corresponds to widget view controller in executable. So all we need to do is make sure that our bundle gets installed to the correct location and that the principal class is a valid widget view controller. Both of which should be taken care of by the Theos template.</p>
+				</div>
+			</div>
+			<div class="sectionInfo">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>File Structure</span></h1>
+				<div class="referenceInfo">
+					<p>Template should have created these files:</p>
+					<div class="codeblock plaintext">
+<pre><code>
+&lt;Project Directory&gt;
+| Resources
+| | Info.plist
+| | <span class="highlight">icon.png (not created by template, but can be added if supporting 32-bit devices on iOS 10)</span>
+| | <span class="highlight">icon@2x.png (not created by template, but can be added)</span>
+| | <span class="highlight">icon@3x.png (not created by template, but can be added)</span>
+| control
+| HSCustomWidgetViewController.h
+| HSCustomWidgetViewController.mm
+| Makefile
+</code></pre>
+					</div>
+					<div class="codeblockdescription">
+						<small><span class="descriptionHeader"></span>Icon images are not created by the template but can and should be added before release.</small>
+					</div>
+					<p>We could compile and run this project, which should display "Custom Widget" as one of the widgets that can be added through HSWidgets' adding view. Doing so will add an empty widget that has no content. But before adding our content, lets better understand how widgets function by looking at what each of these files are used for.</p>
+
+					<!--  Info.plist -->
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Resources/Info.plist</span></h3>
+					<p>Provides information about the bundle and also be used to specify some metadata about our widget. Things like icon image name, widget display name, widget view controller class, etc. Here is a list of fields that can be set:</p>
+					<ul class="unbulleted">
+						<li><p><span class="plaintext bold"><span class="highlight-alt">CFBundleIdentifier:</span></span> (Required) identifier of bundle.</p></li>
+						<li><p><span class="plaintext bold"><span class="highlight-alt">NSPrincipalClass:</span></span> (Required) principal class that is used as widget view controller. The class needs to be subclass of <span class="codeblockinline">HSWidgetViewController</span>.</p></li>
+						<li><p><span class="plaintext bold"><span class="highlight-alt">HSWidgetDisplayName:</span></span> name of widget displayed to users.</p></li>
+						<li><p><span class="plaintext bold"><span class="highlight-alt">HSWidgetIcon:</span></span> name of icon image.</p></li>
+						<li><p><span class="plaintext bold"><span class="highlight-alt">HSWidgetCreator:</span></span> name of creator, take credit for your awesome work.</p></li>
+						<li><p><span class="plaintext bold"><span class="highlight-alt">HSWidgetAddNewOptionsControllerClass:</span></span> class used for displaying additional options via HSWidgets' adding view. This class needs to conform to <span class="codeblockinline">HSWidgetAdditionalOptions</span> protocol and must be a view controller.</p></li>
+						<li><p><span class="plaintext bold"><span class="highlight-alt">HSWidgetPreferencesControllerClass:</span></span> class used for adding settings preferences to widgets, specifying a valid class here will enable the settings button as well. This class may conform to <span class="codeblockinline">HSWidgetPreferences</span> (but is not enforced) and can be any view controller.</p></li>
+					</ul>
+					<p>Some of these fields can also be set dynamically.</p>
+
+					<!-- control -->
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>control</span></h3>
+					<p>Contains information about the package, has same functionality as other Theos projects. There is only one unique things in this file for custom widgets and that is to depend on HSWidgets so that your package manager will install it if not already installed. We can do this by adding <span class="codeblockinline">com.dgh0st.hswidgets</span> to <span class="codeblockinline">Depends</span> field.</p>
+
+					<!-- HSCustomWidgetViewController.h -->
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>HSCustomWidgetViewController.h</span></h3>
+					<p>Header file that interfaces our custom widget that we created. Most important thing to note here is the widget needs to be a subclass of <span class="codeblockinline">HSWidgetViewController</span>.</p>
+					<div class="codeblock objectivec">
+<pre><code>
+<span class="reservedkeyword">#import</span> <span class="stringliteral">&lt;HSWidgets/HSWidgetViewController.h&gt;</span>
+
+<span class="reservedidentifier">@interface</span> <span class="classidentifier">HSCustomWidgetViewController</span> : <span class="subclassidentifier">HSWidgetViewController</span>
+<span class="reservedidentifier">@end</span>
+</code></pre>
+					</div>
+					<p>Lets add a property for red square that we are going to add.</p>
+					<div class="codeblock objectivec">
+<pre><code>
+<span class="reservedkeyword">@property</span> (<span class="reservedkeyword">nonatomic</span>, <span class="reservedkeyword">strong</span>) <span class="classname">UIView</span> *square;
+</code></pre>
+					</div>
+					<p><!--SPACING--></p>
+
+					<!-- HSCustomWidgetViewController.mm -->
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>HSCustomWidgetViewController.mm</span></h3>
+					<p>Now to the fun part, coding the widget. The template should have generated following code in this file:</p>
+					<div class="codeblock objectivec">
+<pre><code>
+<span class="reservedkeyword">#import</span> <span class="stringliteral">"HSCustomWidgetViewController.h"</span>
+
+<span class="reservedidentifier">@implementation</span> <span class="classidentifier">HSCustomWidgetViewController</span>
+-(<span class="primitive">void</span>)<span class="methodsignature">viewDidLoad</span> {
+	[<span class="reservedkeywordalt">super</span> <span class="methodcall">viewDidLoad</span>];
+	
+	<span class="comment">// add custom view</span>
+}
+
++(<span class="struct">HSWidgetSize</span>)<span class="methodsignature">minimumSize</span> {
+	<span class="reservedkeyword">return</span> <span class="functioncall">HSWidgetSizeMake</span>(<span class="literal">1</span>, <span class="literal">1</span>);
+}
+<span class="reservedidentifier">@end</span>
+</code></pre>
+					</div>
+					<p>Notice the new type here called <span class="codeblockinline">HSWidgetSize</span>, which is defined as:</p>
+					<div class="codeblock objectivec">
+<pre><code>
+<span class="struct">typedef struct HSWidgetSize</span> {
+	<span class="primitive">NSUInteger</span> numRows;
+	<span class="primitive">NSUInteger</span> numCols;
+} <span class="typedefidentifier">HSWidgetSize</span>;
+</code></pre>
+					</div>
+					<p>Its a struct for managing number of rows and columns.</p>
+					<p>Overriding <span class="codeblockinline">minimumSize</span> is specifying that our widget requires a minimum of 1 row and 1 column. HSWidgets uses this size to determine if the widget can currently be added to home screen page. If we were to change this size to 2x2, it would only show in HSWidgets' adding view if there was enough space to fit 2x2 widget.</p>
+					<p>Widgets are just view controllers so we can add our custom square view as a subview of the view controller's view. Lets add our squre in <span class="codeblockinline">viewDidLoad</span>:</p>
+					<div class="codeblock objectivec">
+<pre><code>
+<span class="reservedkeywordalt">self</span>.square = [[<span class="classname">UIView</span> <span class="methodcall">alloc</span>] <span class="methodcall">initWithFrame:</span><span class="functioncall">CGRectMake</span>(<span class="literal">5</span>, <span class="literal">5</span>, <span class="literal">50</span>, <span class="literal">50</span>)];
+<span class="reservedkeywordalt">self</span>.square.backgroundColor = [[<span class="classname">UIColor</span> <span class="methodcall">redColor</span>] <span class="methodcall">colorWithAlphaComponent:</span></span><span class="literal">0.5</span>];
+<span class="reservedkeywordalt">self</span>.square.layer.cornerRadius = <span class="literal">5</span>;
+[<span class="reservedkeywordalt">self</span>.view <span class="methodcall">addSubview:</span><span class="reservedkeywordalt">self</span>.square];
+</code></pre>
+					</div>
+					<p>That is all we need to do add a custom view.</p>
+
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Makefile</span></h3>
+					<p>Last but not least, the makefile that Theos can use to package the deb correctly. Custom widgets are just bundles as explained earlier, so we only need to setup bundle variables that Theos can then use to create the package. First we need to link HSWidgets framework that compiler can use to find header files and that linker can use to link against symbols in tbd. We do this by adding:</p>
+					<div class="codeblock makefile">
+<pre><code>
+<span class="variable">&lt;Bundle Name&gt;_EXTRA_FRAMEWORKS</span> = HSWidgets
+</code></pre>
+					</div>
+					<p>This will look for HSWidgets framework in your framework search paths (<span class="codeblockinline terminal"><span class="variable">$THEOS</span>/lib</span> for instance) so make sure you setup your Theos Environment correctly.</p>
+					<p>Next is getting the widget bundle to be installed to correct spot so that HSWidgets can load it. HSWidgets loads all widget bundles in <span class="codeblockinline">/Library/HSWidgets</span> directory so add:</p>
+					<div class="codeblock makefile">
+<pre><code>
+<span class="variable">&lt;Bundle Name&gt;_INSTALL_PATH</span> = /Libary/HSWidgets
+</code></pre>
+					</div>
+					<p>The generated file should already have both of these so the final version of makefile should have something like this:</p>
+					<div class="codeblock makefile">
+<pre><code>
+<span class="variable">INSTALL_TARGET_PROCESSES</span> = SpringBoard
+
+<span class="reservedkeyword">include</span> <span class="variable">$(THEOS)</span>/makefiles/common.mk
+
+<span class="variable">BUNDLE_NAME</span> = HSCustomWidget
+<span class="variable">HSCustomWidget_FILES</span> = HSCustomWidgetViewController.mm
+<span class="variable">HSCustomWidget_FRAMEWORKS</span> = UIKit
+<span class="variable">HSCustomWidget_EXTRA_FRAMEWORKS</span> = HSWidgets
+<span class="variable">HSCustomWidget_INSTALL_PATH</span> = /Library/HSWidgets
+<span class="variable">HSCustomWidget_CFLAGS</span> = -fobjc-arc
+
+<span class="reservedkeyword">include</span> <span class="variable">$(THEOS_MAKE_PATH)</span>/bundle.mk
+
+</code></pre>
+					</div>
+				</div>
+			</div>
+			<div class="sectionInfo">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Testing/Running</span></h1>
+				<div class="referenceInfo">
+					<p>Compiling and running above code should add "Custom Widget" as one of the options when going into HSWidgets' adding view. Then adding the widget should display our red square.</p>
+					<div class="imageContainer">
+						<img src="RedSquareWidget.png">
+					</div>
+					<p>But that looks funky with the corner radius not matching and editing view being bigger than our content view. To fix the corner radius we just need to get current corner radius from super class via <span class="codeblockinline objectivec"><span class="reservedkeywordalt">self</span>.cornerRadius</span> (alternatively we could also set that property to a custom value).</p>
+					<p>For the sizing issue we can increase size of our content to match container size. Auto layout with anchors would be really easy to implement here to do exactly that so lets do it. All sides of our square need to be anchored to corresponding sides of container view (<span class="codeblockinline objectivec"><span class="reservedkeywordalt">self</span>.view</span>), which we can do right after creating our view inside <span class="codeblockinline">viewDidLoad</span>:</p>
+					<div class="codeblock objectivec">
+<pre><code>
+<span class="reservedkeywordalt">self</span>.square.translatesAutoresizingMaskIntoConstraints = <span class="literal">NO</span>;
+[<span class="reservedkeywordalt">self</span>.square.topAnchor <span class="methodcall">constraintEqualToAnchor:</span><span class="reservedkeywordalt">self</span>.view.topAnchor].active = <span class="literal">YES</span>;
+[<span class="reservedkeywordalt">self</span>.square.bottomAnchor <span class="methodcall">constraintEqualToAnchor:</span><span class="reservedkeywordalt">self</span>.view.bottomAnchor].active = <span class="literal">YES</span>;
+[<span class="reservedkeywordalt">self</span>.square.leadingAnchor <span class="methodcall">constraintEqualToAnchor:</span><span class="reservedkeywordalt">self</span>.view.leadingAnchor].active = <span class="literal">YES</span>;
+[<span class="reservedkeywordalt">self</span>.square.trailingAnchor <span class="methodcall">constraintEqualToAnchor:</span><span class="reservedkeywordalt">self</span>.view.trailingAnchor].active = <span class="literal">YES</span>;
+</code></pre>
+					</div>
+					<p><!-- SPACER --></p>
+					<div class="imageContainer">
+						<img src="PillRedSquareWidget.png">
+					</div>
+					<p>That looks much nicer but thats not really a square anymore, so what if we wanted to keep our previous size? Well we can resize the editing view instead. HSWidgets supports this by letting subclasses override <span class="codeblockinline">calculatedFrame</span>.</p>
+					<div class="codeblock objectivec">
+<pre><code>
+-(<span class="struct">CGRect</span>)<span class="methodsignature">calculatedFrame</span> {
+	<span class="reservedkeyword">return</span> <span class="functioncall">CGRectMake</span>(<span class="literal">5</span>, <span class="literal">5</span>, <span class="literal">50</span>, <span class="literal">50</span>);
+}
+</code></pre>
+					</div>
+					<p>For consistency, we could also call this method to set frame of our square but I'll leave that for you to practice.</p>
+					<div class="imageContainer">
+						<img src="RoundedRedSquareWidget.png">
+					</div>
+					<p>Finally rounded square widget! Yay!</p>
+				</div>
+			</div>
+			<div class="sectionInfo continuation-links">
+				<a class="continuation-prev" href="Theos_Environment_Setup.html"><i style="vertical-align: -25%; margin: 0px 5px 0px 5px;" class="fas fa-angle-left fa-2x"></i>Theos Environment Setup</a>
+				<a class="continuation-next" href="Adding_Dynamic_Size.html">Adding Dynamic Size<i style="vertical-align: -25%; margin: 0px 5px 0px 5px;" class="fas fa-angle-right fa-2x"></i></a>
+			</div>
+		</div>
+
+		<!-- FOOTER -->
+		<div class="footer">
+			<hr class="footer-separator">
+			<div class="footer-content">
+				<p>Copyright © 2020 <a href="https://dgh0st.github.io">DGh0st</a>. All rights reserved.</p>
+			</div>
+		</div>
+
+		<!-- BACK TO TOP -->
+		<div class="backToTop unselectable">
+			<h1 onclick="backToTop()"><i style="color: white;" class="fas fa-arrow-circle-up" aria-hidden="true"></i></h1>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width"/>
+		<title>HSWidgetViewController</title>
+		<link rel="icon" href="https://dgh0st.github.io/img/favicon.ico">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/all.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/navigation-bar.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/documentation_all.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/syntax_highlighting.css">
+		<script src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/navigation.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/all.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/documentation.js"></script>
+	</head>
+	<body>
+		<!-- NAVIGATION BAR -->
+		<div class="nav-bar unselectable">
+			<a href="../index.html" class="title">HSWidgets Docs</a>
+			<div class="pages">
+				<li><a href="https://github.com/DGh0st/HSWidgets"><i style="color: white;" class="fab fa-github fa-lg fa-fw"></i>GitHub</a></li>
+			</div>
+		</div>
+
+		<!-- CONTENT -->
+		<div class="content">
+			<div class="content-nav-links">
+				<p><a href="../index.html" class="home"></a></p>
+				<p><i class="fas fa-angle-right"></i></p>
+				<p class="current">HSWidgetViewController</p>
+			</div>
+			
+			<!-- API INFO -->
+			<div class="sectionInfo">
+				<h2 class="fakeReferenceName api-type"><i class="fas fa-link fakeReferenceCopy"></i> Protocol</h2>
+				<h1 class="referenceName api-name"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>HSWidgetViewController</span></h1>
+				<div class="referenceInfo">
+					<p>A view controller that specializes in managing a widget view.</p>
+					<hr class="api-separator">
+				</div>
+			</div>
+
+			<!-- DECLARATION -->
+			<div class="sectionInfo">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Declaration</span></h1>
+				<div class="referenceInfo">
+					<div class="codeblock objectivec">
+<pre><code>
+<span class="reservedidentifier">@interface</span> <span class="classidentifier">HSWidgetViewController</span> : <span class="subclassidentifier">UIViewController</span>
+</code></pre>
+					</div>
+				</div>
+			</div>
+
+			<!-- DESCRIPTION -->
+			<div class="sectionInfo">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Description</span></h1>
+				<div class="referenceInfo">
+					<p>Subclass <span class="codeblockinline">HSWidgetViewController</span> to implement the primary view of the widget. It provides default behavior for various functionality allowing widget development to focus on implementing the content. It provides the following functionality:</p>
+					<ul>
+						<li>Implements the <span class="codeblockinline">loadView</span> to setup the unclipped view allowing content outside of the bounds to receive events.</li>
+						<li>Implements the <span class="codeblockinline">viewDidLoad</span> to setup the editing view and accessories while providing customization via <span class="codeblockinline">cornerRadius</span> and <span class="codeblockinline">calculatedFrame</span>.</li>
+						<li>Implements loading of classes and widget display info from <span class="codeblockinline">Info.plist</span> while also allowing dynamic overriding of the values.</li>
+						<li>Allowing custom widget availability via <span class="codeblockinline">isAvailable</span>.</li>
+						<li>(Required) Providing a way to specify the starting grid size of the widget.</li> 
+						<li>Provides default implementation for creating/managing the preference options.</li>
+						<li>Allowing widgets to enable accessories such as Expand, Shrink and Settings. While automatically enabling settings accesosry when a valid preference options class is provided.</li>
+						<li>Provides convenience methods for managing expanding and shrinking accessories.</li>
+						<li>Provides default implementation for zoom animation view while allowing overridability.</li>
+					</ul>
+					<p>When creating a subclass, <span class="codeblockinline">minimumSize</span> needs to be implemented so that widgets manager knows when to allow addition of the widget. You may override any of these methods; but if you do, be sure to invoke the super class implementation for consistency.</p>
+				</div>
+			</div>
+
+			<!-- TOPICS -->
+			<div class="sectionInfo containerReferenceSection">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Topics</span></h1>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Widget Information</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetViewController/bundle.html"><span class="referencemethodtype">+</span>&nbsp;&nbsp;bundle</a>
+							<p>Get the bundle of the widget.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/widgetDisplayInfo.html"><span class="referencemethodtype">+</span>&nbsp;&nbsp;widgetDisplayInfo</a>
+							<p>Get the display information about the widget such as icon, name and creator.</p>
+						</li>
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Adding Widgets</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetViewController/isAvailable.html"><span class="referencemethodtype">+</span>&nbsp;&nbsp;isAvailable</a>
+							<p>Returns whether the widget is currently available for addition.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/minimumSize.html"><span class="referencemethodtype">+</span>&nbsp;&nbsp;minimumSize</a>
+							<p>Gets the minimum size required to add the widget to page.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/canAddWidgetForAvailableGridPositions.html"><span class="referencemethodtype">+</span>&nbsp;&nbsp;canAddWidgetForAvailableGridPositions:</a>
+							<p>Get whether the widget can be added for given available grid positions.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/allowedInstancesPerPage.html"><span class="referencemethodtype">+</span>&nbsp;&nbsp;allowedInstancesPerPage</a>
+							<p>Return the number of allowed instances per page so that widget manager can restrict additional instances.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/addNewWidgetAdditionalOptionsControllerClass.html"><span class="referencemethodtype">+</span>&nbsp;&nbsp;addNewWidgetAdditionalOptionsControllerClass</a>
+							<p>Specify the class used for the additional options during widget adding.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/createOptionsFromController_withAvailableGridPosition.html"><span class="referencemethodtype">+</span>&nbsp;&nbsp;createOptionsFromController:withAvailableGridPosition:</a>
+							<p>Create options dictionary to use for widget addition for the given additional options controller and grid positions.</p>
+						</li>
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Initializing A Widget View Controller</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetViewController/initForWidgetFrame_withOptions.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;initForWidgetFrame:withOptions:</a>
+							<p>Initialize a newly allocated widget view controller with the specified widget frame and options.</p>
+						</li>
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Properties</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetViewController/widgetFrame.html">widgetFrame</a>
+							<p>A structure that represents the current grid frame of the widget.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/requestedSize.html">requestedSize</a>
+							<p>The requested view size for the widget.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/_gridPositions.html">_gridPositions</a>
+							<p>An array of grid positions that the widget current occupies.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/cornerRadius.html">cornerRadius</a>
+							<p>Corner radius of the content and editing view.</p>
+						</li>
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Delegate</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetViewController/_delegate.html">_delegate</a>
+							<p>An object to manage widget changes and perform accessory events.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/_setDelegate.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;_setDelegate:</a>
+							<p>Called to set the delegate object.</p>
+						</li>
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Calculate Frame</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetViewController/calculatedFrame.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;calculatedFrame</a>
+							<p>Get the calculated frame to use for content and editing view.</p>
+						</li> 
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Accessories</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetViewController/AccessoryType.html">AccessoryType</a>
+							<p>Constants for specifying the accessory type.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/isAccessoryTypeEnabled.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;isAccessoryTypeEnabled:</a>
+							<p>Return whether the accessory of specified type should be enabled or not.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/accessoryTypeTapped.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;accessoryTypeTapped:</a>
+							<p>Called when the accessory of specfied type was tapped.</p>
+						</li>
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Dynamic Sizing</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="../Getting_Started/Adding_Dynamic_Size.html">Adding Dynamic Size</a>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/containsSpaceToExpandOrShrinkToGridPositions.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;containsSpaceToExpandOrShrinkToGridPositions:</a>
+							<p>Return whether there is enough available space to expand or shrink to specified grid positions.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/containsSpaceToExpandOrShrinkToWidgetSize.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;containsSpaceToExpandOrShrinkToWidgetSize:</a>
+							<p>Return whether there is enough available space to expand or shrink to specified size structure.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/updateForExpandOrShrinkToGridPositions.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;updateForExpandOrShrinkToGridPositions:</a>
+							<p>Update the widget to the specfied grid positions.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/updateForExpandOrShrinkToWidgetSize.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;updateForExpandOrShrinkToWidgetSize:</a>
+							<p>Update the widget size to the specfied size structure (also updates grid positions).</p>
+						</li>
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Adding Preferences</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="../Getting_Started/Adding_Basic_Preferences.html">Adding Basic Preferences</a>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/preferencesOptionsControllerClass.html"><span class="referencemethodtype">+</span>&nbsp;&nbsp;preferencesOptionsControllerClass</a>
+							<p>Specify the class used for the preferences for settings accessory.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/widgetOptions.html">widgetOptions</a>
+							<p>Stores the current options for the widget.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/options.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;options</a>
+							<p>Gets a copy of the current widget options.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/setWidgetOptionValue_forKey.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;setWidgetOptionValue:forKey:</a>
+							<p>Setter for changing widget options.</p>
+						</li>
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Zoom Animation</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetViewController/ZoomAnimationViewStyle.html">ZoomAnimationViewStyle</a>
+							<p>Constants for specifying the animation view style used during zoom animation.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/viewStyleForZoomAnimaton.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;viewStyleForZoomAnimaton</a>
+							<p>Get the zoom animationg view style to use.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/zoomAnimatingView.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;zoomAnimatingView</a>
+							<p>Get the view to use for zoom animation.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/clearZoomAnimatingView.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;clearZoomAnimatingView</a>
+							<p>Called at the end of zoom animation, allowing the widget to clean up any custom views if created.</p>
+						</li>
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Animation Constants</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetViewController/HSWidgetAnimationDuration.html">HSWidgetAnimationDuration</a>
+							<p>Constant for normal animation duration.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/HSWidgetQuickAnimationDuration.html">HSWidgetQuickAnimationDuration</a>
+							<p>Constant for quicker animation duration.</p>
+						</li>
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Notifications</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetViewController/HSWidgetAllWidgetsConfiguredNotification.html">HSWidgetAllWidgetsConfiguredNotification</a>
+							<p>Posted when all widgets are done being configured after a respring.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/HSWidgetAvailableSpaceDidChangeNotification.html">HSWidgetAvailableSpaceDidChangeNotification</a>
+							<p>Posted when grid space availability of the page changed.</p>
+						</li>
+						<li>
+							<a href="HSWidgetViewController/HSWidgetEditingStateChangedNotification.html">HSWidgetEditingStateChangedNotification</a>
+							<p>Posted when editing state changed providing the new state in user info.</p>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<!-- RELATED LINKS -->
+			<div class="sectionInfo containerReferenceSection">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Related Links</span></h1>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="fakeReferenceName"><i class="fas fa-link fakeReferenceCopy"></i> <span>Getting Started</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="../Getting_Started/Simple_Widget.html">Simple Widget</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<!-- FOOTER -->
+		<div class="footer">
+			<hr class="footer-separator">
+			<div class="footer-content">
+				<p>Copyright © 2020 <a href="https://dgh0st.github.io">DGh0st</a>. All rights reserved.</p>
+			</div>
+		</div>
+
+		<!-- BACK TO TOP -->
+		<div class="backToTop unselectable">
+			<h1 onclick="backToTop()"><i style="color: white;" class="fas fa-arrow-circle-up" aria-hidden="true"></i></h1>
+		</div>
+	</body>
+</html>

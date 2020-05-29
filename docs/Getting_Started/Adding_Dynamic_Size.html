@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width"/>
+		<title>Adding Dynamic Size</title>
+		<link rel="icon" href="https://dgh0st.github.io/img/favicon.ico">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/all.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/navigation-bar.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/documentation_all.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/syntax_highlighting.css">
+		<script src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/navigation.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/all.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/documentation.js"></script>
+	</head>
+	<body>
+		<!-- NAVIGATION BAR -->
+		<div class="nav-bar unselectable">
+			<a href="../index.html" class="title">HSWidgets Docs</a>
+			<div class="pages">
+				<li><a href="https://github.com/DGh0st/HSWidgets"><i style="color: white;" class="fab fa-github fa-lg fa-fw"></i>GitHub</a></li>
+			</div>
+		</div>
+
+		<!-- CONTENT -->
+		<div class="content">
+			<div class="content-nav-links">
+				<p><a href="../index.html" class="home"></a></p>
+				<p><i class="fas fa-angle-right"></i></p>
+				<p class="current">Adding Dynamic Size</p>
+			</div>
+			<div class="sectionInfo">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Dynamic Sizing</span></h1>
+				<div class="referenceInfo">
+					<p>Last time we created a rounded square widget, now lets extend it to allow users to resize it dynamically. There are 3 parts to adding dynamic size which are enabling expand/shrink buttons, handling button taps and updating the content. These buttons are considered as accessories and a few convenience methods are provided to deal with them.</p>
+					<p>To enable the buttons we need to override <span class="codeblockinline">isAccessoryTypeEnabled:</span>. This method is called to check if widget should currently enable any of the accessory types it provides (see enum in <span class="codeblockinline">HSWidgetViewController.h</span> for all the supported accessory types). For simplicity lets enable accessories for following cases:</p>
+					<ul>
+						<li>Enable <span class="plaintext bold"><span class="highlight-alt">expand</span></span> if there is enough space to increase by 1 row and 1 column</li>
+						<li>Enable <span class="plaintext bold"><span class="highlight-alt">shrink</span></span> if our current size is more than 1 row and 1 column (i.e. 1 icon space)</li>
+					</ul>
+					<p>So how do we check if there is enough space to increase our widget you might ask? <span class="codeblockinline">HSWidgetViewController</span> provides <span class="codeblockinline">containsSpaceToExpandOrShrinkToWidgetSize:</span> convenient method for exactly that reason. This method can be used to check for space availablity of any shape and takes in final size to expand, shrink or change shape to for its argument. For our case there only needs to be a check for expansion by 1 row and 1 column, since there will always be enough space to shrink as we would be giving up space that we already have. For expansion check we need to get current size of widget via <span class="codeblockinline objectivec"><span class="reservedkeywordalt">self</span>.widgetFrame.size</span>. Putting it all that together:</p>
+					<div class="codeblock objectivec">
+<pre><code>
+-(<span class="primitive">BOOL</span>)<span class="methodsignature">isAccessoryTypeEnabled:</span>(<span class="enum">AccessoryType</span>)<span class="signatureargument">accessoryType</span> {
+	<span class="reservedkeyword">if</span> (accessoryType == <span class="literal">AccessoryTypeEnabled</span>) {
+		<span class="struct">HSWidgetSize</span> finalExpandedSize = <span class="functioncall">HSWidgetSizeAdd</span>(<span class="reservedkeywordalt">self</span>.widgetFrame.size, <span class="literal">1</span>, <span class="literal">1</span>);
+		<span class="reservedkeyword">return</span> [<span class="reservedkeywordalt">self</span> <span class="methodcall">containsSpaceToExpandOrShrinkToWidgetSize:</span>finalExpandedSize];
+	} <span class="reservedkeyword">else if</span> (accessoryType == <span class="literal">AccessoryTypeShrink</span>) {
+		<span class="reservedkeyword">return</span> <span class="reservedkeywordalt">self</span>.widgetFrame.size.numRows > <span class="literal">1</span> && <span class="reservedkeywordalt">self</span>.widgetFrame.size.numCols > <span class="literal">1</span>;
+	}
+
+	<span class="comment">// anything else we don't support but let super class handle it incase new accessory types are added</span>
+	<span class="reservedkeyword">return</span> [<span class="reservedkeywordalt">super</span> <span class="methodcall">isAccessoryTypeEnabled:</span>accessoryType];
+}
+</code></pre>
+					</div>
+					<p>Compiling and running this code will show the expand accessory.</p>
+					<div class="imageContainer">
+						<img src="AccessorySquareWidget.png">
+					</div>
+					<p>But thats only enabling the visuals, we still need to handle both expand and shrink events. To do this, <span class="codeblockinline">accessoryTypeTapped:</span> needs to be overriden. We want to use this method to resize widget and update states of our content based on accessory that was tapped. <span class="codeblockinline">HSWidgetViewController</span> handles a lot of the widget resizing so we just need to call one of the convenience methods (<span class="codeblockinline">updateForExpandOrShrinkToWidgetSize:</span>) that handles it.</p>
+					<div class="codeblock objectivec">
+<pre><code>
+-(<span class="primitive">void</span>)<span class="methodsignature">accessoryTypeTapped:</span>(<span class="enum">AccessoryType</span>)<span class="signatureargument">accessoryType</span> {
+	<span class="reservedkeyword">if</span> (accessoryType == <span class="literal">AccessoryTypeExpand</span>) {
+		<span class="struct">HSWidgetSize</span> finalExpandSize = <span class="functioncall">HSWidgetSizeAdd</span>(<span class="reservedkeywordalt">self</span>.widgetFrame.size, <span class="literal">1</span>, <span class="literal">1</span>);
+		[<span class="reservedkeywordalt">self</span> <span class="methodcall">updateForExpandOrShrinkToWidgetSize:</span>finalExpandSize];
+
+		<span class="comment">// handle any state changes for expanding to new size</span>
+	} <span class="reservedkeyword">else if</span> (accessoryType == <span class="literal">AccessoryTypeShrink</span>) {
+		<span class="struct">HSWidgetSize</span> finalShrinkSize = <span class="functioncall">HSWidgetSizeAdd</span>(<span class="reservedkeywordalt">self</span>.widgetFrame.size, <span class="literal">-1</span>, <span class="literal">-1</span>);
+		[<span class="reservedkeywordalt">self</span> <span class="methodcall">updateForExpandOrShrinkToWidgetSize:</span>finalShrinkSize];
+
+		<span class="comment">// handle any state changes for shrinking to new size</span>
+	}
+}
+</code></pre>
+					</div>
+					<p>Since we have added dynamic size to our widget, our old appraoch of using 50 for width and height doesn't really make sense anymore. We could go back to using auto layout and not have to worry about any additional sizing, but thats no fun. Instead we could change our content size when the requested size of our container view (<span class="codeblockinline objectivec"><span class="reservedkeywordalt">self</span>.view</span>) changes. HSWidgets handles these size change notifications by setting the <span class="codeblockinline">requestedSize</span> property of <span class="codeblockinline">HSWidgetViewController</span>. This means that we can override the setter to handle our size changes.</p>
+					<div class="codeblock objectivec">
+<pre><code>
+-(<span class="primitive">void</span>)<span class="methodsignature">setRequestedSize:</span>(<span class="struct">CGSize</span>)<span class="signatureargument">size</span> {
+	[<span class="reservedkeywordalt">super</span> <span class="methodcall">setRequestedSize:</span>size];
+
+	<span class="comment">// It wouldn't be a square if both the sides weren't equal so find the smallest length from size</span>
+	<span class="primitive">CGFloat</span> length = <span class="macro">MIN</span>(size.width, size.height);
+	<span class="reservedkeywordalt">self</span>.square.frame = <span class="functioncall">CGRectMake</span>(<span class="literal">5</span>, <span class="literal">5</span>, length - <span class="literal">10</span>, length - <span class="literal">10</span>);
+}
+</code></pre>
+					</div>
+					<p>Now that we handle both events and update size of our square, we are ready to test it. Deploying it to device, and tapping expand button will animate resizing of our widget even though we didn't add any animations. Thats because HSWidgets sets <span class="codeblockinline">requestedSize</span> inside an animation block which means our frame changes are happening as part of that animation. That leaves us with the animation ending at:</p>
+					<div class="imageContainer">
+						<img src="BuggyExpandedSquareWidget.png">
+					</div>
+					<p>Oof thats buggy, well thats because we forgot to update our <span class="codeblockinline">calculatedFrame</span> implementation with the sizing logic that we changed. For practice I'll leave that up to you, the final result after the change should look like this:</p>
+					<div class="imageContainer">
+						<img src="ExpandedSquareWidget.png">
+					</div>
+					<p><!-- SPACING --></p>
+				</div>
+			</div>
+			<div class="sectionInfo continuation-links">
+				<a class="continuation-prev" href="Simple_Widget.html"><i style="vertical-align: -25%; margin: 0px 5px 0px 5px;" class="fas fa-angle-left fa-2x"></i>Simple Widget</a>
+				<a class="continuation-next" href="Adding_Basic_Preferences.html">Adding Basic Preferences<i style="vertical-align: -25%; margin: 0px 5px 0px 5px;" class="fas fa-angle-right fa-2x"></i></a>
+			</div>
+		</div>
+
+		<!-- FOOTER -->
+		<div class="footer">
+			<hr class="footer-separator">
+			<div class="footer-content">
+				<p>Copyright © 2020 <a href="https://dgh0st.github.io">DGh0st</a>. All rights reserved.</p>
+			</div>
+		</div>
+
+		<!-- BACK TO TOP -->
+		<div class="backToTop unselectable">
+			<h1 onclick="backToTop()"><i style="color: white;" class="fas fa-arrow-circle-up" aria-hidden="true"></i></h1>
+		</div>
+	</body>
+</html>

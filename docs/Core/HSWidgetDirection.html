@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width"/>
+		<title>HSWidgetDirection</title>
+		<link rel="icon" href="https://dgh0st.github.io/img/favicon.ico">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/all.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/navigation-bar.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/documentation_all.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/syntax_highlighting.css">
+		<link rel="stylesheet" href="css/HSWidgetDirection.css">
+		<script src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/navigation.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/all.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/documentation.js"></script>
+	</head>
+	<body>
+		<!-- NAVIGATION BAR -->
+		<div class="nav-bar unselectable">
+			<a href="../index.html" class="title">HSWidgets Docs</a>
+			<div class="pages">
+				<li><a href="https://github.com/DGh0st/HSWidgets"><i style="color: white;" class="fab fa-github fa-lg fa-fw"></i>GitHub</a></li>
+			</div>
+		</div>
+
+		<!-- CONTENT -->
+		<div class="content">
+			<div class="content-nav-links">
+				<p><a href="../index.html" class="home"></a></p>
+				<p><i class="fas fa-angle-right"></i></p>
+				<p class="current">HSWidgetDirection</p>
+			</div>
+
+			<!-- API INFO -->
+			<div class="sectionInfo">
+				<h2 class="fakeReferenceName api-type"><i class="fas fa-link fakeReferenceCopy"></i> Enumeration</h2>
+				<h1 class="referenceName api-name"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>HSWidgetDirection</span></h1>
+				<div class="referenceInfo">
+					<p>These constants are mask bits for specifying a direction from a widget position.</p>
+					<hr class="api-separator">
+				</div>
+			</div>
+
+			<!-- DECLARATION -->
+			<div class="sectionInfo">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Declaration</span></h1>
+				<div class="referenceInfo">
+					<div class="codeblock objectivec">
+<pre><code>
+<span class="reservedidentifier">typedef enum</span> HSWidgetDirection : <span class="primitive">NSUInteger</span> {
+	<span style="line-height: 200%;">...</span>
+} <span class="classidentifier">HSWidgetDirection</span>;
+</code></pre>
+					</div>
+				</div>
+			</div>
+
+			<!-- Overview -->
+			<div class="sectionInfo">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Overview</span></h1>
+				<div class="referenceInfo">
+					<p>Directions follow natural coordinate space while positions continue to use iOS coordinate space where the origin is upper-left corner and positive extends towards the lower-right corner.</p>
+					<div class="directionGraph unselectable">
+						<div><span>(1, 1)</span></div>
+						<div class="up"><span>Up</span></div>
+						<div><span>(1, 3)</span></div>
+						<div class="left"><span>Left</span></div>
+						<div class="none">
+							<span>
+								<span>None</span>
+								<small>(position)</small>
+							</span>
+						</div>
+						<div class="right"><span>Right</span></div>
+						<div><span>(3, 1)</span></div>
+						<div class="down"><span>Down</span></div>
+						<div><span>(3, 3)</span></div>
+					</div>
+					<p>These constants are masks so bitwise operations can be performed to select multiple directions. However, selecting opposite directions such as <span class="codeblockinline">HSWidgetDirectionUp</span> and <span class='codeblockinline'>HSWidgetDirectionDown</span> will cancel each other out when used in certain functions.</p>
+				</div>
+			</div>
+
+			<!--- TOPICS -->
+			<div class="sectionInfo containerReferenceSection">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Topics</span></h1>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Directions</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetDirection/HSWidgetDirectionNone.html">HSWidgetDirectionNone</a>
+							<p>The direction from the position is none/unknown.</p>
+						</li>
+						<li>
+							<a href="HSWidgetDirection/HSWidgetDirectionLeft.html">HSWidgetDirectionLeft</a>
+							<p>The left direction from a position.</p>
+						</li>
+						<li>
+							<a href="HSWidgetDirection/HSWidgetDirectionUp.html">HSWidgetDirectionUp</a>
+							<p>The up direction from a position.</p>
+						</li>
+						<li>
+							<a href="HSWidgetDirection/HSWidgetDirectionRight.html">HSWidgetDirectionRight</a>
+							<p>The right direction from a position.</p>
+						</li>
+						<li>
+							<a href="HSWidgetDirection/HSWidgetDirectionDown.html">HSWidgetDirectionDown</a>
+							<p>The down direction from a position.</p>
+						</li>
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Using Relative Directions</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetDirection/HSWidgetPositionIsAdjacent.html">HSWidgetPositionIsAdjacent</a>
+							<p>Returns whether position is directly adjacent in given direction from first specified position.</p>
+						</li>
+						<li>
+							<a href="HSWidgetDirection/HSWidgetPositionInDirection.html">HSWidgetPositionInDirection</a>
+							<p>Returns a adjacent position in given direction.</p>
+						</li>
+						<li>
+							<a href="HSWidgetDirection/HSWidgetReverseDirection.html">HSWidgetReverseDirection</a>
+							<p>Returns a direction that is directly opposite of specified direction.</p>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<!-- RELATED LINKS -->
+			<div class="sectionInfo containerReferenceSection">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Related Links</span></h1>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="fakeReferenceName"><i class="fas fa-link fakeReferenceCopy"></i> <span>Position</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetPosition.html">HSWidgetPosition</a>
+							<p>A structure that contains location in grid positions.</p>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<!-- FOOTER -->
+		<div class="footer">
+			<hr class="footer-separator">
+			<div class="footer-content">
+				<p>Copyright © 2020 <a href="https://dgh0st.github.io">DGh0st</a>. All rights reserved.</p>
+			</div>
+		</div>
+
+		<!-- BACK TO TOP -->
+		<div class="backToTop unselectable">
+			<h1 onclick="backToTop()"><i style="color: white;" class="fas fa-arrow-circle-up" aria-hidden="true"></i></h1>
+		</div>
+	</body>
+</html>

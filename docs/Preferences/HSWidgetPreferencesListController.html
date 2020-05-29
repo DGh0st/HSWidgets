@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" name="viewport" content="width=device-width"/>
+		<title>HSWidgetPreferencesListController</title>
+		<link rel="icon" href="https://dgh0st.github.io/img/favicon.ico">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/all.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/navigation-bar.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/documentation_all.css">
+		<link rel="stylesheet" href="https://dgh0st.github.io/css/syntax_highlighting.css">
+		<script src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/navigation.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/all.js"></script>
+		<script type="text/javascript" src="https://dgh0st.github.io/js/documentation.js"></script>
+	</head>
+	<body>
+		<!-- NAVIGATION BAR -->
+		<div class="nav-bar unselectable">
+			<a href="../index.html" class="title">HSWidgets Docs</a>
+			<div class="pages">
+				<li><a href="https://github.com/DGh0st/HSWidgets"><i style="color: white;" class="fab fa-github fa-lg fa-fw"></i>GitHub</a></li>
+			</div>
+		</div>
+
+		<!-- CONTENT -->
+		<div class="content">
+			<div class="content-nav-links">
+				<p><a href="../index.html" class="home"></a></p>
+				<p><i class="fas fa-angle-right"></i></p>
+				<p class="current">HSWidgetPreferencesListController</p>
+			</div>
+			
+			<!-- API INFO -->
+			<div class="sectionInfo">
+				<h2 class="fakeReferenceName api-type"><i class="fas fa-link fakeReferenceCopy"></i> Protocol</h2>
+				<h1 class="referenceName api-name"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>HSWidgetPreferencesListController</span></h1>
+				<div class="referenceInfo">
+					<p>A preference list controller subclass for easily managing/applying widget preferences.</p>
+					<hr class="api-separator">
+				</div>
+			</div>
+
+			<!-- DECLARATION -->
+			<div class="sectionInfo">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Declaration</span></h1>
+				<div class="referenceInfo">
+					<div class="codeblock objectivec">
+<pre><code>
+<span class="reservedidentifier">@interface</span> <span class="classidentifier">HSWidgetPreferencesListController</span> : <span class="subclassidentifier">PSListController</span> &lt;<a href="HSWidgetPreferences.html">HSWidgetPreferences</a>&gt;
+</code></pre>
+					</div>
+				</div>
+			</div>
+
+			<!-- DESCRIPTION -->
+			<div class="sectionInfo">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Description</span></h1>
+				<div class="referenceInfo">
+					<p>A subclass of this view controller can be presented when the settings accessory is tapped.</p>
+					<p>Since it inherits from <span class="codeblockinline">PSListController</span> we can use specifiers similar to Tweak preferences for our UI. This also means that we can take advantange of the setter/getter for each specifier to store values in different locations. Both have been overriden to use widget options, the setter (<span class="codeblockinline">setPreferenceValue:specifier:</span>) and the getter (<span class="codeblockinline">readPreferenceValue:</span>. If we wanted to instead use the user defaults, we could change the setter/getter of the specifier in the plist file:</p>
+					<div class="codeblock xml">
+<pre><code>
+&lt;<span class="tag">dict</span>&gt;
+	...
+	&lt;<span class="tag">key</span>&gt;get&lt;/<span class="tag">key</span>&gt;
+	&lt;<span class="tag">string</span>&gt;readUserDefaultsValue:&lt;/<span class="tag">string</span>&gt;
+	&lt;<span class="tag">key</span>&gt;set&lt;/<span class="tag">key</span>&gt;
+	&lt;<span class="tag">string</span>&gt;setUserDefaultsValue:specifier:&lt;/<span class="tag">string</span>&gt;
+&lt;/<span class="tag">dict</span>&gt;
+</code></pre>
+					</div>
+					<div class="codeblockdescription">
+						<small><span class="descriptionHeader"></span>The value stored in the user defaults will be saved with the key of the specifier. Which means it is not unique to this widget, other widgets of the same class would get the same value.</small>
+					</div>
+				</div>
+			</div>
+
+			<!-- TOPICS -->
+			<div class="sectionInfo containerReferenceSection">
+				<h1 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Topics</span></h1>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Managing Preferences</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetPreferencesListController/resetAllSettings.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;resetAllSettings</a>
+							<p>Reset all specifiers and settings for the current list controller.</p>
+						</li>
+						<li>
+							<a href="HSWidgetPreferencesListController/readPreferenceValue.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;readPreferenceValue:</a>
+							<p>Read the preference value for the given specifier.</p>
+						</li>
+						<li>
+							<a href="HSWidgetPreferencesListController/setPreferenceValue_specifier.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;setPreferenceValue:specifier:</a>
+							<p>Set the preference value for the given specifier.</p>
+						</li>
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Using Widget Options</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetPreferencesListController/resetWidgetOptions.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;resetWidgetOptions</a>
+							<p>Reset all widget options for the current list controller.</p>
+						</li>
+						<li>
+							<a href="HSWidgetPreferencesListController/readWidgetOptionsValue.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;readWidgetOptionsValue:</a>
+							<p>Get the widget option value for the given specifier.</p>
+						</li>
+						<li>
+							<a href="HSWidgetPreferencesListController/setWidgetOptionsValue_specifier.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;setWidgetOptionsValue:specifier:</a>
+							<p>Set the widget option value for the given specifier.</p>
+						</li>
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Using User Defaults</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetPreferencesListController/resetUserDefaults.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;resetUserDefaults</a>
+							<p>Reset all user default values for the current list controller.</p>
+						</li>
+						<li>
+							<a href="HSWidgetPreferencesListController/readUserDefaultsValue.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;readUserDefaultsValue:</a>
+							<p>Get the user default value for the given specifier.</p>
+						</li>
+						<li>
+							<a href="HSWidgetPreferencesListController/setUserDefaultsValue_specifier.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;setUserDefaultsValue:specifier:</a>
+							<p>Set the user default value for the given specifier.</p>
+						</li>
+					</ul>
+				</div>
+				<div class="referenceContent">
+					<hr class="api-separator">
+				</div>
+				<div class="referenceSection">
+					<h3 class="referenceName"><i onclick="copyToClipboard(this);" class="fas fa-link referenceCopy"></i> <span>Using Files</span></h3>
+					<ul class="referenceInfo">
+						<li>
+							<a href="HSWidgetPreferencesListController/resetFileValues.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;resetFileValues</a>
+							<p>Reset all values stored in file for the current list controller.</p>
+						</li>
+						<li>
+							<a href="HSWidgetPreferencesListController/readFileValue.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;readFileValue:</a>
+							<p>Get the value stored in file for the given specifier.</p>
+						</li>
+						<li>
+							<a href="HSWidgetPreferencesListController/setFileValue_specifier.html"><span class="referencemethodtype">-</span>&nbsp;&nbsp;setFileValue:specifier:</a>
+							<p>Set the value stored in file for the given specifier.</p>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<!-- FOOTER -->
+		<div class="footer">
+			<hr class="footer-separator">
+			<div class="footer-content">
+				<p>Copyright © 2020 <a href="https://dgh0st.github.io">DGh0st</a>. All rights reserved.</p>
+			</div>
+		</div>
+
+		<!-- BACK TO TOP -->
+		<div class="backToTop unselectable">
+			<h1 onclick="backToTop()"><i style="color: white;" class="fas fa-arrow-circle-up" aria-hidden="true"></i></h1>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,37 @@
+---
+archs:                 [ armv7, arm64, arm64e ]
+platform:              ios
+install-name:          /Library/MobileSubstrate/DynamicLibraries/HSWidgets.dylib
+current-version:       0
+compatibility-version: 0
+objc-constraint:       retain_release
+exports:
+  - archs:                [ armv7, arm64, arm64e ]
+    symbols:              [ _HSWidgetAllWidgetsConfiguredNotification,
+                            _HSWidgetAnimationDuration,
+                            _HSWidgetAvailableSpaceDidChangeNotification,
+                            _HSWidgetBezierShapeChangedNotification,
+                            _HSWidgetBezierShapeDisplayNameKey,
+                            _HSWidgetBezierShapeEnumKey, _HSWidgetBezierShapeKey,
+                            _HSWidgetDisplayCreatorKey, _HSWidgetDisplayIconKey,
+                            _HSWidgetDisplayNameKey, _HSWidgetDomain,
+                            _HSWidgetEditingStateChangedNotification,
+                            _HSWidgetEditingStateKey, _HSWidgetExpandImageName,
+                            _HSWidgetFrameZero, _HSWidgetPlaceholderImageName,
+                            _HSWidgetPlaceholderShapeImageName,
+                            _HSWidgetPositionZero,
+                            _HSWidgetQuickAnimationDuration,
+                            _HSWidgetSettingsImageName, _HSWidgetShrinkImageName,
+                            _HSWidgetSizeZero ]
+    objc-classes:         [ _HSWidgetAdditionalOptionsViewController,
+                            _HSWidgetAvailablePositionObject,
+                            _HSWidgetCombinedAdditionalOptionsAndPreferencesViewController,
+                            _HSWidgetFrameObject,
+                            _HSWidgetGridPositionConverterCache,
+                            _HSWidgetPositionObject,
+                            _HSWidgetPreferencesListController,
+                            _HSWidgetResources, _HSWidgetSizeObject,
+                            _HSWidgetUnclippedView, _HSWidgetViewController ]
+    objc-ivars:           [ _HSWidgetViewController._delegate,
+                            _HSWidgetViewController.widgetOptions ]
+...
