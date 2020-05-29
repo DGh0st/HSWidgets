@@ -13,4 +13,4 @@ Compiling the source using `make package` which should create a packaged deb fil
 
 ## How to create your own widgets
 
-See HSWidget docs to get started.
+See [HSWidget docs](https://github.com/DGh0st/HSWidgets) to get started.
