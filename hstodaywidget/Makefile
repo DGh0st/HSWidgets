@@ -1,12 +1,11 @@
 include $(THEOS)/makefiles/common.mk
 
-TWEAK_NAME = HSTodayWidget
-HSTodayWidget_FILES = HSTodayWidgetViewController.xm
+BUNDLE_NAME = HSTodayWidget
+HSTodayWidget_FILES = $(wildcard *.mm *.x)
 HSTodayWidget_FRAMEWORKS = UIKit CoreGraphics
-HSTodayWidget_LIBRARIES = HSWidgets
-HSTodayWidget_INSTALL_PATH = /Library/HSWidgets/HSTodayWidget
+HSTodayWidget_EXTRA_FRAMEWORKS = CydiaSubstrate HSWidgets
+HSTodayWidget_PRIVATE_FRAMEWORKS = Preferences
+HSTodayWidget_INSTALL_PATH = /Library/HSWidgets
+HSTodayWidget_CFLAGS = -Iprivate_headers
 
-include $(THEOS_MAKE_PATH)/tweak.mk
-
-after-install::
-	install.exec "killall -9 SpringBoard"
+include $(THEOS_MAKE_PATH)/bundle.mk

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>id</key>
+			<string>WidthStyleDescriptor</string>
+			<key>label</key>
+			<string>Width</string>
+			<key>footerText</key>
+			<string>Pick the style used for determining the widget width.</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSegmentCell</string>
+			<key>id</key>
+			<string>WidthStylePicker</string>
+			<key>key</key>
+			<string>WidthStyle</string>
+			<key>validTitles</key>
+			<array>
+				<string>Auto</string>
+				<string>Fill Space</string>
+				<string>Custom</string>
+			</array>
+			<key>validValues</key>
+			<array>
+				<integer>0</integer>
+				<integer>1</integer>
+				<integer>2</integer>
+			</array>
+			<key>default</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>id</key>
+			<string>CustomWidth</string>
+			<key>key</key>
+			<string>Width</string>
+			<key>placeholder</key>
+			<string>398.0</string>
+			<key>isDecimalPad</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Spaces</string>
+			<key>footerText</key>
+			<string>Set the number of icon rows and columns this widget takes up. Icon Columns of 4 is recommended when using auto width.</string>
+		</dict>
+		<dict>
+			<key>cellClass</key>
+			<string>HSTodayWidgetStepperCell</string>
+			<key>label</key>
+			<string>Icon Rows</string>
+			<key>id</key>
+			<string>SpacesRowStepper</string>
+			<key>min</key>
+			<integer>2</integer>
+			<key>max</key>
+			<integer>2</integer>
+			<key>default</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>cellClass</key>
+			<string>HSTodayWidgetStepperCell</string>
+			<key>label</key>
+			<string>Icon Columns</string>
+			<key>id</key>
+			<string>SpacesColStepper</string>
+			<key>min</key>
+			<integer>2</integer>
+			<key>max</key>
+			<integer>2</integer>
+			<key>default</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>footerText</key>
+			<string>Note: advanced options are beta features and are not officially supported, use at your own risk.</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSLinkCell</string>
+			<key>label</key>
+			<string>Advanced (Beta)</string>
+			<key>detail</key>
+			<string>HSTodayWidgetAdvancedPreferencesViewController</string>
+			<key>isController</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>footerAlignment</key>
+			<integer>1</integer>
+			<key>footerText</key>
+			<string>HSTodayWidget © 2020 DGh0st</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>Reset Settings</string>
+			<key>action</key>
+			<string>resetAllSettings</string>
+			<key>alignment</key>
+			<integer>1</integer>
+		</dict>
+	</array>
+	<key>title</key>
+	<string>Today Widget</string>
+</dict>
+</plist>

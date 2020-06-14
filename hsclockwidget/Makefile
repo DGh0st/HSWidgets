@@ -1,12 +1,11 @@
 include $(THEOS)/makefiles/common.mk
 
-TWEAK_NAME = HSClockWidget
-HSClockWidget_FILES = HSClockWidgetViewController.xm
+BUNDLE_NAME = HSClockWidget
+HSClockWidget_FILES = HSClockWidgetViewController.xm HSClockWidgetPreferencesViewController.mm
 HSClockWidget_FRAMEWORKS = UIKit
-HSClockWidget_LIBRARIES = HSWidgets
-HSClockWidget_INSTALL_PATH = /Library/HSWidgets/HSClockWidget
+HSClockWidget_EXTRA_FRAMEWORKS = CydiaSubstrate HSWidgets
+HSClockWidget_PRIVATE_FRAMEWORKS = Preferences
+HSClockWidget_INSTALL_PATH = /Library/HSWidgets
+HSClockWidget_CFLAGS = -Iprivate_headers
 
-include $(THEOS_MAKE_PATH)/tweak.mk
-
-after-install::
-	install.exec "killall -9 SpringBoard"
+include $(THEOS_MAKE_PATH)/bundle.mk

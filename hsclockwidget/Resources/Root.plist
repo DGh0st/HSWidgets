@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Alignment</string>
+			<key>footerText</key>
+			<string>Set the alignment for the time &amp; date.</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSliderCell</string>
+			<key>min</key>
+			<real>-1.0</real>
+			<key>max</key>
+			<real>1.0</real>
+			<key>default</key>
+			<real>0.0</real>
+			<key>key</key>
+			<string>AlignmentPercent</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>footerAlignment</key>
+			<integer>1</integer>
+			<key>footerText</key>
+			<string>HSClockWidget © 2020 DGh0st</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>Reset All Settings</string>
+			<key>action</key>
+			<string>resetAllSettings</string>
+			<key>alignment</key>
+			<integer>1</integer>
+		</dict>
+	</array>
+	<key>title</key>
+	<string>Time &amp; Date</string>
+</dict>
+</plist>

@@ -1,83 +1,79 @@
 #import "HSClockWidgetViewController.h"
+#import "SBDateTimeController.h"
+#import "SBFLockScreenDateView.h"
+#import "SBFLegibilityDomain.h"
+#import "SBPreciseClockTimer.h"
+#import "SBPrototypeController.h"
+#import "SBUIPreciseClockTimer.h"
+#import "_UILegibilitySettings.h"
 
-#define kNumRows 2 // clock takes 2 rows
-#define kDisplayName @"Time & Date"
-#define kIconImageName @"HSClock"
-#define kBundlePath @"/Library/Application Support/HSWidgets/Assets.bundle"
+#import <algorithm>
+#import <vector>
+
+#define MIN_NUM_ROWS 2U // clock takes up atleast 2 row
+#define MIN_NUM_COLS 3U // clock takes up atleast 3 col
+
+#define ALIGNMENT_PERCENT_KEY @"AlignmentPercent"
+#define JELLYFISH_ALIGNMENT_PERCENTAGE 1.0
 
 @implementation HSClockWidgetViewController
--(id)initForOriginRow:(NSUInteger)originRow withOptions:(NSDictionary *)options {
-	self = [super initForOriginRow:originRow withOptions:options];
+-(instancetype)initForWidgetFrame:(HSWidgetFrame)frame withOptions:(NSDictionary *)options {
+	self = [super initForWidgetFrame:frame withOptions:options];
 	if (self != nil) {
 		self.dateView = nil;
-		_numRows = options[@"NumRows"] ? [options[@"NumRows"] integerValue] : kNumRows;
 		_legibilitySettings = nil; // TODO: add legibilitySettings
+		_timerToken = nil;
 	}
 	return self;
 }
 
--(NSUInteger)numRows {
-	return _numRows;
-}
-
-+(BOOL)canAddWidgetForAvailableRows:(NSUInteger)rows {
-	return rows >= kNumRows; // least amount of rows needed
-}
-
-+(NSString *)displayName {
-	return kDisplayName;
-}
-
-+(UIImage *)icon {
-	return [UIImage imageNamed:kIconImageName inBundle:[NSBundle bundleWithPath:kBundlePath] compatibleWithTraitCollection:nil];
-}
-
-+(Class)addNewWidgetAdditionalOptionsClass {
-	return nil; // we don't have any additional options for this so we don't want to display anything when add new widget selection is being displayed
-}
-
-+(NSDictionary *)createOptionsFromController:(id)controller {
-	return @{
-		@"NumRows" : @(kNumRows)
-	};
++(HSWidgetSize)minimumSize {
+	return HSWidgetSizeMake(MIN_NUM_ROWS, MIN_NUM_COLS);
 }
 
 +(NSInteger)allowedInstancesPerPage {
 	return 1; // there only needs to be one clock/date per page
 }
 
--(CGRect)calculatedFrame {
-	return (CGRect){{0, 0}, self.requestedSize};
+-(void)createDateViewIfNeeded {
+	if (self.dateView == nil) {
+		self.dateView = [[%c(SBFLockScreenDateView) alloc] initWithFrame:CGRectZero];
+		[self.dateView setUserInteractionEnabled:NO];
+		[self.dateView setLegibilitySettings:_legibilitySettings];
+		if ([[NSFileManager defaultManager] fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/Jellyfish.dylib"]) {
+			[self.dateView setAlignmentPercent:JELLYFISH_ALIGNMENT_PERCENTAGE];
+		} else if (widgetOptions[ALIGNMENT_PERCENT_KEY] != nil) {
+			[self.dateView setAlignmentPercent:[widgetOptions[ALIGNMENT_PERCENT_KEY] doubleValue]];
+		}
+		[self.view addSubview:self.dateView];
+
+		/*
+		self.dateView.translatesAutoresizingMaskIntoConstraints = NO;
+		[self.dateView.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor].active = YES;
+		[self.dateView.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor].active = YES;
+		[self.dateView.heightAnchor constraintEqualToConstant:74 * MIN_NUM_ROWS].active = YES;
+		[self.dateView.widthAnchor constraintLessThanOrEqualToAnchor:self.view.widthAnchor].active = YES;
+		*/
+	}
+}
+
+-(void)setWidgetOptionValue:(id<NSCoding>)object forKey:(NSString *)key {
+	[super setWidgetOptionValue:object forKey:key];
+
+	if ([key isEqualToString:ALIGNMENT_PERCENT_KEY]) {
+		[self.dateView setAlignmentPercent:[(NSNumber *)object doubleValue]];
+	}
 }
 
 -(void)setRequestedSize:(CGSize)requestedSize {
 	[super setRequestedSize:requestedSize];
 
-	if (self.dateView != nil) {
-		CGFloat twoRowHeight = 74 * kNumRows;
-		self.dateView.frame = CGRectMake(0, (self.requestedSize.height - twoRowHeight) / 2, self.requestedSize.width, twoRowHeight);
-	}
-}
-
--(void)createDateViewIfNeeded {
-	if (self.dateView == nil) {
-		CGFloat twoRowHeight = 74 * kNumRows;
-		self.dateView = [[%c(SBFLockScreenDateView) alloc] initWithFrame:CGRectMake(0, (self.requestedSize.height - twoRowHeight) / 2, self.requestedSize.width, twoRowHeight)];
-		[self.dateView setUserInteractionEnabled:NO];
-		[self.dateView setLegibilitySettings:_legibilitySettings];
-		if ([[NSFileManager defaultManager] fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/Jellyfish.dylib"])
-			[self.dateView setAlignmentPercent:1.0];
-		else if (_options[@"AlignmentPercent"] != nil)
-			[self.dateView setAlignmentPercent:[_options[@"AlignmentPercent"] doubleValue]];
-		[self.view addSubview:self.dateView];
-	}
+	CGFloat twoRowHeight = 74 * MIN_NUM_ROWS;
+	self.dateView.frame = CGRectMake(0, (self.requestedSize.height - twoRowHeight) / 2, self.requestedSize.width, twoRowHeight);
 }
 
 -(void)loadView {
 	[super loadView];
-
-	SBDateTimeController *dateTimeController = [%c(SBDateTimeController) sharedInstance];
-	[dateTimeController addObserver:self];
 
 	[self createDateViewIfNeeded];
 
@@ -102,7 +98,12 @@
 }
 
 -(void)_updateLegibilityStrength {
-	SBLegibilitySettings *settings = [[[%c(SBPrototypeController) sharedInstance] rootSettings] legibilitySettings];
+	LegibilitySettings *settings = nil;
+	if (%c(SBFLegibilityDomain)) {
+		settings = [%c(SBFLegibilityDomain) rootSettings];
+	} else {
+		settings = [[[%c(SBPrototypeController) sharedInstance] rootSettings] legibilitySettings];
+	}
 	CGFloat style = [_legibilitySettings style];
 	[self.dateView setTimeLegibilityStrength:[settings timeStrengthForStyle:style]];
 	[self.dateView setSubtitleLegibilityStrength:[settings dateStrengthForStyle:style]];
@@ -113,8 +114,10 @@
 }
 
 -(void)settings:(id)arg1 changedValueForKey:(id)arg2 {
-	if ([arg1 isMemberOfClass:%c(SBLegibilitySettings)])
+	Class LegibilitySettings = %c(SBLegibilitySettings) ?: %c(SBFLegibilitySettings);
+	if ([arg1 isMemberOfClass:LegibilitySettings]) {
 		[self _updateLegibilityStrength];
+	}
 }
 
 -(void)_addObservers {
@@ -123,18 +126,34 @@
 	[defaultCenter addObserver:self selector:@selector(updateTimeNow) name:UIContentSizeCategoryDidChangeNotification object:nil];
 	[defaultCenter addObserver:self selector:@selector(updateTimeNow) name:@"UIAccessibilityLargeTextChangedNotification" object:nil];
 
-	[[[[%c(SBPrototypeController) sharedInstance] rootSettings] legibilitySettings] addKeyObserverIfPrototyping:self];
+	[[%c(SBDateTimeController) sharedInstance] addObserver:self];
+	if (%c(SBFLegibilityDomain)) {
+		[[%c(SBFLegibilityDomain) rootSettings] addKeyObserver:self];
+	} else {
+		[[[[%c(SBPrototypeController) sharedInstance] rootSettings] legibilitySettings] addKeyObserverIfPrototyping:self];
+	}
+
+	[defaultCenter addObserver:self selector:@selector(updateWidgetAfterRespring) name:HSWidgetAllWidgetsConfiguredNotification object:nil];
 }
 
 -(void)_removeObservers {
+	NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+	[defaultCenter removeObserver:self name:@"BSDateTimeCacheChangedNotification" object:nil];
+	[defaultCenter removeObserver:self name:UIContentSizeCategoryDidChangeNotification object:nil];
+	[defaultCenter removeObserver:self name:@"UIAccessibilityLargeTextChangedNotification" object:nil];
+
 	[[%c(SBDateTimeController) sharedInstance] removeObserver:self];
-	[[[[%c(SBPrototypeController) sharedInstance] rootSettings] legibilitySettings] removeKeyObserver:self];
+	if (%c(SBFLegibilityDomain)) {
+		[[%c(SBFLegibilityDomain) rootSettings] removeKeyObserver:self];
+	} else {
+		[[[[%c(SBPrototypeController) sharedInstance] rootSettings] legibilitySettings] removeKeyObserver:self];
+	}
+
+	[defaultCenter removeObserver:self name:HSWidgetAllWidgetsConfiguredNotification object:nil];
 }
 
 -(void)updateWidgetAfterRespring {
 	// fix clock widget not starting to update after respring
-	[super updateWidgetAfterRespring];
-
 	[self updateTimeNow];
 
 	if (_timerToken == nil) {
@@ -169,26 +188,70 @@
 	}
 }
 
--(BOOL)canExpandWidget {
-	return [self availableRows] >= 1;
+-(BOOL)_canExpand:(inout HSWidgetSize *)expandSize {
+	std::vector<HSWidgetSize> expandSizes;
+	expandSizes.push_back(HSWidgetSizeAdd(self.widgetFrame.size, 1, 1)); // expand row and col
+	expandSizes.push_back(HSWidgetSizeAdd(self.widgetFrame.size, 0, 1)); // expand col
+	expandSizes.push_back(HSWidgetSizeAdd(self.widgetFrame.size, 1, 0)); // expand row
+
+	for (const HSWidgetSize &size : expandSizes) {
+		if ([super containsSpaceToExpandOrShrinkToWidgetSize:size]) {
+			if (expandSize != nil) {
+				*expandSize = size;
+			}
+			return YES;
+		}
+	}
+
+	// we can't expand
+	return NO;
 }
 
--(BOOL)canShrinkWidget {
-	return _numRows > kNumRows;
+-(BOOL)_canShrink:(inout HSWidgetSize *)shrinkSize {
+	// try shrinking row and/or col
+	HSWidgetSize shrunkWidgetSize;
+	shrunkWidgetSize.numRows = MAX(self.widgetFrame.size.numRows - 1, MIN_NUM_ROWS);
+	shrunkWidgetSize.numCols = MAX(self.widgetFrame.size.numCols - 1, MIN_NUM_COLS);
+	if (!HSWidgetSizeEqualsSize(self.widgetFrame.size, shrunkWidgetSize)) {
+		if (shrinkSize != nil) {
+			*shrinkSize = shrunkWidgetSize;
+		}
+		return YES;
+	}
+
+	// we can't shrink
+	return NO;
 }
 
--(void)expandBoxTapped {
-	++_numRows;
-	_options[@"NumRows"] = @(_numRows);
+-(BOOL)isAccessoryTypeEnabled:(AccessoryType)accessory {
+	// check if expand or shrink
+	if (accessory == AccessoryTypeExpand) {
+		return [self _canExpand:nil];
+	} else if (accessory == AccessoryTypeShrink) {
+		return [self _canShrink:nil];
+	} else if (accessory == AccessoryTypeSettings) {
+		// currently we only support Alignment Percentage which Jellyfish forces to 1.0 so if we are using Jellyfish don't add settings
+		return ![[NSFileManager defaultManager] fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/Jellyfish.dylib"];
+	}
 
-	[self updateForExpandOrShrinkFromRows:_numRows - 1];
+	// anything else we don't support but let super class handle it incase new accessory types are added
+	return [super isAccessoryTypeEnabled:accessory];
 }
 
--(void)shrinkBoxTapped {
-	--_numRows;
-	_options[@"NumRows"] = @(_numRows);
-
-	[self updateForExpandOrShrinkFromRows:_numRows + 1];
+-(void)accessoryTypeTapped:(AccessoryType)accessory {
+	if (accessory == AccessoryTypeExpand) {
+		// handle expand tapped
+		HSWidgetSize expandSize;
+		if ([self _canExpand:&expandSize]) {
+			[super updateForExpandOrShrinkToWidgetSize:expandSize];
+		}
+	} else if (accessory == AccessoryTypeShrink) {
+		// handle shrink tapped
+		HSWidgetSize shrinkSize;
+		if ([self _canShrink:&shrinkSize]) {
+			[super updateForExpandOrShrinkToWidgetSize:shrinkSize];
+		}
+	}
 }
 
 -(void)dealloc {
@@ -211,10 +274,10 @@
 
 %hook SBFLockScreenDateView
 -(void)layoutSubviews {
-	%orig;
-	
-	if (self.superview != nil && self.superview.superview != nil && [self.superview.superview isKindOfClass:%c(SBRootIconListView)]) {
-		CGFloat twoRowHeight = 74 * kNumRows;
+	%orig();
+
+	if (self.superview != nil && [self.superview isKindOfClass:%c(HSWidgetUnclippedView)]) {
+		CGFloat twoRowHeight = 74 * MIN_NUM_ROWS;
 		self.frame = CGRectMake(0, (self.superview.frame.size.height - twoRowHeight) / 2, self.superview.frame.size.width, twoRowHeight);
 	}
 }

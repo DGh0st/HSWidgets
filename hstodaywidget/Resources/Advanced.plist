@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>footerText</key>
+			<string>Note: Expanded mode doesn't fully function on some devices (specially iPad). Some widgets have inconsistent heights and will span outside the space widget has available so it is recommended to set a custom height below.</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>id</key>
+			<string>ExpansionMode</string>
+			<key>key</key>
+			<string>isExpandedMode</string>
+			<key>label</key>
+			<string>Enable Expanded Mode</string>
+			<key>default</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>id</key>
+			<string>ModeHeightDescriptor</string>
+			<key>label</key>
+			<string>Custom Height</string>
+			<key>footerText</key>
+			<string>Set the custom height for current mode. Leave empty or set to 0 to automatically calculate height.</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>key</key>
+			<string>modeHeight</string>
+			<key>placeholder</key>
+			<string>0.0</string>
+			<key>isDecimalPad</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Offset X</string>
+			<key>footerText</key>
+			<string>Set the offset of the widget in x direction.</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>key</key>
+			<string>offsetX</string>
+			<key>placeholder</key>
+			<string>0.0</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Offset Y</string>
+			<key>footerText</key>
+			<string>Set the offset of the widget in y direction.</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>key</key>
+			<string>offsetY</string>
+			<key>placeholder</key>
+			<string>0.0</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>footerAlignment</key>
+			<integer>1</integer>
+			<key>footerText</key>
+			<string>HSTodayWidget © 2020 DGh0st</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>Reset Advanced Settings</string>
+			<key>action</key>
+			<string>resetAllSettings</string>
+			<key>alignment</key>
+			<integer>1</integer>
+		</dict>
+	</array>
+	<key>title</key>
+	<string>Advanced</string>
+</dict>
+</plist>

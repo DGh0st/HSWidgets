@@ -1,6 +1,4 @@
 #import <HSWidgets/HSWidgetViewController.h>
 
-@interface HSSpacerWidgetViewController : HSWidgetViewController {
-	NSUInteger _numRows;
-}
+@interface HSSpacerWidgetViewController : HSWidgetViewController
 @end

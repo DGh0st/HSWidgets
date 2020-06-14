@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>com.dgh0st.hswidgets.todaywidgets</string>
+	<key>NSPrincipalClass</key>
+	<string>HSTodayWidgetViewController</string>
+	<key>HSWidgetAddNewOptionsControllerClass</key>
+	<string>HSTodayWidgetsListViewController</string>
+	<key>HSWidgetPreferencesControllerClass</key>
+	<string>HSTodayWidgetRootPreferencesViewController</string>
+	<key>HSWidgetDisplayName</key>
+	<string>Today Widgets</string>
+	<key>HSWidgetIcon</key>
+	<string>icon.png</string>
+	<key>HSWidgetCreator</key>
+	<string>DGh0st</string>
+</dict>
+</plist>

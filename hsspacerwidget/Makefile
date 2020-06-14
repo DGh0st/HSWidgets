@@ -1,12 +1,9 @@
 include $(THEOS)/makefiles/common.mk
 
-TWEAK_NAME = HSSpacerWidget
-HSSpacerWidget_FILES = HSSpacerWidgetViewController.xm
+BUNDLE_NAME = HSSpacerWidget
+HSSpacerWidget_FILES = HSSpacerWidgetViewController.mm
 HSSpacerWidget_FRAMEWORKS = UIKit
-HSSpacerWidget_LIBRARIES = HSWidgets
-HSSpacerWidget_INSTALL_PATH = /Library/HSWidgets/HSSpacerWidget
+HSSpacerWidget_EXTRA_FRAMEWORKS = HSWidgets
+HSSpacerWidget_INSTALL_PATH = /Library/HSWidgets
 
-include $(THEOS_MAKE_PATH)/tweak.mk
-
-after-install::
-	install.exec "killall -9 SpringBoard"
+include $(THEOS_MAKE_PATH)/bundle.mk

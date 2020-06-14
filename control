@@ -1,7 +1,7 @@
 Package: com.dgh0st.hswidgets
 Name: HSWidgets
 Depends: mobilesubstrate
-Version: 0.0.1
+Version: 0.1
 Architecture: iphoneos-arm
 Description: Add today widgets or custom widgets to home screen.
 Maintainer: DGh0st <deeppwnage@yahoo.com>
