@@ -9,11 +9,15 @@
 #define DRAGGING_WIDGET_HOLD_DURATION 0.03
 // #define PICKER_ROTATION_ASSERTION_REASON @"HSWidgetPicker"
 
-static NSMutableArray *AvailableWidgetControllerClassesForAvailableSpaces(NSArray<HSWidgetAvailablePositionObject *> *positions) {
+static NSMutableArray *AvailableWidgetControllerClassesForAvailableSpaces(NSArray<HSWidgetAvailablePositionObject *> *positions, NSMutableArray *insufficientSpaceWidgets) {
 	NSMutableArray *result = [NSMutableArray array];
 	for (Class widgetClass in [HSWidgetLoader availableHSWidgetClasses]) {
-		if ([widgetClass isSubclassOfClass:[HSWidgetViewController class]] && [widgetClass isAvailable] && [widgetClass canAddWidgetForAvailableGridPositions:positions]) {
-			[result addObject:widgetClass];
+		if ([widgetClass isSubclassOfClass:[HSWidgetViewController class]] && [widgetClass isAvailable]) {
+			if ([widgetClass canAddWidgetForAvailableGridPositions:positions]) {
+				[result addObject:widgetClass];
+			} else {
+				[insufficientSpaceWidgets addObject:widgetClass];
+			}
 		}
 	}
 	return result;
@@ -660,7 +664,8 @@ static inline void RemoveViewController(UIViewController *viewController, BOOL a
 -(void)addNewWidgetTappedForPosition:(HSWidgetPosition)position {
 	// get list of available widget classes for available free spaces
 	NSArray *availableSpaces = [self availableSpaceWithRule:HSWidgetAvailableSpaceRuleIncludeIconsWithMark];
-	NSArray *availableWidgetClasses = AvailableWidgetControllerClassesForAvailableSpaces(availableSpaces);
+	NSMutableArray *insufficientSpaceWidgets = [NSMutableArray array];
+	NSArray *availableWidgetClasses = AvailableWidgetControllerClassesForAvailableSpaces(availableSpaces, insufficientSpaceWidgets);
 
 	// get list of widget options to exclude
 	NSMutableDictionary *widgetOptionsToExclude = [NSMutableDictionary dictionary];
@@ -675,7 +680,7 @@ static inline void RemoveViewController(UIViewController *viewController, BOOL a
 	}
 
 	// create widget view controllers that will contain the list of available widgets
-	HSAddWidgetRootViewController *widgetPickerTableViewController = [[HSAddWidgetRootViewController alloc] initWithWidgets:availableWidgetClasses excludingWidgetsOptions:widgetOptionsToExclude];
+	HSAddWidgetRootViewController *widgetPickerTableViewController = [[HSAddWidgetRootViewController alloc] initWithWidgets:availableWidgetClasses insufficientSpaceWidgets:insufficientSpaceWidgets excludingWidgetsOptions:widgetOptionsToExclude];
 	[widgetPickerTableViewController setDelegate:self];
 	widgetPickerTableViewController.preferredPosition = position;
 	widgetPickerTableViewController.availablePositions = availableSpaces;
@@ -831,7 +836,7 @@ static inline void RemoveViewController(UIViewController *viewController, BOOL a
 	HSWidgetAvailableSpaceRule rule = included ? HSWidgetAvailableSpaceRuleIncludeIconsWithMarkExceptLast : HSWidgetAvailableSpaceRuleIncludeIconsWithMark;
 	NSArray *availableSpaceForWidgets = [self availableSpaceWithRule:rule];
 
-	BOOL areWidgetsAvailableForCurrentEmptySpace = [AvailableWidgetControllerClassesForAvailableSpaces(availableSpaceForWidgets) count] > 0;
+	BOOL areWidgetsAvailableForCurrentEmptySpace = [AvailableWidgetControllerClassesForAvailableSpaces(availableSpaceForWidgets, nil) count] > 0;
 	if (!areWidgetsAvailableForCurrentEmptySpace || remove || numIcons == 0 || IsDraggingIcon()) {
 		availableSpaceForWidgets = nil;
 	}

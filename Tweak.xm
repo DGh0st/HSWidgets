@@ -7,12 +7,25 @@
 #import "SBIconListModel.h"
 #import "SBIconListView.h"
 #import "SBRootFolderController.h"
+#import "SBRootFolderView.h"
 
 const HSWidgetPosition HSWidgetPositionZero = HSWidgetPositionMake(0, 0);
 const HSWidgetSize HSWidgetSizeZero = HSWidgetSizeMake(0, 0);
 const HSWidgetFrame HSWidgetFrameZero = HSWidgetFrameMake(HSWidgetPositionZero, HSWidgetSizeZero);
 
 #define WIDGET_LAYOUT_PREFERENCES_PATH @"/var/mobile/Library/Preferences/com.dgh0st.hswidget.widgetlayouts.plist"
+
+static inline void ConfigureWidgetsIfNeeded(NSArray *iconListViews) {
+	for (NSInteger listViewIndex = 0; listViewIndex < iconListViews.count; ++listViewIndex) {
+		SBIconListView *iconListView = iconListViews[listViewIndex];
+		HSWidgetPageController *widgetPageController = iconListView.widgetPageController;
+		[widgetPageController configureWidgetsIfNeededWithIndex:listViewIndex];
+		[iconListView layoutIconsNow];
+	}
+
+	// send all widgets configured notification
+	[[NSNotificationCenter defaultCenter] postNotificationName:HSWidgetAllWidgetsConfiguredNotification object:nil userInfo:nil];
+}
 
 static inline SBIconCoordinate GetCoordinateAtPoint(SBIconListView *iconListView, CGPoint point, SBIconCoordinate preferredCoordinate) {
 	// undo our changes to calculate the correct row and column for editing mode
@@ -64,14 +77,7 @@ static inline NSMutableDictionary *GetWidgetLayouts() {
 		// load saved widget layouts from file
 		self.allPagesWidgetLayouts = GetWidgetLayouts();
 
-		for (NSInteger listViewIndex = 0; listViewIndex < self.iconListViewCount; ++listViewIndex) {
-			SBIconListView *iconListView = self.iconListViews[listViewIndex];
-			HSWidgetPageController *widgetPageController = iconListView.widgetPageController;
-			[widgetPageController configureWidgetsIfNeededWithIndex:listViewIndex];
-		}
-
-		// send all widgets configured notification
-		[[NSNotificationCenter defaultCenter] postNotificationName:HSWidgetAllWidgetsConfiguredNotification object:nil userInfo:nil];
+		ConfigureWidgetsIfNeeded(self.iconListViews);
 	}
 }
 

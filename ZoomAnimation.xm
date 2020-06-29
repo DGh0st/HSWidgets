@@ -50,6 +50,43 @@
 // +(void)animateWithFactory:(id)arg1 additionalDelay:(NSTimeInterval)arg2 options:(NSUInteger)arg3 actions:(id)arg4 completion:(id)arg5; // iOS 9 - 13
 @end
 
+@interface CoverSheetTransitionSettings : NSObject // SBCoverSheetTransitionSettings in iOS 11 - 12 and CSCoverSheetTransitionSettings in iOS 13
+-(BOOL)iconsFlyIn; // iOS 11 - 13
+@end
+
+@interface SBCoverSheetPresentationManager : NSObject // iOS 11 - 13
++(id)sharedInstance;
+-(CoverSheetTransitionSettings *)transitionSettings;; // iOS 13
+@end
+
+static inline void ConfigureWidgetsIfNeeded(NSArray *iconListViews) {
+	for (NSInteger listViewIndex = 0; listViewIndex < iconListViews.count; ++listViewIndex) {
+		SBIconListView *iconListView = iconListViews[listViewIndex];
+		HSWidgetPageController *widgetPageController = iconListView.widgetPageController;
+		[widgetPageController configureWidgetsIfNeededWithIndex:listViewIndex];
+		[iconListView layoutIconsNow];
+	}
+
+	// send all widgets configured notification
+	[[NSNotificationCenter defaultCenter] postNotificationName:HSWidgetAllWidgetsConfiguredNotification object:nil userInfo:nil];
+}
+
+// fix widgets being lost on respring when reduce motion is enabled or fly in animations are disabled
+%hook SBCoverSheetPresentationManager
+-(void)_prepareForDismissalTransition {
+	%orig;
+
+	static BOOL isFirstIconAnimationAfterRespring = YES;
+	if (isFirstIconAnimationAfterRespring && (UIAccessibilityIsReduceMotionEnabled() || ![[self transitionSettings] iconsFlyIn])) {
+		SBIconController *iconController = [%c(SBIconController) sharedInstance];
+		SBRootFolderController *rootFolderController = [iconController _rootFolderController];
+		ConfigureWidgetsIfNeeded(rootFolderController.iconListViews);
+
+		isFirstIconAnimationAfterRespring = NO;
+	}
+}
+%end
+
 %hook SBCenterIconZoomAnimator
 -(void)_prepareAnimation {
 	%orig;
@@ -58,14 +95,7 @@
 	if (isFirstZoomAnimationAfterRespring) {
 		SBIconController *iconController = [%c(SBIconController) sharedInstance];
 		SBRootFolderController *rootFolderController = [iconController _rootFolderController];
-		for (NSInteger listViewIndex = 0; listViewIndex < rootFolderController.iconListViewCount; ++listViewIndex) {
-			SBIconListView *iconListView = rootFolderController.iconListViews[listViewIndex];
-			HSWidgetPageController *widgetPageController = iconListView.widgetPageController;
-			[widgetPageController configureWidgetsIfNeededWithIndex:listViewIndex];	
-		}
-
-		// send all widgets configured notification
-		[[NSNotificationCenter defaultCenter] postNotificationName:HSWidgetAllWidgetsConfiguredNotification object:nil userInfo:nil];
+		ConfigureWidgetsIfNeeded(rootFolderController.iconListViews);
 
 		isFirstZoomAnimationAfterRespring = NO;
 	}

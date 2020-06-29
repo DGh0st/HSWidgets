@@ -8,6 +8,7 @@
 #define REUSABLE_HEADER_IDENTIFIER @"HSAddWidgetHeader"
 #define REUSABLE_BEZIER_SHAPE_IDENTIIFER @"HSWidgetAddBezierShapeCell"
 #define REUSABLE_WIDGET_CELL_IDENTIFIER @"HSAddWidgetClassesCell"
+#define REUSABLE_WIDGET_DISABLED_CELL_IDENTIFIER @"HSAddWidgetInsufficientSpaceClassesCell"
 #define NAVIGATION_TITLE @"HSWidgets"
 // totally isn't copied from apple's add widgets description
 #define ADD_WIDGETS_TITLE @"Add HSWidgets"
@@ -15,10 +16,12 @@
 #define BEZIER_SHAPE_TITLE @"Placeholder Shape"
 #define BEZIER_SHAPE_DESCRIPTION @"Select the shape that is used in place of available icon positions"
 #define MORE_WIDGETS_TITLE @"More Widgets"
+#define INSUFFICIENT_TITLE @"Disabled Widgets (Insufficient space)"
 
 #define COMMON_SECTION 0
 #define MORE_SECTION 1
-#define TOTAL_SECTIONS 2 // make sure to update this when adding more sections
+#define INSUFFICIENT_SPACE_SECTION 2
+#define TOTAL_SECTIONS 3 // make sure to update this when adding more sections
 
 @interface UINavigationBar ()
 -(void)_setShadowAlpha:(CGFloat)arg1; // iOS 8 - 13
@@ -26,11 +29,12 @@
 
 @interface HSAddWidgetRootViewController ()
 @property (nonatomic, retain, setter=_setAvailableWidgetClasses:) NSArray *_availableWidgetClasses;
+@property (nonatomic, retain, setter=_setInsufficientSpaceWidgets:) NSArray *_insufficientSpaceClasses;
 @property (nonatomic, retain, setter=_setExcludeWidgetsWithOptions:) NSDictionary *_excludeWidgetsWithOptions;
 @end
 
 @implementation HSAddWidgetRootViewController
--(instancetype)initWithWidgets:(NSArray *)classes excludingWidgetsOptions:(NSDictionary *)excludes {
+-(instancetype)initWithWidgets:(NSArray *)availableClasses insufficientSpaceWidgets:(NSArray *)insufficientSpaceClasses excludingWidgetsOptions:(NSDictionary *)excludes {
 	BOOL isAtLeastiOS13 = [[[UIDevice currentDevice] systemVersion] compare:@"13.0" options:NSNumericSearch] == NSOrderedDescending;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunguarded-availability-new"
@@ -43,7 +47,7 @@
 
 		// filter available classes
 		NSMutableArray *filteredAvailableWidgetClasses = [NSMutableArray array];
-		for (Class widgetClass in classes) {
+		for (Class widgetClass in availableClasses) {
 			if ([widgetClass allowedInstancesPerPage] == -1) { // unlimited instances allowed or filtered via additional options
 				[filteredAvailableWidgetClasses addObject:widgetClass];
 			} else {
@@ -55,6 +59,7 @@
 		}
 
 		self._availableWidgetClasses = filteredAvailableWidgetClasses;
+		self._insufficientSpaceClasses = insufficientSpaceClasses;
 		self._excludeWidgetsWithOptions = excludes;
 	}
 	return self;
@@ -92,6 +97,7 @@
 		[self.tableView registerClass:[HSWidgetHeaderTableView class] forHeaderFooterViewReuseIdentifier:REUSABLE_HEADER_IDENTIFIER];
 		[self.tableView registerClass:[HSWidgetBezierShapeDisclosureTableViewCell class] forCellReuseIdentifier:REUSABLE_BEZIER_SHAPE_IDENTIIFER];
 		[self.tableView registerClass:[HSWidgetSubtitleTableViewCell class] forCellReuseIdentifier:REUSABLE_WIDGET_CELL_IDENTIFIER];
+		[self.tableView registerClass:[HSWidgetSubtitleTableViewCell class] forCellReuseIdentifier:REUSABLE_WIDGET_DISABLED_CELL_IDENTIFIER];
 	}
 }
 
@@ -149,7 +155,7 @@
 }
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-	return TOTAL_SECTIONS;
+	return self._insufficientSpaceClasses.count > 0 ? TOTAL_SECTIONS : TOTAL_SECTIONS - 1;
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -157,6 +163,8 @@
 		return 1;
 	else if (section == MORE_SECTION)
 		return self._availableWidgetClasses.count;
+	else if (section == INSUFFICIENT_SPACE_SECTION)
+		return self._insufficientSpaceClasses.count;
 	return 0;
 }
 
@@ -179,6 +187,8 @@
 -(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
 	if (section == MORE_SECTION)
 		return MORE_WIDGETS_TITLE;
+	else if (section == INSUFFICIENT_SPACE_SECTION)
+		return INSUFFICIENT_TITLE;
 	return nil;
 }
 
@@ -219,6 +229,23 @@
 			cell.accessoryType = UITableViewCellAccessoryNone;
 			cell.editingAccessoryType = UITableViewCellAccessoryNone;
 		}
+	} else if (indexPath.section == INSUFFICIENT_SPACE_SECTION) {
+		cell = [tableView dequeueReusableCellWithIdentifier:REUSABLE_WIDGET_DISABLED_CELL_IDENTIFIER forIndexPath:indexPath];
+		Class widgetClass = [self._insufficientSpaceClasses objectAtIndex:indexPath.row];
+		NSDictionary *widgetDisplayInfo = [widgetClass widgetDisplayInfo];
+		cell.textLabel.text = widgetDisplayInfo[HSWidgetDisplayNameKey];
+		cell.detailTextLabel.text = [NSString stringWithFormat:@"By %@", widgetDisplayInfo[HSWidgetDisplayCreatorKey]];
+		cell.imageView.image = widgetDisplayInfo[HSWidgetDisplayIconKey];
+		if ([widgetClass addNewWidgetAdditionalOptionsControllerClass] != nil) {
+			cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+			cell.editingAccessoryType = UITableViewCellAccessoryDisclosureIndicator;
+		} else {
+			cell.accessoryType = UITableViewCellAccessoryNone;
+			cell.editingAccessoryType = UITableViewCellAccessoryNone;
+		}
+		cell.selectionStyle = UITableViewCellSelectionStyleNone;
+		cell.contentView.alpha = 0.5;
+		cell.userInteractionEnabled = NO;
 	}
 	return cell;
 }
@@ -279,6 +306,8 @@
 		} else {
 			[self additionalOptionsViewController:nil addWidgetForClass:widgetClass];
 		}
+	} else if (indexPath.section == INSUFFICIENT_SPACE_SECTION) {
+		// do nothing (something went wrong if this happens)
 	}
 }
 

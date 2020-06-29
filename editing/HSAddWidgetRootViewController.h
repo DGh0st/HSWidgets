@@ -11,6 +11,6 @@ __attribute__((visibility("hidden")))
 }
 @property (nonatomic, assign) HSWidgetPosition preferredPosition;
 @property (nonatomic, retain) NSArray<HSWidgetAvailablePositionObject *> *availablePositions;
--(instancetype)initWithWidgets:(NSArray *)classes excludingWidgetsOptions:(NSDictionary *)excludes;
+-(instancetype)initWithWidgets:(NSArray *)availableClasses insufficientSpaceWidgets:(NSArray *)insufficientSpaceClasses excludingWidgetsOptions:(NSDictionary *)excludes;
 -(void)setDelegate:(id<HSAddWidgetSelectionDelegate>)delegate;
 @end
