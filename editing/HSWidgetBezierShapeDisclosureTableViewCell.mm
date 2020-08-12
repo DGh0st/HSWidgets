@@ -56,7 +56,7 @@
 		// add constraints
 		imageView.translatesAutoresizingMaskIntoConstraints = NO;
 		if (isiPad) {
-			[imageView.leftAnchor constraintEqualToAnchor:self.contentView.leftAnchor constant:constraintSpacing].active = YES;
+			[imageView.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:constraintSpacing].active = YES;
 		} else {
 			[imageView.leadingAnchor constraintEqualToAnchor:self.contentView.layoutMarginsGuide.leadingAnchor].active = YES;
 		}

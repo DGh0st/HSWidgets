@@ -23,7 +23,8 @@ exports:
                             _HSWidgetQuickAnimationDuration,
                             _HSWidgetSettingsImageName, _HSWidgetShrinkImageName,
                             _HSWidgetSizeZero ]
-    objc-classes:         [ _HSWidgetAdditionalOptionsViewController,
+    objc-classes:         [ _HSModernWidgetViewController,
+                            _HSWidgetAdditionalOptionsViewController,
                             _HSWidgetAvailablePositionObject,
                             _HSWidgetCombinedAdditionalOptionsAndPreferencesViewController,
                             _HSWidgetFrameObject,

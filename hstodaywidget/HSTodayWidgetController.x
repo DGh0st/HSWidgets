@@ -28,6 +28,8 @@
 		self.widgetDiscoveryController = [[%c(WGWidgetDiscoveryController) alloc] init];
 		[self.widgetDiscoveryController beginDiscovery];
 		[self.widgetDiscoveryController addDiscoveryObserver:self];
+
+		self.cancelTouchesAssertionsByWidgetID = [NSMutableDictionary dictionary];
 	}
 	return self;
 }
@@ -67,6 +69,14 @@
 		widgetHostingViewController.host = host;
 	}
 	return widgetHostingViewController;
+}
+
+-(void)enumerateWidgetsWithBlock:(void(^)(HSTodayWidgetController *, WGWidgetHostingViewController *))block {
+	NSMutableDictionary *_enabledWidgetIdsToWidgets = [[HSTodayWidgetController sharedInstance] _enabledWidgetIdsToWidgets];
+	for (NSString *widgetIdentifier in _enabledWidgetIdsToWidgets) {
+		WGWidgetHostingViewController *hostingViewController = _enabledWidgetIdsToWidgets[widgetIdentifier];
+		block(self, hostingViewController);
+	}
 }
 
 -(NSMutableDictionary *)_enabledWidgetIdsToWidgets {

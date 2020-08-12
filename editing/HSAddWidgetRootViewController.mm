@@ -52,14 +52,25 @@
 				[filteredAvailableWidgetClasses addObject:widgetClass];
 			} else {
 				NSArray *widgetsForCurrentClass = [excludes objectForKey:NSStringFromClass(widgetClass)];
-				if (widgetsForCurrentClass == nil || widgetsForCurrentClass.count < [widgetClass allowedInstancesPerPage]) {
+				if (widgetsForCurrentClass == nil || widgetsForCurrentClass.count < [widgetClass allowedInstancesPerPage])
 					[filteredAvailableWidgetClasses addObject:widgetClass];
-				}
+			}
+		}
+
+		// filter insufficient space classes
+		NSMutableArray *filteredInsufficientSpaceClasses = [NSMutableArray array];
+		for (Class widgetClass in insufficientSpaceClasses) {
+			if ([widgetClass allowedInstancesPerPage] == -1) { // unlimited instances allowed or filtered via additional options
+				[filteredInsufficientSpaceClasses addObject:widgetClass];
+			} else {
+				NSArray *widgetsForCurrentClass = [excludes objectForKey:NSStringFromClass(widgetClass)];
+				if (widgetsForCurrentClass == nil || widgetsForCurrentClass.count < [widgetClass allowedInstancesPerPage])
+					[filteredInsufficientSpaceClasses addObject:widgetClass];
 			}
 		}
 
 		self._availableWidgetClasses = filteredAvailableWidgetClasses;
-		self._insufficientSpaceClasses = insufficientSpaceClasses;
+		self._insufficientSpaceClasses = filteredInsufficientSpaceClasses;
 		self._excludeWidgetsWithOptions = excludes;
 	}
 	return self;

@@ -30,6 +30,7 @@ export TBD_OUTPUT_PATH = $(FRAMEWORK_PATH)/$(FRAMEWORK_NAME).tbd
 internal-all::
 	mkdir -p $(FRAMEWORK_PATH)/Headers
 	find $(PUBLIC_HEADERS_DIR) -maxdepth 1 -name "*.h" -exec cp {} $(FRAMEWORK_PATH)/Headers \;
+	chmod +x $(HSWIDGETS_THEOS_TEMPLATE_STAGING_DIR)/create_tbd.sh
 	$(HSWIDGETS_THEOS_TEMPLATE_STAGING_DIR)/create_tbd.sh
 	cp -r $(FRAMEWORK_PATH) $(THEOS)/lib/$(FRAMEWORK_NAME).framework
 

@@ -92,7 +92,22 @@ typedef NS_ENUM(NSInteger, BoxViewButtonStyle) {
 }
 @end
 
-static BOOL SetupAccessory(UIView *accessoryView, BOOL isEnabled, CGFloat previousButtonXOffset, CGPoint globalOffset, CGSize containerSize, BOOL animated, BOOL &isPresentingOrDismissingAccessory) {
+static void SetContinuousCornerRadius(UIView *view, CGFloat cornerRadius) {
+	view.layer.cornerRadius = cornerRadius;
+	// enable continuous corner radius
+	if ([view.layer respondsToSelector:@selector(setCornerCurve:)]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"
+		// iOS 13+
+		view.layer.cornerCurve = kCACornerCurveContinuous;
+#pragma clang diagnostic pop
+	} else if ([view.layer respondsToSelector:@selector(setContinuousCorners:)]) {
+		// iOS 11 - 12
+		view.layer.continuousCorners = YES;
+	}
+}
+
+static BOOL SetupAccessory(UIView *accessoryView, BOOL isEnabled, CGPoint previousButtonOffset, CGPoint globalOffset, CGSize containerSize, BOOL animated, BOOL &isPresentingOrDismissingAccessory) {
 	if (isPresentingOrDismissingAccessory) {
 		// disable changes to accessory views when we are presenting or dismissing them
 		return NO;
@@ -108,7 +123,7 @@ static BOOL SetupAccessory(UIView *accessoryView, BOOL isEnabled, CGFloat previo
 				accessoryView.hidden = NO;
 			}
 
-			CGPoint center = CGPointMake(containerSize.width - previousButtonXOffset - globalOffset.x, containerSize.height - globalOffset.y);
+			CGPoint center = CGPointMake(containerSize.width - previousButtonOffset.x - globalOffset.x, containerSize.height - previousButtonOffset.y - globalOffset.y);
 			[UIView animateWithDuration:HSWidgetAnimationDuration animations:^{
 				accessoryView.transform = CGAffineTransformMakeScale(1.0 , 1.0);
 				accessoryView.alpha = 1.0;
@@ -117,7 +132,7 @@ static BOOL SetupAccessory(UIView *accessoryView, BOOL isEnabled, CGFloat previo
 				isPresentingOrDismissingAccessory = NO;
 			}];
 		} else {
-			accessoryView.center = CGPointMake(containerSize.width - previousButtonXOffset - globalOffset.x, containerSize.height - globalOffset.y);
+			accessoryView.center = CGPointMake(containerSize.width - previousButtonOffset.x - globalOffset.x, containerSize.height - previousButtonOffset.y - globalOffset.y);
 			accessoryView.transform = CGAffineTransformMakeScale(1.0 , 1.0);
 			accessoryView.hidden = NO;
 		}
@@ -130,7 +145,7 @@ static BOOL SetupAccessory(UIView *accessoryView, BOOL isEnabled, CGFloat previo
 				accessoryView.alpha = 1.0;
 			}
 
-			CGPoint center = CGPointMake(containerSize.width - previousButtonXOffset - globalOffset.x, containerSize.height - globalOffset.y);
+			CGPoint center = CGPointMake(containerSize.width - previousButtonOffset.x - globalOffset.x, containerSize.height - previousButtonOffset.y - globalOffset.y);
 			[UIView animateWithDuration:HSWidgetAnimationDuration animations:^{
 				accessoryView.transform = CGAffineTransformMakeScale(0.1, 0.1);
 				accessoryView.alpha = 0.0;
@@ -141,7 +156,7 @@ static BOOL SetupAccessory(UIView *accessoryView, BOOL isEnabled, CGFloat previo
 				isPresentingOrDismissingAccessory = NO;
 			}];
 		} else {
-			accessoryView.center = CGPointMake(containerSize.width - previousButtonXOffset - globalOffset.x, containerSize.height - globalOffset.y);
+			accessoryView.center = CGPointMake(containerSize.width - previousButtonOffset.x - globalOffset.x, containerSize.height - previousButtonOffset.y - globalOffset.y);
 			accessoryView.hidden = YES;
 		}
 	}
@@ -273,6 +288,16 @@ static BOOL SetupAccessory(UIView *accessoryView, BOOL isEnabled, CGFloat previo
 	_widgetFrame = frame;
 }
 
+-(void)setCornerRadius:(CGFloat)cornerRadius {
+	_cornerRadius = cornerRadius;
+	SetContinuousCornerRadius(_editingView, cornerRadius);
+
+	// re-set the corner radius of the accessories
+	// _expandAccessoryView.layer.cornerRadius = cornerRadius / _expandAccessoryView.frame.size.width;
+	// _shrinkAccessoryView.layer.cornerRadius = cornerRadius / _shrinkAccessoryView.frame.size.width;
+	// _settingsAccessoryView.layer.cornerRadius = cornerRadius / _settingsAccessoryView.frame.size.width;
+}
+
 -(SBCloseBoxView *)_createButtonBoxView:(SEL)action withStyle:(BoxViewButtonStyle)buttonStyle {
 	SBCloseBoxView *buttonBoxView = nil;
 	if (%c(SBXCloseBoxView)) {
@@ -327,18 +352,7 @@ static BOOL SetupAccessory(UIView *accessoryView, BOOL isEnabled, CGFloat previo
 		frame.size.height = MAX(frame.size.height, 0);
 
 		_editingView = [[HSWidgetUnclippedView alloc] initWithFrame:frame];
-		_editingView.layer.cornerRadius = self.cornerRadius;
-		// enable continuous corner radius
-		if ([_editingView.layer respondsToSelector:@selector(setCornerCurve:)]) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability-new"
-			// iOS 13+
-			_editingView.layer.cornerCurve = kCACornerCurveContinuous;
-#pragma clang diagnostic pop
-		} else if ([_editingView.layer respondsToSelector:@selector(setContinuousCorners:)]) {
-			// iOS 11 - 12
-			_editingView.layer.continuousCorners = YES;
-		}
+		SetContinuousCornerRadius(_editingView, self.cornerRadius);
 
 		[self.view addSubview:_editingView];
 		_editingView.hidden = YES;
@@ -354,7 +368,7 @@ static BOOL SetupAccessory(UIView *accessoryView, BOOL isEnabled, CGFloat previo
 			((UIImageView *)[_expandAccessoryView valueForKey:@"xPlusDView"]).image = expandImage;
 		}
 		_expandAccessoryView.center = CGPointMake(_editingView.frame.size.width, _editingView.frame.size.height);
-		_expandAccessoryView.layer.cornerRadius = self.cornerRadius / _expandAccessoryView.frame.size.width;
+		// _expandAccessoryView.layer.cornerRadius = self.cornerRadius / _expandAccessoryView.frame.size.width;
 		_expandAccessoryView.hidden = YES;
 		[_editingView addSubview:_expandAccessoryView];
 
@@ -365,7 +379,7 @@ static BOOL SetupAccessory(UIView *accessoryView, BOOL isEnabled, CGFloat previo
 			((UIImageView *)[_shrinkAccessoryView valueForKey:@"xPlusDView"]).image = shrinkImage;
 		}
 		_shrinkAccessoryView.center = CGPointMake(_editingView.frame.size.width - _expandAccessoryView.frame.size.width * 3.0 / 2.0, _editingView.frame.size.height);
-		_shrinkAccessoryView.layer.cornerRadius = self.cornerRadius / _shrinkAccessoryView.frame.size.width;
+		// _shrinkAccessoryView.layer.cornerRadius = self.cornerRadius / _shrinkAccessoryView.frame.size.width;
 		_shrinkAccessoryView.hidden = YES;
 		[_editingView addSubview:_shrinkAccessoryView];
 
@@ -376,7 +390,7 @@ static BOOL SetupAccessory(UIView *accessoryView, BOOL isEnabled, CGFloat previo
 			((UIImageView *)[_settingsAccessoryView valueForKey:@"xPlusDView"]).image = settingsImage;
 		}
 		_settingsAccessoryView.center = CGPointMake(_editingView.frame.size.width, 0);
-		_settingsAccessoryView.layer.cornerRadius = self.cornerRadius / _expandAccessoryView.frame.size.width;
+		// _settingsAccessoryView.layer.cornerRadius = self.cornerRadius / _settingsAccessoryView.frame.size.width;
 		_settingsAccessoryView.hidden = YES;
 		[_editingView addSubview:_settingsAccessoryView];
 
@@ -389,6 +403,11 @@ static BOOL SetupAccessory(UIView *accessoryView, BOOL isEnabled, CGFloat previo
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_editingStateChanged:) name:HSWidgetEditingStateChangedNotification object:nil];
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_availableSpaceDidChange) name:HSWidgetAvailableSpaceDidChangeNotification object:nil];
 	}
+}
+
+-(void)_closeTapped {
+	[self _forceEndWidgetDragging:YES];
+	[_delegate closeTapped:self];
 }
 
 -(void)_expandTapped {
@@ -498,11 +517,6 @@ static BOOL SetupAccessory(UIView *accessoryView, BOOL isEnabled, CGFloat previo
 	}
 }
 
--(void)_closeTapped {
-	[self _forceEndWidgetDragging:YES];
-	[_delegate closeTapped:self];
-}
-
 -(ZoomAnimationViewStyle)viewStyleForZoomAnimaton {
 	return ZoomAnimationViewStyleDefault;
 }
@@ -554,6 +568,9 @@ static BOOL SetupAccessory(UIView *accessoryView, BOOL isEnabled, CGFloat previo
 	BOOL isShrinkEnabled = [self isAccessoryTypeEnabled:AccessoryTypeShrink];
 	BOOL isSettingEnabled = [self isAccessoryTypeEnabled:AccessoryTypeSettings];
 
+	// if both expand and shrink accessories are enabled and
+	BOOL useAlternativeExpandOrShrinkLayout = isExpandEnabled && isShrinkEnabled && self.requestedSize.width < buttonWidth * 3;
+
 	BOOL isCompactMode = self.widgetFrame.size.numCols == 1 || self.widgetFrame.size.numRows == 1;
 	CGPoint globalShrinkOrExpandOffset = isCompactMode ? CGPointZero : CGPointMake(buttonWidth, buttonHeight);
 	CGPoint globalSettingsOffset = isCompactMode ? CGPointZero : CGPointMake(buttonWidth, -buttonHeight);
@@ -561,24 +578,30 @@ static BOOL SetupAccessory(UIView *accessoryView, BOOL isEnabled, CGFloat previo
 	CGSize settingsContainerSize = CGSizeMake(_editingView.frame.size.width, 0);
 
 	// update position of close box view
+	CGPoint closeCenter = isCompactMode ? CGPointZero : CGPointMake(buttonWidth, buttonHeight);
 	if (animated) {
-		CGPoint center = isCompactMode ? CGPointZero : CGPointMake(buttonWidth, buttonHeight);
 		[UIView animateWithDuration:HSWidgetAnimationDuration animations:^{
-			_closeAccessoryView.center = center;
+			_closeAccessoryView.center = closeCenter;
 		} completion:nil];
 	} else {
-		_closeAccessoryView.center = isCompactMode ? CGPointZero : CGPointMake(buttonWidth, buttonHeight);
+		_closeAccessoryView.center = closeCenter;
 	}
 
 	// update position/transform of expand box view
-	BOOL didUpdateExpandAccessory = SetupAccessory(_expandAccessoryView, isExpandEnabled, 0.0, globalShrinkOrExpandOffset, expandOrShrinkContainerSize, animated, _isPresentingOrDismissingExpandAccessoryView);
+	BOOL didUpdateExpandAccessory = SetupAccessory(_expandAccessoryView, isExpandEnabled, CGPointZero, globalShrinkOrExpandOffset, expandOrShrinkContainerSize, animated, _isPresentingOrDismissingExpandAccessoryView);
 
 	// update position/transform of shrink box view
-	BOOL didUpdateShrinkAccessory = SetupAccessory(_shrinkAccessoryView, isShrinkEnabled, isExpandEnabled ? buttonWidth * 3.0 / 2.0 : 0.0, globalShrinkOrExpandOffset, expandOrShrinkContainerSize, animated, _isPresentingOrDismissingShrinkAccessoryView);
+	CGPoint shrinkPreviousButtonOffset;
+	if (useAlternativeExpandOrShrinkLayout) {
+		shrinkPreviousButtonOffset = CGPointMake(0.0, isExpandEnabled ? buttonWidth * 3.0 / 2.0 : 0.0);
+	} else {
+		shrinkPreviousButtonOffset = CGPointMake(isExpandEnabled ? buttonWidth * 3.0 / 2.0 : 0.0, 0.0);
+	}
+	BOOL didUpdateShrinkAccessory = SetupAccessory(_shrinkAccessoryView, isShrinkEnabled, shrinkPreviousButtonOffset, globalShrinkOrExpandOffset, expandOrShrinkContainerSize, animated, _isPresentingOrDismissingShrinkAccessoryView);
 
-	// update position of settings box view
-	BOOL isPresentignOrDismissingSettings = NO;
-	SetupAccessory(_settingsAccessoryView, isSettingEnabled, 0.0, globalSettingsOffset, settingsContainerSize, animated, isPresentignOrDismissingSettings);
+	// update position/transform of settings box view
+	BOOL isPresentingOrDismissingSettings = NO;
+	SetupAccessory(_settingsAccessoryView, isSettingEnabled, CGPointZero, globalSettingsOffset, settingsContainerSize, animated, isPresentingOrDismissingSettings);
 
 	// fix accessories sometimes not being updated when released too soon
 	if (!didUpdateExpandAccessory || !didUpdateShrinkAccessory) {

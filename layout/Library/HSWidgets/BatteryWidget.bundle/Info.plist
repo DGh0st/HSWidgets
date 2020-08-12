@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>com.qiop1379.batterywidget</string>
+	<key>NSPrincipalClass</key>
+	<string>BatteryWidgetViewController</string>
+	<key>HSWidgetDisplayName</key>
+	<string>Batteries (Modern)</string>
+	<key>HSWidgetIcon</key>
+	<string>icon.png</string>
+	<key>HSWidgetCreator</key>
+	<string>qwertyuiop1379</string>
+</dict>
+</plist>

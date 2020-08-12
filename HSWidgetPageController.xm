@@ -276,10 +276,12 @@ static inline void RemoveViewController(UIViewController *viewController, BOOL a
 
 			// calculate and set the frame for the widget
 			PageType currentPageType = _model.pageLayoutType;
-			// NSUInteger numRows = [widgetViewController numRows];
 			HSWidgetFrame widgetFrame = widgetViewController.widgetFrame;
 			_model.pageLayoutType = PageTypeNone;
-			CGPoint origin = [_iconListView originForIconAtCoordinate:SBIconCoordinateMake(widgetFrame.origin)];
+			CGFloat originCol = widgetFrame.origin.col;
+			if ([UIApplication sharedApplication].userInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionRightToLeft)
+				originCol += widgetFrame.size.numCols - 1;
+			CGPoint origin = [_iconListView originForIconAtCoordinate:SBIconCoordinateMake(widgetFrame.origin.row, originCol)];
 			_model.pageLayoutType = currentPageType;
 			widgetViewController.requestedSize = [self sizeForWidgetSize:widgetFrame.size];
 
@@ -561,6 +563,9 @@ static inline void RemoveViewController(UIViewController *viewController, BOOL a
 
 			// get the shifted grid positions
 			HSWidgetFrame widgetFrame = widgetViewController.widgetFrame;
+			if ([UIApplication sharedApplication].userInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionRightToLeft)
+				newWidgetOrigin.col -= widgetFrame.size.numCols - 1;
+
 			NSInteger diffRow = newWidgetOrigin.row - widgetFrame.origin.row;
 			NSInteger diffCol = newWidgetOrigin.col - widgetFrame.origin.col;
 			if (diffRow != 0 || diffCol != 0) {
@@ -716,7 +721,10 @@ static inline void RemoveViewController(UIViewController *viewController, BOOL a
 	
 	PageType currentPageType = _model.pageLayoutType;
 	_model.pageLayoutType = PageTypeNone;
-	CGPoint origin = [_iconListView originForIconAtCoordinate:SBIconCoordinateMake(widgetFrame.origin)];
+	CGFloat originCol = widgetFrame.origin.col;
+	if ([UIApplication sharedApplication].userInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionRightToLeft)
+		originCol += widgetFrame.size.numCols - 1;
+	CGPoint origin = [_iconListView originForIconAtCoordinate:SBIconCoordinateMake(widgetFrame.origin.row, originCol)];
 	_model.pageLayoutType = currentPageType;
 
 	_model = [_iconListView model]; // update maxIconCount for current page

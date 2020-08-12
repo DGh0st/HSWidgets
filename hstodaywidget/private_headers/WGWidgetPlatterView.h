@@ -11,4 +11,5 @@
 -(void)setMaterialGroupNameBase:(NSString *)arg1; // iOS 13
 -(void)_configureHeaderViewsIfNecessary; // iOS 13
 -(void)_configureBackgroundMaterialViewIfNecessary; // iOS 13
+-(void)setContentViewHitTestingDisabled:(BOOL)arg1; // iOS 13
 @end

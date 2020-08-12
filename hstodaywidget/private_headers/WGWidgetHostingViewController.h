@@ -26,4 +26,5 @@
 -(void)managingContainerWillAppear:(id)arg1; // iOS 11 - 13
 -(void)managingContainerDidDisappear:(id)arg1; // iOS 11 - 13
 -(void)setDisconnectsImmediately:(BOOL)arg1; // iOS 10 - 13
+-(id)_cancelTouches; // iOS 10 - 13
 @end
