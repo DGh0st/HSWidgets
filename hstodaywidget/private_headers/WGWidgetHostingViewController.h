@@ -3,6 +3,7 @@
 
 @interface WGWidgetHostingViewController : UIViewController // iOS 10 - 13
 @property (nonatomic, readonly) WGWidgetInfo *widgetInfo; // iOS 10 - 13
+@property (assign, nonatomic, weak) id<WGWidgetHostingViewControllerDelegate> delegate; // iOS 10 - 13
 @property (assign, nonatomic, weak) id<WGWidgetHostingViewControllerHost> host; // iOS 10 - 13
 @property (assign, nonatomic) NSInteger userSpecifiedDisplayMode; // iOS 10 - 13
 // @property (nonatomic,readonly) NSInteger activeDisplayMode; // iOS 10 - 13
