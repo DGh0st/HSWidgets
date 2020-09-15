@@ -38,7 +38,7 @@ clean-env:
 	rm -r $(HSWIDGETS_THEOS_TEMPLATE_STAGING_DIR)/$(FRAMEWORK_NAME).framework $(THEOS)/lib/$(FRAMEWORK_NAME).framework
 
 create-framework-zip:
-	zip -r $(FRAMEWORK_PATH).zip $(FRAMEWORK_PATH)
+	cd $(HSWIDGETS_THEOS_TEMPLATE_STAGING_DIR) && zip -r $(FRAMEWORK_PATH).zip $(FRAMEWORK_NAME).framework
 
 clean-framework-zip:
 	rm $(FRAMEWORK_PATH).zip
