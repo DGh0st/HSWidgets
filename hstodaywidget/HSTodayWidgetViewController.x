@@ -305,7 +305,9 @@ typedef NS_ENUM(NSInteger, DisplayMode) {
 -(void)viewWillAppear:(BOOL)animated {
 	[super viewWillAppear:animated];
 
-	[self.hostingViewController managingContainerWillAppear:self];
+	if ([self.hostingViewController respondsToSelector:@selector(managingContainerWillAppear:)]) {
+		[self.hostingViewController managingContainerWillAppear:self];
+	}
 	
 	[self.hostingViewController wg_beginAppearanceTransitionIfNecessary:YES animated:animated];
 }
@@ -333,7 +335,9 @@ typedef NS_ENUM(NSInteger, DisplayMode) {
 	[super viewDidDisappear:animated];
 
 	_isWidgetVisible = NO;
-	[self.hostingViewController managingContainerDidDisappear:self];
+	if ([self.hostingViewController respondsToSelector:@selector(managingContainerDidDisappear:)]) {
+		[self.hostingViewController managingContainerDidDisappear:self];
+	}
 
 	[self.hostingViewController wg_beginAppearanceTransitionIfNecessary:NO animated:animated];
 	[self.hostingViewController wg_endAppearanceTransitionIfNecessary];
@@ -470,7 +474,8 @@ typedef NS_ENUM(NSInteger, DisplayMode) {
 	[[HSTodayWidgetController sharedInstance] removeWidgetWithIdentifier:self.widgetIdentifier];
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:HSWidgetEditingStateChangedNotification object:nil];
 
-	[self.hostingViewController release];
+	[self.hostingViewController willMoveToParentViewController:nil];
+	[self.hostingViewController removeFromParentViewController];
 	self.hostingViewController = nil;
 
 	[self.widgetView removeFromSuperview];

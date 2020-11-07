@@ -57,8 +57,8 @@
 
 	HSWidgetLoader *_sharedLoader = [self sharedLoader];
 
-	_sharedLoader._availableHSWidgetClasses = [NSMutableArray arrayWithCapacity:4];
-	_sharedLoader._availableHSWidgetBundles = [NSMutableArray arrayWithCapacity:4];
+	_sharedLoader._availableHSWidgetClasses = [NSMutableArray arrayWithCapacity:widgetsDirectories.count];
+	_sharedLoader._availableHSWidgetBundles = [NSMutableArray arrayWithCapacity:widgetsDirectories.count];
 	for (NSString *widgetDirectoryName in widgetsDirectories) {
 		NSString *widgetDirectoryPath = [WIDGETS_INSTALLATION_PATH stringByAppendingPathComponent:widgetDirectoryName];
 		NSBundle *widgetBundle = [NSBundle bundleWithPath:widgetDirectoryPath];

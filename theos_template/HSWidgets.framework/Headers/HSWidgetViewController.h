@@ -53,6 +53,7 @@ typedef NS_ENUM(NSUInteger, AccessoryType) {
 +(nullable Class<HSWidgetAdditionalOptions>)addNewWidgetAdditionalOptionsControllerClass;
 +(nullable Class)preferencesOptionsControllerClass;
 +(nullable NSDictionary *)createOptionsFromController:(nullable id<HSWidgetAdditionalOptions>)controller withAvailableGridPosition:(NSArray<HSWidgetAvailablePositionObject *> *)positions;
++(HSWidgetSize)widgetSizeFromController:(nullable id<HSWidgetAdditionalOptions>)controller withAvailableGridPosition:(NSArray<HSWidgetAvailablePositionObject *> *)positions;
 +(NSInteger)allowedInstancesPerPage;
 -(instancetype)initForWidgetFrame:(HSWidgetFrame)frame withOptions:(nullable NSDictionary *)options NS_REQUIRES_SUPER;
 -(nullable NSDictionary *)options;

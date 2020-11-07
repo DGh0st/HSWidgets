@@ -1,5 +1,6 @@
 #import "HSWidgetCombinedAdditionalOptionsAndPreferencesViewController.h"
 #import "HSWidgetAvailablePositionObject.h"
+#import "HSWidgetGridPositionConverterCache.h"
 #import "HSWidgetViewController.h"
 
 #define ADD_NAVIGATION_ITEM_TITLE @"Add"
@@ -100,6 +101,24 @@
 -(void)addWidget {
 	// perform actions when additional options is added/done
 	[self.delegate additionalOptionsViewController:self addWidgetForClass:self.widgetClass];
+}
+
+-(BOOL)containsSpaceForGridPositions:(NSArray<HSWidgetPositionObject *> *)positions {
+	if (self.widgetViewController != nil) {
+		// if widget view controller is set then we are being presented as preferences view controller
+		return [super containsSpaceForGridPositions:positions];
+	} else {
+		return [HSWidgetGridPositionConverterCache canFitWidget:positions inGridPositions:self.availablePositions];
+	}
+}
+
+-(BOOL)containsSpaceForWidgetSize:(HSWidgetSize)size {
+	if (self.widgetViewController != nil) {
+		// if widget view controller is set then we are being presented as preferences view controller
+		return [super containsSpaceForWidgetSize:size];
+	} else {
+		return [HSWidgetGridPositionConverterCache canFitWidgetOfSize:size inGridPositions:self.availablePositions];
+	}
 }
 
 -(void)dealloc {

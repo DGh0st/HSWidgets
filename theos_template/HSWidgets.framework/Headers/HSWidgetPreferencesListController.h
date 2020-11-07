@@ -19,4 +19,6 @@
 -(void)resetFileValues;
 -(id)readFileValue:(PSSpecifier *)specifier;
 -(void)setFileValue:(id)value specifier:(PSSpecifier *)specifier;
+-(BOOL)containsSpaceForGridPositions:(NSArray<HSWidgetPositionObject *> *)positions;
+-(BOOL)containsSpaceForWidgetSize:(HSWidgetSize)size;
 @end

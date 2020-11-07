@@ -3,6 +3,7 @@
 #import "HSWidgetAddNewAdditionalOptionsDelegate.h"
 #import "HSWidgetBezierShapeTableViewCell.h"
 #import "HSWidgetResources.h"
+#import "Availability.h"
 #import "NSUserDefaults.h"
 
 #define NAVIGATION_TITLE @"Placeholder Shape"
@@ -10,10 +11,9 @@
 
 @implementation HSWidgetBezierShapeSelectorViewController
 -(instancetype)initWithDelegate:(id<HSWidgetAddNewAdditionalOptionsDelegate>)delegate {
-		BOOL isAtLeastiOS13 = [[[UIDevice currentDevice] systemVersion] compare:@"13.0" options:NSNumericSearch] == NSOrderedDescending;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunguarded-availability-new"
-	self = [super initWithStyle:isAtLeastiOS13 ? UITableViewStyleInsetGrouped : UITableViewStyleGrouped];
+	self = [super initWithStyle:isAtLeastiOS13() ? UITableViewStyleInsetGrouped : UITableViewStyleGrouped];
 #pragma clang diagnostic pop
 	if (self != nil) {
 		_delegate = delegate;

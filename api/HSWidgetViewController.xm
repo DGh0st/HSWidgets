@@ -208,6 +208,13 @@ static BOOL SetupAccessory(UIView *accessoryView, BOOL isEnabled, CGPoint previo
 	return [NSDictionary dictionaryWithDictionary:controller.widgetOptions];
 }
 
++(HSWidgetSize)widgetSizeFromController:(nullable id<HSWidgetAdditionalOptions>)controller withAvailableGridPosition:(NSArray<HSWidgetAvailablePositionObject *> *)positions {
+	if (controller != nil && controller.requestWidgetSize.numRows > 0 && controller.requestWidgetSize.numCols > 0) {
+		return controller.requestWidgetSize;
+	}
+	return [self minimumSize];
+}
+
 +(NSInteger)allowedInstancesPerPage {
 	return -1; // -1 = unlimited
 }

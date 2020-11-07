@@ -6,7 +6,7 @@
 
 #define LABEL_YOFFSET 5.0
 #define FONT_SIZE 12.0
-#define CORNER_RADIUS 35.0
+#define CORNER_RADIUS 20.0
 #define EXPANDED_KEY @"isExpanded"
 
 static void SetContinuousCornerRadius(UIView *view, CGFloat cornerRadius) {

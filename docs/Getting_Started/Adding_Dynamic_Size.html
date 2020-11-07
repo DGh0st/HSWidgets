@@ -42,7 +42,7 @@
 					<div class="codeblock objectivec">
 <pre><code>
 -(<span class="primitive">BOOL</span>)<span class="methodsignature">isAccessoryTypeEnabled:</span>(<span class="enum">AccessoryType</span>)<span class="signatureargument">accessoryType</span> {
-	<span class="reservedkeyword">if</span> (accessoryType == <span class="literal">AccessoryTypeEnabled</span>) {
+	<span class="reservedkeyword">if</span> (accessoryType == <span class="literal">AccessoryTypeExpand</span>) {
 		<span class="struct">HSWidgetSize</span> finalExpandedSize = <span class="functioncall">HSWidgetSizeAdd</span>(<span class="reservedkeywordalt">self</span>.widgetFrame.size, <span class="literal">1</span>, <span class="literal">1</span>);
 		<span class="reservedkeyword">return</span> [<span class="reservedkeywordalt">self</span> <span class="methodcall">containsSpaceToExpandOrShrinkToWidgetSize:</span>finalExpandedSize];
 	} <span class="reservedkeyword">else if</span> (accessoryType == <span class="literal">AccessoryTypeShrink</span>) {
@@ -92,11 +92,11 @@
 					<div class="imageContainer">
 						<img src="BuggyExpandedSquareWidget.png">
 					</div>
-					<p>Oof thats buggy, well thats because we forgot to update our <span class="codeblockinline">calculatedFrame</span> implementation with the sizing logic that we changed. For practice I'll leave that up to you, the final result after the change should look like this:</p>
+					<p>Oof thats buggy, well thats because we forgot to update our hardcoded implemented of <span class="codeblockinline">calculatedFrame</span> with the sizing logic that we changed. For practice I'll leave that up to you, the final result after the change should look like this:</p>
 					<div class="imageContainer">
 						<img src="ExpandedSquareWidget.png">
 					</div>
-					<p><!-- SPACING --></p>
+					<p>Note <span class="codeblockinline">calculatedFrame</span> only needs to be overridden if custom widget view does not cover the entire size of the widget.</p>
 				</div>
 			</div>
 			<div class="sectionInfo continuation-links">

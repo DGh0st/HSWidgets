@@ -9,3 +9,4 @@
 #import <HSWidgets/HSWidgetResources.h>
 #import <HSWidgets/HSWidgetUnclippedView.h>
 #import <HSWidgets/HSWidgetViewController.h>
+#import <HSWidgets/HSModernWidgetViewController.h>

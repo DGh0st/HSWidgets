@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Image Selector</string>
+			<key>id</key>
+			<string>SelectionDescription</string>
+			<key>footerText</key>
+			<string>Pick the selector used to choose displayed images.</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSegmentCell</string>
+			<key>key</key>
+			<string>ImageSelectionType</string>
+			<key>id</key>
+			<string>TypeSelection</string>
+			<key>validTitles</key>
+			<array>
+				<string>Album</string>
+				<string>Image</string>
+				<string>Random</string>
+			</array>
+			<key>validValues</key>
+			<array>
+				<integer>2</integer><!-- Album -->
+				<integer>1</integer><!-- Image -->
+				<integer>0</integer><!-- Random -->
+			</array>
+			<key>default</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>cellClass</key>
+			<string>HSPhotosWidgetImageViewPickerCell</string>
+			<key>key</key>
+			<string>SelectedImageLocalIdentifier</string>
+			<key>id</key>
+			<string>ImageSelection</string>
+			<key>height</key>
+			<real>350</real>
+		</dict>
+		<dict>
+			<key>cellClass</key>
+			<string>HSPhotosWidgetAlbumPickerCell</string>
+			<key>key</key>
+			<string>SelectedAlbumLocalIdentifier</string>
+			<key>id</key>
+			<string>AlbumSelection</string>
+			<key>height</key>
+			<real>350</real>
+		</dict>
+	</array>
+	<key>title</key>
+	<string>Photos</string>
+</dict>
+</plist>

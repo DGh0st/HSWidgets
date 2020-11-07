@@ -1,4 +1,6 @@
 #import "HSWidgetPreferencesListController.h"
+#import "HSWidgetGridPositionConverterCache.h"
+#import "Availability.h"
 #import "NSUserDefaults.h"
 
 #define PREFERENCES_PLIST_PATH_FORMAT @"/var/mobile/Library/Preferences/%@.plist"
@@ -6,6 +8,14 @@
 @interface PSListController (Private)
 -(id)controllerForSpecifier:(PSSpecifier *)specifier; // iOS 6 - 13
 @end
+
+static inline NSMutableArray *GetAvailableGridPositionsExcludingWidget(HSWidgetViewController *widgetViewController, NSArray<HSWidgetAvailablePositionObject *> *availablePositions) {
+	NSMutableArray<HSWidgetAvailablePositionObject *> *availableGridPositions = [NSMutableArray arrayWithArray:availablePositions];
+	for (HSWidgetPositionObject *position in widgetViewController._gridPositions) {
+		[availableGridPositions addObject:[HSWidgetAvailablePositionObject objectWithAvailableWidgetPosition:position.position containingIcon:NO]];
+	}
+	return availableGridPositions;
+}
 
 @implementation HSWidgetPreferencesListController
 -(instancetype)initWithWidgetViewController:(HSWidgetViewController *)widgetViewController availablePositions:(NSArray<HSWidgetAvailablePositionObject *> *)positions {
@@ -16,10 +26,9 @@
 }
 
 -(UITableViewStyle)tableViewStyle {
-	BOOL isAtLeastiOS13 = [[[UIDevice currentDevice] systemVersion] compare:@"13.0" options:NSNumericSearch] == NSOrderedDescending;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunguarded-availability-new"
-	return isAtLeastiOS13 ? UITableViewStyleInsetGrouped : [super tableViewStyle];
+	return isAtLeastiOS13() ? UITableViewStyleInsetGrouped : [super tableViewStyle];
 #pragma clang diagnostic pop
 }
 
@@ -150,6 +159,16 @@
 	}
 
 	[self _postNotificationForSpecifierIfProvided:specifier];
+}
+
+-(BOOL)containsSpaceForGridPositions:(NSArray<HSWidgetPositionObject *> *)positions {
+	NSMutableArray *availableGridPositions = GetAvailableGridPositionsExcludingWidget(self.widgetViewController, self.availablePositions);
+	return [HSWidgetGridPositionConverterCache canFitWidget:positions inGridPositions:availableGridPositions];
+}
+
+-(BOOL)containsSpaceForWidgetSize:(HSWidgetSize)size {
+	NSMutableArray *availableGridPositions = GetAvailableGridPositionsExcludingWidget(self.widgetViewController, self.availablePositions);
+	return [HSWidgetGridPositionConverterCache canFitWidgetOfSize:size inGridPositions:availableGridPositions];
 }
 
 -(void)dealloc {

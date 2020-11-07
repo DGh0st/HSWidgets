@@ -32,7 +32,7 @@ internal-all::
 	find $(PUBLIC_HEADERS_DIR) -maxdepth 1 -name "*.h" -exec cp {} $(FRAMEWORK_PATH)/Headers \;
 	chmod +x $(HSWIDGETS_THEOS_TEMPLATE_STAGING_DIR)/create_tbd.sh
 	$(HSWIDGETS_THEOS_TEMPLATE_STAGING_DIR)/create_tbd.sh
-	cp -r $(FRAMEWORK_PATH) $(THEOS)/lib/$(FRAMEWORK_NAME).framework
+	cp -r $(FRAMEWORK_PATH) $(THEOS)/lib/
 
 clean-env:
 	rm -r $(HSWIDGETS_THEOS_TEMPLATE_STAGING_DIR)/$(FRAMEWORK_NAME).framework $(THEOS)/lib/$(FRAMEWORK_NAME).framework

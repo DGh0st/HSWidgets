@@ -4,6 +4,7 @@
 #import "HSWidgetHeaderTableView.h"
 #import "HSWidgetSubtitleTableViewCell.h"
 #import "HSWidgetViewController.h"
+#import "Availability.h"
 
 #define REUSABLE_HEADER_IDENTIFIER @"HSAddWidgetHeader"
 #define REUSABLE_BEZIER_SHAPE_IDENTIIFER @"HSWidgetAddBezierShapeCell"
@@ -35,10 +36,9 @@
 
 @implementation HSAddWidgetRootViewController
 -(instancetype)initWithWidgets:(NSArray *)availableClasses insufficientSpaceWidgets:(NSArray *)insufficientSpaceClasses excludingWidgetsOptions:(NSDictionary *)excludes {
-	BOOL isAtLeastiOS13 = [[[UIDevice currentDevice] systemVersion] compare:@"13.0" options:NSNumericSearch] == NSOrderedDescending;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunguarded-availability-new"
-	self = [super initWithStyle:isAtLeastiOS13 ? UITableViewStyleInsetGrouped : UITableViewStyleGrouped];
+	self = [super initWithStyle:isAtLeastiOS13() ? UITableViewStyleInsetGrouped : UITableViewStyleGrouped];
 #pragma clang diagnostic pop
 	if (self != nil) {
 		_delegate = nil;
@@ -151,7 +151,17 @@
 
 -(void)additionalOptionsViewController:(id<HSWidgetAdditionalOptions>)additionalOptionsViewController addWidgetForClass:(Class)widgetClass {
 	NSDictionary *options = [widgetClass createOptionsFromController:additionalOptionsViewController withAvailableGridPosition:self.availablePositions];
-	HSWidgetSize size = [widgetClass minimumSize];
+	HSWidgetSize size = [widgetClass widgetSizeFromController:additionalOptionsViewController withAvailableGridPosition:self.availablePositions];
+
+	if (![HSWidgetGridPositionConverterCache canFitWidgetOfSize:size inGridPositions:self.availablePositions]) {
+		NSString *reason = [NSString stringWithFormat:@"Insufficient space to add a widget of size %zu, %zu", size.numRows, size.numCols];
+		@throw [NSException exceptionWithName:@"HSWidgetsInsufficientSpaceExecption" reason:reason userInfo:@{
+			@"WidgetClass" : widgetClass,
+			@"RequestedNumRows" : @(size.numRows),
+			@"RequestedNumCols" : @(size.numCols)
+		}];
+	}
+
 	HSWidgetPosition position = [_delegate widgetOriginForWidgetSize:size withPreferredOrigin:self.preferredPosition];
 	HSWidgetFrame widgetFrame = HSWidgetFrameMake(position, size);
 	NSMutableArray<HSWidgetPositionObject *> *widgetPositions = [HSWidgetGridPositionConverterCache gridPositionsForWidgetFrame:widgetFrame];

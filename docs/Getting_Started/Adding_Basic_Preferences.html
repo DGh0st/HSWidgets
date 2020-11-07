@@ -112,9 +112,9 @@
 			&lt;/<span class="tag">array</span>&gt;
 			&lt;<span class="tag">key</span>&gt;validValues&lt;/<span class="tag">key</span>&gt;
 			&lt;<span class="tag">array</span>&gt;
-				&lt;<span class="tag">integer</span>&gt;0&lt;/<span class="tag">integer</span>&gt;<span class="comment">&lt;-- Red --></span>
-				&lt;<span class="tag">integer</span>&gt;1&lt;/<span class="tag">integer</span>&gt;<span class="comment">&lt;-- Green --></span>
-				&lt;<span class="tag">integer</span>&gt;2&lt;/<span class="tag">integer</span>&gt;<span class="comment">&lt;-- Blue --></span>
+				&lt;<span class="tag">integer</span>&gt;0&lt;/<span class="tag">integer</span>&gt;<span class="comment">&lt;!-- Red --></span>
+				&lt;<span class="tag">integer</span>&gt;1&lt;/<span class="tag">integer</span>&gt;<span class="comment">&lt;!-- Green --></span>
+				&lt;<span class="tag">integer</span>&gt;2&lt;/<span class="tag">integer</span>&gt;<span class="comment">&lt;!-- Blue --></span>
 			&lt;/<span class="tag">array</span>&gt;
 			&lt;<span class="tag">key</span>&gt;default&lt;/<span class="tag">key</span>&gt;
 			&lt;<span class="tag">integer</span>&gt;0&lt;/<span class="tag">integer</span>&gt;
@@ -141,10 +141,11 @@
 <span class="reservedidentifier">@end</span>
 </code></pre>
 					</div>
-					<p>Then modify our makefile to also compile the new implementation file along with our main widget class.</p>
+					<p>Then modify our makefile to also compile the new implementation file along with our main widget class and link against Preferences framework since we are using specifiers.</p>
 					<div class="codeblock makefile">
 <pre><code>
 <span class="variable">HSCustomWidget_FILES</span> = HSCustomWidgetViewController.mm HSCustomWidgetPreferencesViewController.mm
+<span class="variable">HSCustomWidget_PRIVATE_FRAMEWORKS</span> = Preferences
 </code></pre>
 					</div>
 					<p>The final steps is to let HSWidgets know to use this class for additional options and then use the preference options in our widget. As mentioned above:</p>

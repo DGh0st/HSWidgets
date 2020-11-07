@@ -1,18 +1,19 @@
+#import "Availability.h"
 #import "HSWidgetAdditionalOptionsViewController.h"
 #import "HSWidgetAvailablePositionObject.h"
 #import "HSWidgetViewController.h"
 
 @implementation HSWidgetAdditionalOptionsViewController
 -(instancetype)initWithWidgetsOptionsToExclude:(NSArray *)optionsToExclude withDelegate:(id<HSWidgetAddNewAdditionalOptionsDelegate>)delegate availablePositions:(NSArray<HSWidgetAvailablePositionObject *> *)positions {
-	BOOL isAtLeastiOS13 = [[[UIDevice currentDevice] systemVersion] compare:@"13.0" options:NSNumericSearch] == NSOrderedDescending;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunguarded-availability-new"
-	self = [super initWithStyle:isAtLeastiOS13 ? UITableViewStyleInsetGrouped : UITableViewStyleGrouped];
+	self = [super initWithStyle:isAtLeastiOS13() ? UITableViewStyleInsetGrouped : UITableViewStyleGrouped];
 #pragma clang diagnostic pop
 	if (self != nil) {
 		self.delegate = delegate;
 		self.widgetClass = nil;
 		self.widgetOptions = [NSMutableDictionary dictionary];
+		self.requestWidgetSize = HSWidgetSizeZero;
 		self.availablePositions = positions;
 	}
 	return self;
@@ -38,6 +39,14 @@
 -(void)addWidget {
 	// perform actions when additional options is added/done
 	[self.delegate additionalOptionsViewController:self addWidgetForClass:self.widgetClass];
+}
+
+-(BOOL)containsSpaceForGridPositions:(NSArray<HSWidgetPositionObject *> *)positions {
+	return [HSWidgetGridPositionConverterCache canFitWidget:positions inGridPositions:self.availablePositions];
+}
+
+-(BOOL)containsSpaceForWidgetSize:(HSWidgetSize)size {
+	return [HSWidgetGridPositionConverterCache canFitWidgetOfSize:size inGridPositions:self.availablePositions];
 }
 
 -(void)dealloc {

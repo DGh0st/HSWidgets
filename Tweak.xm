@@ -7,7 +7,6 @@
 #import "SBIconListModel.h"
 #import "SBIconListView.h"
 #import "SBRootFolderController.h"
-#import "SBRootFolderView.h"
 
 const HSWidgetPosition HSWidgetPositionZero = HSWidgetPositionMake(0, 0);
 const HSWidgetSize HSWidgetSizeZero = HSWidgetSizeMake(0, 0);

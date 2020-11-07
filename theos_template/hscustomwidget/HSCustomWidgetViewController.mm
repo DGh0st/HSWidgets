@@ -4,15 +4,8 @@
 -(void)viewDidLoad {
 	[super viewDidLoad];
 
-	NSInteger colorPicked = [widgetOptions[@"WidgetColor"] integerValue];
-
 	self.square = [[UIView alloc] initWithFrame:[self calculatedFrame]];
-	if (colorPicked == 0)
-		self.square.backgroundColor = [[UIColor redColor] colorWithAlphaComponent:0.5];
-	else if (colorPicked == 1)
-		self.square.backgroundColor = [[UIColor greenColor] colorWithAlphaComponent:0.5];
-	else if (colorPicked == 2)
-		self.square.backgroundColor = [[UIColor blueColor] colorWithAlphaComponent:0.5];
+	[self updateSquareColor];
 	self.square.layer.cornerRadius = self.cornerRadius;
 	[self.view addSubview:self.square];
 }
@@ -21,14 +14,18 @@
 	[super setWidgetOptionValue:object forKey:key];
 
 	if ([key isEqualToString:@"WidgetColor"]) {
-		NSInteger colorPicked = [widgetOptions[@"WidgetColor"] integerValue];
-		if (colorPicked == 0)
-        	        self.square.backgroundColor = [[UIColor redColor] colorWithAlphaComponent:0.5];
-	        else if (colorPicked == 1)
-                	self.square.backgroundColor = [[UIColor greenColor] colorWithAlphaComponent:0.5];
-        	else if (colorPicked == 2)
-	                self.square.backgroundColor = [[UIColor blueColor] colorWithAlphaComponent:0.5];
+		[self updateSquareColor];
 	}
+}
+
+-(void)updateSquareColor {
+	NSInteger colorPicked = [widgetOptions[@"WidgetColor"] integerValue];
+	if (colorPicked == 0)
+		self.square.backgroundColor = [[UIColor redColor] colorWithAlphaComponent:0.5];
+	else if (colorPicked == 1)
+		self.square.backgroundColor = [[UIColor greenColor] colorWithAlphaComponent:0.5];
+	else if (colorPicked == 2)
+		self.square.backgroundColor = [[UIColor blueColor] colorWithAlphaComponent:0.5];
 }
 
 -(CGRect)calculatedFrame {
@@ -61,8 +58,7 @@
 -(void)setRequestedSize:(CGSize)size {
 	[super setRequestedSize:size];
 
-	CGFloat length = MIN(size.width, size.height);
-	self.square.frame = CGRectMake(5, 5, length - 10, length - 10);
+	self.square.frame = [self calculatedFrame];
 }
 
 +(HSWidgetSize)minimumSize {

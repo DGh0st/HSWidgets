@@ -65,10 +65,11 @@
 		widgetHostingViewController = [[%c(WGWidgetHostingViewController) alloc] initWithWidgetInfo:widgetInfo delegate:delegate host:host];
 
 		[[self _enabledWidgetIdsToWidgets] setObject:widgetHostingViewController forKey:identifier];
+		return [widgetHostingViewController autorelease];
 	} else {
 		widgetHostingViewController.host = host;
+		return widgetHostingViewController;
 	}
-	return widgetHostingViewController;
 }
 
 -(void)enumerateWidgetsWithBlock:(void(^)(HSTodayWidgetController *, WGWidgetHostingViewController *))block {

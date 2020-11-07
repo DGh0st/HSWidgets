@@ -2,9 +2,12 @@
 #import "HSWidgetLoader.h"
 #import "HSWidgetPreferences.h"
 #import "HSWidgetUnrotateableViewController.h"
+#import "SBFolder.h"
 #import "SBIconController.h"
 #import "SBRootFolderController.h"
 // #import "SpringBoard.h"
+
+#import <dlfcn.h>
 
 #define DRAGGING_WIDGET_HOLD_DURATION 0.03
 // #define PICKER_ROTATION_ASSERTION_REASON @"HSWidgetPicker"
@@ -21,6 +24,11 @@ static NSMutableArray *AvailableWidgetControllerClassesForAvailableSpaces(NSArra
 		}
 	}
 	return result;
+}
+
+static inline BOOL CanPageBeRemovedForCompaction(SBIconListModel *model) {
+	SBFolder *folder = [model folder];
+	return [[folder _listsForCompaction] containsObject:model];
 }
 
 static inline SBIconListView *GetCurrentIconListView() {
@@ -845,7 +853,7 @@ static inline void RemoveViewController(UIViewController *viewController, BOOL a
 	NSArray *availableSpaceForWidgets = [self availableSpaceWithRule:rule];
 
 	BOOL areWidgetsAvailableForCurrentEmptySpace = [AvailableWidgetControllerClassesForAvailableSpaces(availableSpaceForWidgets, nil) count] > 0;
-	if (!areWidgetsAvailableForCurrentEmptySpace || remove || numIcons == 0 || IsDraggingIcon()) {
+	if (!areWidgetsAvailableForCurrentEmptySpace || remove || (numIcons == 0 && CanPageBeRemovedForCompaction(_model)) || IsDraggingIcon()) {
 		availableSpaceForWidgets = nil;
 	}
 
@@ -859,7 +867,7 @@ static inline void RemoveViewController(UIViewController *viewController, BOOL a
 		NSUInteger numIcons = ((NSMutableArray *)[_iconListView icons]).count;
 		NSUInteger maxIconCountForPage = [_model maxNumberOfIcons];
 		NSUInteger iconsRequiredToRemove = excluded ? 1 : 0;
-		BOOL shouldRemoveFromPage = numIcons <= iconsRequiredToRemove;
+		BOOL shouldRemoveFromPage = numIcons <= iconsRequiredToRemove && CanPageBeRemovedForCompaction(_model);
 		if (numIcons <= maxIconCountForPage) {
 			[CATransaction begin];
 			[CATransaction setCompletionBlock:^{
@@ -926,6 +934,8 @@ static inline void RemoveViewController(UIViewController *viewController, BOOL a
 }
 
 -(void)dealloc {
+	[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_updateWidgetDrag) object:nil];
+
 	_isRemoving = YES;
 
 	_iconListView = nil;
@@ -966,6 +976,7 @@ static inline void RemoveViewController(UIViewController *viewController, BOOL a
 		[[%c(ISIconSupport) sharedInstance] addExtension:@"com.dgh0st.hswidgets"];
 	}
 
+	// TODO: potentially move to a different spot (later in SpringBoard initialization?)
 	[HSWidgetLoader loadAllWidgets];
 }
 
