@@ -938,6 +938,9 @@ static inline void RemoveViewController(UIViewController *viewController, BOOL a
 
 	_isRemoving = YES;
 
+	for (HSWidgetViewController *widgetViewController in _model.widgetViewControllers)
+		[widgetViewController _setDelegate:nil];
+
 	_iconListView = nil;
 	_model = nil;
 	self.draggingWidgetViewController = nil;

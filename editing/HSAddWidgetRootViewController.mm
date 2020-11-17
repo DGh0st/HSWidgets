@@ -1,10 +1,10 @@
 #import "HSAddWidgetRootViewController.h"
+#import "HSWidget-Availability.h"
 #import "HSWidgetBezierShapeDisclosureTableViewCell.h"
 #import "HSWidgetBezierShapeSelectorViewController.h"
 #import "HSWidgetHeaderTableView.h"
 #import "HSWidgetSubtitleTableViewCell.h"
 #import "HSWidgetViewController.h"
-#import "Availability.h"
 
 #define REUSABLE_HEADER_IDENTIFIER @"HSAddWidgetHeader"
 #define REUSABLE_BEZIER_SHAPE_IDENTIIFER @"HSWidgetAddBezierShapeCell"

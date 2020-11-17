@@ -1,9 +1,9 @@
 #import "HSWidgetBezierShapeSelectorViewController.h"
 #import "HSAddNewWidgetPositionView.h"
+#import "HSWidget-Availability.h"
 #import "HSWidgetAddNewAdditionalOptionsDelegate.h"
 #import "HSWidgetBezierShapeTableViewCell.h"
 #import "HSWidgetResources.h"
-#import "Availability.h"
 #import "NSUserDefaults.h"
 
 #define NAVIGATION_TITLE @"Placeholder Shape"

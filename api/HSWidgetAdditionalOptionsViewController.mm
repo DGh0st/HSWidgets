@@ -1,4 +1,4 @@
-#import "Availability.h"
+#import "HSWidget-Availability.h"
 #import "HSWidgetAdditionalOptionsViewController.h"
 #import "HSWidgetAvailablePositionObject.h"
 #import "HSWidgetViewController.h"

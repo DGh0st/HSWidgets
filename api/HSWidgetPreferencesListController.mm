@@ -1,6 +1,6 @@
+#import "HSWidget-Availability.h"
 #import "HSWidgetPreferencesListController.h"
 #import "HSWidgetGridPositionConverterCache.h"
-#import "Availability.h"
 #import "NSUserDefaults.h"
 
 #define PREFERENCES_PLIST_PATH_FORMAT @"/var/mobile/Library/Preferences/%@.plist"

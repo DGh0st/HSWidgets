@@ -203,7 +203,8 @@ typedef NS_ENUM(NSInteger, DisplayMode) {
 	// try get the width from icon controller if possible
 	SBIconController *iconController = [%c(SBIconController) sharedInstance];
 	if (expectedWidth == 0.0 && [iconController respondsToSelector:@selector(widgetGroupViewController:sizeForInterfaceOrientation:)]) {
-		CGSize size = [iconController widgetGroupViewController:nil sizeForInterfaceOrientation:[iconController orientation]];
+		UIInterfaceOrientation orientation = [[%c(SpringBoard) sharedApplication] homeScreenSupportsRotation] ? [iconController orientation] : UIInterfaceOrientationPortrait;
+		CGSize size = [iconController widgetGroupViewController:nil sizeForInterfaceOrientation:orientation];
 		if (size.width > 0) {
 			expectedWidth = size.width;
 		}
@@ -218,7 +219,8 @@ typedef NS_ENUM(NSInteger, DisplayMode) {
 		}
 
 		if ([groupWidgetViewController respondsToSelector:@selector(widgetListViewController:sizeForInterfaceOrientation:)]) {
-			expectedWidth = [groupWidgetViewController widgetListViewController:nil sizeForInterfaceOrientation:[iconController orientation]].width;
+			UIInterfaceOrientation orientation = [[%c(SpringBoard) sharedApplication] homeScreenSupportsRotation] ? [iconController orientation] : UIInterfaceOrientationPortrait;
+			expectedWidth = [groupWidgetViewController widgetListViewController:nil sizeForInterfaceOrientation:orientation].width;
 		} else {
 			WGMajorListViewContorller *majorListViewController = [groupWidgetViewController valueForKey:@"_majorColumnListViewController"];
 			if (majorListViewController != nil) {
