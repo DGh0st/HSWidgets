@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>com.dgh0st.hswidgets.ccmodule</string>
+	<key>HSWidgetAddNewOptionsControllerClass</key>
+	<string>HSCCModulesListViewController</string>
+	<key>HSWidgetCreator</key>
+	<string>DGh0st</string>
+	<key>HSWidgetDisplayName</key>
+	<string>Control Center Module</string>
+	<key>HSWidgetIcon</key>
+	<string>icon.png</string>
+	<key>NSPrincipalClass</key>
+	<string>HSCCModuleWidgetViewController</string>
+</dict>
+</plist>

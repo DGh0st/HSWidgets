@@ -165,6 +165,10 @@ typedef NS_ENUM(NSInteger, DisplayMode) {
 		[self.hostingViewController setDisconnectsImmediately:NO];
 
 		[self _setupWidgetView];
+
+		[self.view setNeedsLayout];
+		[self.view layoutIfNeeded];
+
 		_isWidgetVisible = YES;
 	}
 }

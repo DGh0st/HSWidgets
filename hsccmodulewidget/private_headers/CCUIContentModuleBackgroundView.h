@@ -1,0 +1,2 @@
+@interface CCUIContentModuleBackgroundView : UIView
+@end

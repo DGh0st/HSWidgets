@@ -43,6 +43,7 @@ create-framework-zip:
 clean-framework-zip:
 	rm $(FRAMEWORK_PATH).zip
 
+SUBPROJECTS += hsccmodulewidget
 SUBPROJECTS += hsclockwidget
 SUBPROJECTS += hsspacerwidget
 SUBPROJECTS += hstodaywidget
