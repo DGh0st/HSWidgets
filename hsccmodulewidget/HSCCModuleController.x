@@ -12,6 +12,10 @@
 
 #define CC_SETTINGS_BUNDLE_PATH @"/System/Library/PreferenceBundles/ControlCenterSettings.bundle"
 
+static BOOL IsUnloadableBundle(NSString *identifier) {
+	return ![identifier isEqualToString:@"com.apple.replaykit.controlcenter.screencapture"];
+}
+
 @implementation HSCCModuleController
 +(instancetype)sharedInstance {
 	static HSCCModuleController *_sharedController = nil;
@@ -111,7 +115,7 @@
 
 -(void)unloadModuleBundleForMetadata:(CCSModuleMetadata *)metadata {
 	NSBundle *moduleBundle = [NSBundle bundleWithURL:metadata.moduleBundleURL];
-	if (moduleBundle != nil) {
+	if (moduleBundle != nil && IsUnloadableBundle(metadata.moduleIdentifier)) {
 		[moduleBundle unload];
 	}
 }

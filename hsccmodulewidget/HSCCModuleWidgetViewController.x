@@ -270,6 +270,7 @@ static inline void ForceLayoutViews(NSArray *views) {
 	[self.moduleContainerViewController willMoveToParentViewController:nil];
 	[self.moduleContainerViewController.view removeFromSuperview];
 	[self.moduleContainerViewController removeFromParentViewController];
+	self.moduleContainerViewController.delegate = nil;
 	[self.moduleContainerViewController release];
 	self.moduleContainerViewController = nil;
 

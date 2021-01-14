@@ -45,6 +45,7 @@ clean-framework-zip:
 
 SUBPROJECTS += hsccmodulewidget
 SUBPROJECTS += hsclockwidget
+SUBPROJECTS += hsmodernweatherwidget
 SUBPROJECTS += hsspacerwidget
 SUBPROJECTS += hstodaywidget
 include $(THEOS_MAKE_PATH)/aggregate.mk
