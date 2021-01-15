@@ -938,7 +938,7 @@ static inline void RemoveViewController(UIViewController *viewController, BOOL a
 
 	_isRemoving = YES;
 
-	for (HSWidgetViewController *widgetViewController in _model.widgetViewControllers)
+	for (HSWidgetViewController *widgetViewController in [_iconListView model].widgetViewControllers)
 		[widgetViewController _setDelegate:nil];
 
 	_iconListView = nil;

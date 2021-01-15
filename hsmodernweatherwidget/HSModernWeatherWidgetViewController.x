@@ -11,17 +11,19 @@
 
 #import <HSWidgets/HSWidgetResources.h>
 
-#define LOCATION_FONT_SIZE 18
+#define LOCATION_FONT_SIZE 16
 #define TEMPERATURE_FONT_SIZE 48
 #define MIN_TEMPERATURE_FONT_SIZE 42
 #define IMAGE_HEIGHT 40
 #define CONDITION_DESCRIPTION_FONT_SIZE 14
 #define HIGH_LOW_TEMPERATURE_FONT_SIZE 14
 #define MIN_TEMPERATURE_HEIGHT 36
+#define LOCATION_HEIGHT 18
 
 #define CONTENT_PADDING 10
 #define MIN_EDGE_PADDING 12
 #define EDGE_PADDING 16
+#define IMAGE_PADDING 6
 
 #define NUM_HOURLY_FORECAST 6
 #define HOURLY_FORECAST_HEIGHT 56
@@ -87,7 +89,7 @@
 	self.location.textAlignment = NSTextAlignmentLeft;
 	self.location.textColor = [UIColor whiteColor];
 	self.location.backgroundColor = [UIColor clearColor];
-	self.location.adjustsFontSizeToFitWidth = YES;
+	self.location.lineBreakMode = NSLineBreakByTruncatingTail;
 	[self.contentView addSubview:self.location];
 
 	self.temperature = [[UILabel alloc] init];
@@ -351,8 +353,8 @@
 		}
 
 		NSArray<NSDictionary *> *dailyForecasts = [weatherController dailyForecasts];
-		NSUInteger numDailyForecasts = MIN(dailyForecasts.count - 1, self.dailyForecastViews.count);
-		for (NSUInteger i = 0; i < numDailyForecasts; ++i) {
+		NSInteger numDailyForecasts = MIN(dailyForecasts.count - 1, self.dailyForecastViews.count);
+		for (NSInteger i = 0; i < numDailyForecasts; ++i) {
 			HSModernWeatherDailyForecastView *dailyForecastView = self.dailyForecastViews[i];
 			NSDictionary *dailyForecast = dailyForecasts[i + 1];
 			
@@ -385,14 +387,14 @@
 	[self.contentView removeConstraints:self.contentView.constraints];
 
 	CGFloat edgePadding = self.edgePadding;
-	CGFloat imageEdgePadding = edgePadding - 6;
+	CGFloat imageEdgePadding = edgePadding - IMAGE_PADDING;
 
 	// setup constraints again
 	if (mode == HSModernWeatherWidgetDisplayModeExtraLarge) {self.location.translatesAutoresizingMaskIntoConstraints = NO;
 		[self.location.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:edgePadding].active = YES;
-		[self.location.trailingAnchor constraintGreaterThanOrEqualToAnchor:self.conditionImageView.leadingAnchor constant:-edgePadding].active = YES;
+		[self.location.trailingAnchor constraintGreaterThanOrEqualToAnchor:self.conditionImageView.leadingAnchor constant:-IMAGE_PADDING].active = YES;
 		[self.location.topAnchor constraintEqualToAnchor:self.contentView.topAnchor constant:edgePadding].active = YES;
-		[self.location.heightAnchor constraintEqualToConstant:LOCATION_FONT_SIZE].active = YES;
+		[self.location.heightAnchor constraintEqualToConstant:LOCATION_HEIGHT].active = YES;
 
 		self.temperature.translatesAutoresizingMaskIntoConstraints = NO;
 		[self.temperature.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:edgePadding].active = YES;
@@ -404,11 +406,11 @@
 		[self.temperature.bottomAnchor constraintEqualToAnchor:self.highLowTemperature.bottomAnchor].active = YES;
 
 		self.conditionImageView.translatesAutoresizingMaskIntoConstraints = NO;
-		[self.conditionImageView.leadingAnchor constraintGreaterThanOrEqualToAnchor:self.location.trailingAnchor constant:-imageEdgePadding].active = YES;
+		[self.conditionImageView.leadingAnchor constraintGreaterThanOrEqualToAnchor:self.location.trailingAnchor constant:-IMAGE_PADDING].active = YES;
 		[self.conditionImageView.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-imageEdgePadding].active = YES;
 		[self.conditionImageView.heightAnchor constraintEqualToConstant:IMAGE_HEIGHT].active = YES;
 		[self.conditionImageView.topAnchor constraintEqualToAnchor:self.contentView.topAnchor constant:imageEdgePadding].active = YES;
-		[self.conditionImageView.bottomAnchor constraintLessThanOrEqualToAnchor:self.conditionDescription.topAnchor constant:imageEdgePadding].active = YES;
+		[self.conditionImageView.bottomAnchor constraintLessThanOrEqualToAnchor:self.conditionDescription.topAnchor constant:IMAGE_PADDING].active = YES;
 
 		self.conditionDescription.translatesAutoresizingMaskIntoConstraints = NO;
 		[self.conditionDescription.leadingAnchor constraintGreaterThanOrEqualToAnchor:self.temperature.trailingAnchor constant:-edgePadding].active = YES;
@@ -440,7 +442,7 @@
 		[self.location.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:edgePadding].active = YES;
 		[self.location.trailingAnchor constraintGreaterThanOrEqualToAnchor:self.conditionImageView.leadingAnchor constant:-edgePadding].active = YES;
 		[self.location.topAnchor constraintEqualToAnchor:self.contentView.topAnchor constant:edgePadding].active = YES;
-		[self.location.heightAnchor constraintEqualToConstant:LOCATION_FONT_SIZE].active = YES;
+		[self.location.heightAnchor constraintEqualToConstant:LOCATION_HEIGHT].active = YES;
 
 		self.temperature.translatesAutoresizingMaskIntoConstraints = NO;
 		[self.temperature.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:edgePadding].active = YES;
@@ -452,11 +454,11 @@
 		[self.temperature.bottomAnchor constraintEqualToAnchor:self.highLowTemperature.bottomAnchor].active = YES;
 
 		self.conditionImageView.translatesAutoresizingMaskIntoConstraints = NO;
-		[self.conditionImageView.leadingAnchor constraintGreaterThanOrEqualToAnchor:self.location.trailingAnchor constant:-imageEdgePadding].active = YES;
+		[self.conditionImageView.leadingAnchor constraintGreaterThanOrEqualToAnchor:self.location.trailingAnchor constant:-IMAGE_PADDING].active = YES;
 		[self.conditionImageView.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-imageEdgePadding].active = YES;
 		[self.conditionImageView.heightAnchor constraintEqualToConstant:IMAGE_HEIGHT].active = YES;
 		[self.conditionImageView.topAnchor constraintEqualToAnchor:self.contentView.topAnchor constant:imageEdgePadding].active = YES;
-		[self.conditionImageView.bottomAnchor constraintLessThanOrEqualToAnchor:self.conditionDescription.topAnchor constant:imageEdgePadding].active = YES;
+		[self.conditionImageView.bottomAnchor constraintLessThanOrEqualToAnchor:self.conditionDescription.topAnchor constant:IMAGE_PADDING].active = YES;
 
 		self.conditionDescription.translatesAutoresizingMaskIntoConstraints = NO;
 		[self.conditionDescription.leadingAnchor constraintGreaterThanOrEqualToAnchor:self.temperature.trailingAnchor constant:-edgePadding].active = YES;
@@ -482,7 +484,7 @@
 		[self.location.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:edgePadding].active = YES;
 		[self.location.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:edgePadding].active = YES;
 		[self.location.topAnchor constraintEqualToAnchor:self.contentView.topAnchor constant:edgePadding].active = YES;
-		[self.location.heightAnchor constraintEqualToConstant:LOCATION_FONT_SIZE].active = YES;
+		[self.location.heightAnchor constraintEqualToConstant:LOCATION_HEIGHT].active = YES;
 
 		self.temperature.translatesAutoresizingMaskIntoConstraints = NO;
 		[self.temperature.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:edgePadding].active = YES;
@@ -494,8 +496,8 @@
 		[self.conditionImageView.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:imageEdgePadding].active = YES;
 		[self.conditionImageView.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-imageEdgePadding].active = YES;
 		[self.conditionImageView.heightAnchor constraintEqualToConstant:IMAGE_HEIGHT].active = YES;
-		[self.conditionImageView.topAnchor constraintGreaterThanOrEqualToAnchor:self.temperature.bottomAnchor constant:-imageEdgePadding].active = YES;
-		[self.conditionImageView.bottomAnchor constraintEqualToAnchor:self.conditionDescription.topAnchor constant:imageEdgePadding].active = YES;
+		[self.conditionImageView.topAnchor constraintGreaterThanOrEqualToAnchor:self.temperature.bottomAnchor constant:-IMAGE_PADDING].active = YES;
+		[self.conditionImageView.bottomAnchor constraintEqualToAnchor:self.conditionDescription.topAnchor constant:IMAGE_PADDING].active = YES;
 
 		self.conditionDescription.translatesAutoresizingMaskIntoConstraints = NO;
 		[self.conditionDescription.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:edgePadding].active = YES;
