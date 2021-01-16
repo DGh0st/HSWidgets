@@ -1,4 +1,5 @@
 #import "HSModernWeatherDailyForecastView.h"
+#import "HSWeatherController.h"
 
 #define FONT_SIZE 14
 #define MAX_TEMPERATURE_WIDTH 48
@@ -25,7 +26,7 @@
 		[self addSubview:self.imageView];
 
 		self.highTemperatureLabel = [[UILabel alloc] init];
-		self.highTemperatureLabel.text = @"";
+		self.highTemperatureLabel.text = HSWeatherFakeTemperature;
 		self.highTemperatureLabel.font = [UIFont systemFontOfSize:FONT_SIZE weight:UIFontWeightMedium];
 		self.highTemperatureLabel.numberOfLines = 1;
 		self.highTemperatureLabel.textAlignment = NSTextAlignmentRight;
@@ -35,7 +36,7 @@
 		[self addSubview:self.highTemperatureLabel];
 
 		self.lowTemperatureLabel = [[UILabel alloc] init];
-		self.lowTemperatureLabel.text = @"";
+		self.lowTemperatureLabel.text = HSWeatherFakeTemperature;
 		self.lowTemperatureLabel.font = [UIFont systemFontOfSize:FONT_SIZE weight:UIFontWeightMedium];
 		self.lowTemperatureLabel.numberOfLines = 1;
 		self.lowTemperatureLabel.textAlignment = NSTextAlignmentRight;

@@ -151,7 +151,9 @@ NSString *const HSWeatherDailyForecastDayOfWeekKey = @"DayOfWeek";
 			return WAImageForLegacyConditionCode([condition intValue]);
 	}
 
-	return WAImageForLegacyConditionCode(self.todayModel.forecastModel.currentConditions.conditionCode);
+	if (self.todayModel.forecastModel.currentConditions != nil)
+		return WAImageForLegacyConditionCode(self.todayModel.forecastModel.currentConditions.conditionCode);
+	return nil;
 }
 
 -(NSString *)conditionsDescription {
@@ -166,7 +168,9 @@ NSString *const HSWeatherDailyForecastDayOfWeekKey = @"DayOfWeek";
 			return longDescription;
 	}
 
-	return WAConditionsLineStringFromCurrentForecasts(self.todayModel.forecastModel.currentConditions) ?: HSWeatherFakeDescription;
+	if (self.todayModel.forecastModel.currentConditions != nil)
+		return WAConditionsLineStringFromCurrentForecasts(self.todayModel.forecastModel.currentConditions) ?: HSWeatherFakeDescription;
+	return HSWeatherFakeDescription;
 }
 
 -(NSString *)highLowDescription {

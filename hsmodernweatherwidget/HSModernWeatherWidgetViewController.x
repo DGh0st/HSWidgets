@@ -335,35 +335,62 @@
 -(void)_updateViews {
 	HSWeatherController *weatherController = [HSWeatherController sharedInstance];
 	[UIView transitionWithView:self.contentView duration:HSWidgetAnimationDuration options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionTransitionCrossDissolve animations:^{
+		// fill the basic weather info
 		self.location.text = [weatherController locationName];
 		self.temperature.text = [weatherController temperature];
 		self.conditionImageView.image = [weatherController conditionsImage];
 		self.conditionDescription.text = [weatherController conditionsDescription];
 		self.highLowTemperature.text = [weatherController highLowDescription];
 
+		// fill the hourly forecast info
 		NSArray<NSDictionary *> *hourlyForecasts = [weatherController hourlyForecasts];
-		NSUInteger numHourlyForecasts = MIN(hourlyForecasts.count, self.hourlyForecastViews.count);
-		for (NSUInteger i = 0; i < numHourlyForecasts; ++i) {
-			HSModernWeatherHourlyForecastView *hourlyForecastView = self.hourlyForecastViews[i];
-			NSDictionary *hourlyForecast = hourlyForecasts[i];
-			
-			hourlyForecastView.timeLabel.text = hourlyForecast[HSWeatherHourlyForecastTimeKey];
-			hourlyForecastView.imageView.image = hourlyForecast[HSWeatherHourlyForecastConditionImageKey];
-			hourlyForecastView.temperatureLabel.text = hourlyForecast[HSWeatherHourlyForecastTemperatureKey];
+		NSUInteger hourlyForecastIndex = 0;
+
+		if (hourlyForecasts.count > 0) {
+			NSUInteger numHourlyForecasts = MIN(hourlyForecasts.count, self.hourlyForecastViews.count);
+			for (; hourlyForecastIndex < numHourlyForecasts; ++hourlyForecastIndex) {
+				HSModernWeatherHourlyForecastView *hourlyForecastView = self.hourlyForecastViews[hourlyForecastIndex];
+				NSDictionary *hourlyForecast = hourlyForecasts[hourlyForecastIndex];
+				
+				hourlyForecastView.timeLabel.text = hourlyForecast[HSWeatherHourlyForecastTimeKey];
+				hourlyForecastView.imageView.image = hourlyForecast[HSWeatherHourlyForecastConditionImageKey];
+				hourlyForecastView.temperatureLabel.text = hourlyForecast[HSWeatherHourlyForecastTemperatureKey];
+			}
 		}
 
+		for (; hourlyForecastIndex < self.hourlyForecastViews.count; ++hourlyForecastIndex) {
+			HSModernWeatherHourlyForecastView *hourlyForecastView = self.hourlyForecastViews[hourlyForecastIndex];
+			hourlyForecastView.timeLabel.text = @"";
+			hourlyForecastView.imageView.image = nil;
+			hourlyForecastView.temperatureLabel.text = HSWeatherFakeTemperature;
+		}
+
+		// fill the daily forecast info
 		NSArray<NSDictionary *> *dailyForecasts = [weatherController dailyForecasts];
-		NSInteger numDailyForecasts = MIN(dailyForecasts.count - 1, self.dailyForecastViews.count);
-		for (NSInteger i = 0; i < numDailyForecasts; ++i) {
-			HSModernWeatherDailyForecastView *dailyForecastView = self.dailyForecastViews[i];
-			NSDictionary *dailyForecast = dailyForecasts[i + 1];
-			
-			dailyForecastView.weekDayLabel.text = dailyForecast[HSWeatherDailyForecastDayOfWeekKey];
-			dailyForecastView.imageView.image = dailyForecast[HSWeatherDailyForecastConditionImageKey];
-			dailyForecastView.highTemperatureLabel.text = dailyForecast[HSWeatherDailyForecastHighTemperatureKey];
-			dailyForecastView.lowTemperatureLabel.text = dailyForecast[HSWeatherDailyForecastLowTemperatureKey];
+		NSUInteger dailyForecastIndex = 0;
+
+		if (dailyForecasts.count > 0) {
+			NSUInteger numDailyForecasts = MIN(dailyForecasts.count - 1, self.dailyForecastViews.count);
+			for (; dailyForecastIndex < numDailyForecasts; ++dailyForecastIndex) {
+				HSModernWeatherDailyForecastView *dailyForecastView = self.dailyForecastViews[dailyForecastIndex];
+				NSDictionary *dailyForecast = dailyForecasts[dailyForecastIndex + 1];
+				
+				dailyForecastView.weekDayLabel.text = dailyForecast[HSWeatherDailyForecastDayOfWeekKey];
+				dailyForecastView.imageView.image = dailyForecast[HSWeatherDailyForecastConditionImageKey];
+				dailyForecastView.highTemperatureLabel.text = dailyForecast[HSWeatherDailyForecastHighTemperatureKey];
+				dailyForecastView.lowTemperatureLabel.text = dailyForecast[HSWeatherDailyForecastLowTemperatureKey];
+			}
 		}
 
+		for (; dailyForecastIndex < self.dailyForecastViews.count; ++dailyForecastIndex) {
+			HSModernWeatherDailyForecastView *dailyForecastView = self.dailyForecastViews[dailyForecastIndex];
+			dailyForecastView.weekDayLabel.text = @"";
+			dailyForecastView.imageView.image = nil;
+			dailyForecastView.highTemperatureLabel.text = HSWeatherFakeTemperature;
+			dailyForecastView.lowTemperatureLabel.text = HSWeatherFakeTemperature;
+		}
+
+		// update the dynamic background
 		WUIDynamicWeatherBackground *dynamicWeatherBackground = self.dynamicWeatherBackground;
 		WUIWeatherCondition *condition = dynamicWeatherBackground.condition;
 		City *currentCity = [weatherController currentCity];
