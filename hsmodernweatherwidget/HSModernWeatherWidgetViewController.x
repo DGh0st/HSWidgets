@@ -12,14 +12,15 @@
 #import <HSWidgets/HSWidgetResources.h>
 
 #define LOCATION_FONT_SIZE 16
+#define LOCATION_HEIGHT 18
 #define TEMPERATURE_FONT_SIZE 48
+#define MIN_TEMPERATURE_HEIGHT 36
 #define MIN_TEMPERATURE_FONT_SIZE 42
 #define IMAGE_HEIGHT 40
 #define CONDITION_DESCRIPTION_FONT_SIZE 14
 #define HIGH_LOW_TEMPERATURE_FONT_SIZE 14
-#define MIN_TEMPERATURE_HEIGHT 36
-#define LOCATION_HEIGHT 18
 
+#define MAX_CONTENT_PADDING 16
 #define CONTENT_PADDING 10
 #define MIN_EDGE_PADDING 12
 #define EDGE_PADDING 16
@@ -30,7 +31,7 @@
 #define HOURLY_FORECAST_PADDING 5
 
 #define NUM_DAILY_FORECAST 6
-#define DAILY_FORECAST_HEIGHT 128
+#define DAILY_FORECAST_HEIGHT 168
 #define DAILY_FORECAST_PADDING 0
 
 #define DISPLAY_MODE_KEY @"DisplayMode"
@@ -95,7 +96,7 @@
 	self.temperature = [[UILabel alloc] init];
 	self.temperature.userInteractionEnabled = NO;
 	self.temperature.text = HSWeatherFakeTemperature;
-	self.temperature.font = [UIFont systemFontOfSize:isMediumOrLarger ? MIN_TEMPERATURE_HEIGHT : TEMPERATURE_FONT_SIZE weight:UIFontWeightLight];
+	self.temperature.font = [UIFont systemFontOfSize:isMediumOrLarger ? MIN_TEMPERATURE_FONT_SIZE : TEMPERATURE_FONT_SIZE weight:UIFontWeightLight];
 	self.temperature.numberOfLines = 1;
 	self.temperature.textAlignment = NSTextAlignmentLeft;
 	self.temperature.textColor = [UIColor whiteColor];
@@ -176,8 +177,8 @@
 -(void)setRequestedSize:(CGSize)requestedSize {
 	[super setRequestedSize:requestedSize];
 
+	CGRect calculatedFrame = [self calculatedFrame];
 	if (self.backgroundStyle == HSModernWeatherWidgetBackgroundStyleGradient) {
-		CGRect calculatedFrame = [self calculatedFrame];
 		CGRect presentationBounds = self.dynamicWeatherBackground.gradientLayer.presentationLayer.bounds;
 		CGRect previousBounds = (presentationBounds.size.height > 0 && presentationBounds.size.width > 0) ? presentationBounds : self.dynamicWeatherBackground.gradientLayer.bounds;
 
@@ -187,13 +188,22 @@
 		self.dynamicWeatherBackground.gradientLayer.frame = calculatedFrame;
 		[self.dynamicWeatherBackground.gradientLayer addAnimation:boundsAnimation forKey:@"bounds"];
 	} else if (self.backgroundStyle == HSModernWeatherWidgetBackgroundStyleAnimated) {
-		self.dynamicWeatherBackground.frame = [self calculatedFrame];
+		self.dynamicWeatherBackground.frame = calculatedFrame;
 	}
 
-	if (requestedSize.height > 152)
+	BOOL isSmallOrMedium = (self.displayMode == HSModernWeatherWidgetDisplayModeSmall || self.displayMode == HSModernWeatherWidgetDisplayModeMedium);
+	BOOL isLarger = (self.displayMode == HSModernWeatherWidgetDisplayModeExtraLarge);
+	if ((isSmallOrMedium && calculatedFrame.size.height >= 156) || (isLarger && calculatedFrame.size.height >= 328)) {
 		self.edgePadding = EDGE_PADDING;
-	else
+
+		if (isLarger)
+			[self.dailyForecastContainerView addArrangedSubview:self.dailyForecastViews.lastObject];
+	} else {
 		self.edgePadding = MIN_EDGE_PADDING;
+
+		if (isLarger)
+			[self.dailyForecastViews.lastObject removeFromSuperview];
+	}
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -417,7 +427,8 @@
 	CGFloat imageEdgePadding = edgePadding - IMAGE_PADDING;
 
 	// setup constraints again
-	if (mode == HSModernWeatherWidgetDisplayModeExtraLarge) {self.location.translatesAutoresizingMaskIntoConstraints = NO;
+	if (mode == HSModernWeatherWidgetDisplayModeExtraLarge) {
+		self.location.translatesAutoresizingMaskIntoConstraints = NO;
 		[self.location.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:edgePadding].active = YES;
 		[self.location.trailingAnchor constraintGreaterThanOrEqualToAnchor:self.conditionImageView.leadingAnchor constant:-IMAGE_PADDING].active = YES;
 		[self.location.topAnchor constraintEqualToAnchor:self.contentView.topAnchor constant:edgePadding].active = YES;
@@ -430,6 +441,7 @@
 		[self.temperature.topAnchor constraintEqualToAnchor:self.location.bottomAnchor constant:2].active = YES;
 		[self.temperature.heightAnchor constraintGreaterThanOrEqualToConstant:MIN_TEMPERATURE_HEIGHT].active = YES;
 		[self.temperature.bottomAnchor constraintLessThanOrEqualToAnchor:self.hourlyForecastContainerView.topAnchor constant:-CONTENT_PADDING].active = YES;
+		[self.temperature.bottomAnchor constraintGreaterThanOrEqualToAnchor:self.hourlyForecastContainerView.topAnchor constant:-MAX_CONTENT_PADDING].active = YES;
 		[self.temperature.bottomAnchor constraintEqualToAnchor:self.highLowTemperature.bottomAnchor].active = YES;
 
 		self.conditionImageView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -451,6 +463,7 @@
 		[self.highLowTemperature.topAnchor constraintEqualToAnchor:self.conditionDescription.bottomAnchor constant:2].active = YES;
 		[self.highLowTemperature.heightAnchor constraintEqualToConstant:HIGH_LOW_TEMPERATURE_FONT_SIZE].active = YES;
 		[self.highLowTemperature.bottomAnchor constraintLessThanOrEqualToAnchor:self.hourlyForecastContainerView.topAnchor constant:-CONTENT_PADDING].active = YES;
+		[self.highLowTemperature.bottomAnchor constraintGreaterThanOrEqualToAnchor:self.hourlyForecastContainerView.topAnchor constant:-MAX_CONTENT_PADDING].active = YES;
 		[self.highLowTemperature.bottomAnchor constraintEqualToAnchor:self.temperature.bottomAnchor].active = YES;
 
 		self.hourlyForecastContainerView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -467,7 +480,7 @@
 	} else if (mode == HSModernWeatherWidgetDisplayModeMedium) {
 		self.location.translatesAutoresizingMaskIntoConstraints = NO;
 		[self.location.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:edgePadding].active = YES;
-		[self.location.trailingAnchor constraintGreaterThanOrEqualToAnchor:self.conditionImageView.leadingAnchor constant:-edgePadding].active = YES;
+		[self.location.trailingAnchor constraintGreaterThanOrEqualToAnchor:self.conditionImageView.leadingAnchor constant:-IMAGE_PADDING].active = YES;
 		[self.location.topAnchor constraintEqualToAnchor:self.contentView.topAnchor constant:edgePadding].active = YES;
 		[self.location.heightAnchor constraintEqualToConstant:LOCATION_HEIGHT].active = YES;
 
@@ -478,6 +491,7 @@
 		[self.temperature.topAnchor constraintEqualToAnchor:self.location.bottomAnchor constant:2].active = YES;
 		[self.temperature.heightAnchor constraintGreaterThanOrEqualToConstant:MIN_TEMPERATURE_HEIGHT].active = YES;
 		[self.temperature.bottomAnchor constraintLessThanOrEqualToAnchor:self.hourlyForecastContainerView.topAnchor constant:-CONTENT_PADDING].active = YES;
+		[self.temperature.bottomAnchor constraintGreaterThanOrEqualToAnchor:self.hourlyForecastContainerView.topAnchor constant:-MAX_CONTENT_PADDING].active = YES;
 		[self.temperature.bottomAnchor constraintEqualToAnchor:self.highLowTemperature.bottomAnchor].active = YES;
 
 		self.conditionImageView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -499,6 +513,7 @@
 		[self.highLowTemperature.topAnchor constraintEqualToAnchor:self.conditionDescription.bottomAnchor constant:2].active = YES;
 		[self.highLowTemperature.heightAnchor constraintEqualToConstant:HIGH_LOW_TEMPERATURE_FONT_SIZE].active = YES;
 		[self.highLowTemperature.bottomAnchor constraintLessThanOrEqualToAnchor:self.hourlyForecastContainerView.topAnchor constant:-CONTENT_PADDING].active = YES;
+		[self.highLowTemperature.bottomAnchor constraintGreaterThanOrEqualToAnchor:self.hourlyForecastContainerView.topAnchor constant:-MAX_CONTENT_PADDING].active = YES;
 		[self.highLowTemperature.bottomAnchor constraintEqualToAnchor:self.temperature.bottomAnchor].active = YES;
 
 		self.hourlyForecastContainerView.translatesAutoresizingMaskIntoConstraints = NO;
