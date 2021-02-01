@@ -17,8 +17,10 @@
 #define MIN_TEMPERATURE_HEIGHT 36
 #define MIN_TEMPERATURE_FONT_SIZE 42
 #define IMAGE_HEIGHT 40
-#define CONDITION_DESCRIPTION_FONT_SIZE 14
-#define HIGH_LOW_TEMPERATURE_FONT_SIZE 14
+#define CONDITION_DESCRIPTION_HEIGHT 14
+#define CONDITION_DESCRIPTION_FONT_SIZE 13
+#define HIGH_LOW_TEMPERATURE_HEIGHT 14
+#define HIGH_LOW_TEMPERATURE_FONT_SIZE 13
 
 #define MAX_CONTENT_PADDING 16
 #define CONTENT_PADDING 10
@@ -454,14 +456,14 @@
 		self.conditionDescription.translatesAutoresizingMaskIntoConstraints = NO;
 		[self.conditionDescription.leadingAnchor constraintGreaterThanOrEqualToAnchor:self.temperature.trailingAnchor constant:-edgePadding].active = YES;
 		[self.conditionDescription.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-edgePadding].active = YES;
-		[self.conditionDescription.heightAnchor constraintEqualToConstant:CONDITION_DESCRIPTION_FONT_SIZE].active = YES;
+		[self.conditionDescription.heightAnchor constraintEqualToConstant:CONDITION_DESCRIPTION_HEIGHT].active = YES;
 		[self.conditionDescription.bottomAnchor constraintEqualToAnchor:self.highLowTemperature.topAnchor constant:-2].active = YES;
 
 		self.highLowTemperature.translatesAutoresizingMaskIntoConstraints = NO;
 		[self.highLowTemperature.leadingAnchor constraintGreaterThanOrEqualToAnchor:self.temperature.trailingAnchor constant:-edgePadding].active = YES;
 		[self.highLowTemperature.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-edgePadding].active = YES;
 		[self.highLowTemperature.topAnchor constraintEqualToAnchor:self.conditionDescription.bottomAnchor constant:2].active = YES;
-		[self.highLowTemperature.heightAnchor constraintEqualToConstant:HIGH_LOW_TEMPERATURE_FONT_SIZE].active = YES;
+		[self.highLowTemperature.heightAnchor constraintEqualToConstant:HIGH_LOW_TEMPERATURE_HEIGHT].active = YES;
 		[self.highLowTemperature.bottomAnchor constraintLessThanOrEqualToAnchor:self.hourlyForecastContainerView.topAnchor constant:-CONTENT_PADDING].active = YES;
 		[self.highLowTemperature.bottomAnchor constraintGreaterThanOrEqualToAnchor:self.hourlyForecastContainerView.topAnchor constant:-MAX_CONTENT_PADDING].active = YES;
 		[self.highLowTemperature.bottomAnchor constraintEqualToAnchor:self.temperature.bottomAnchor].active = YES;
@@ -504,14 +506,14 @@
 		self.conditionDescription.translatesAutoresizingMaskIntoConstraints = NO;
 		[self.conditionDescription.leadingAnchor constraintGreaterThanOrEqualToAnchor:self.temperature.trailingAnchor constant:-edgePadding].active = YES;
 		[self.conditionDescription.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-edgePadding].active = YES;
-		[self.conditionDescription.heightAnchor constraintEqualToConstant:CONDITION_DESCRIPTION_FONT_SIZE].active = YES;
+		[self.conditionDescription.heightAnchor constraintEqualToConstant:CONDITION_DESCRIPTION_HEIGHT].active = YES;
 		[self.conditionDescription.bottomAnchor constraintEqualToAnchor:self.highLowTemperature.topAnchor constant:-2].active = YES;
 
 		self.highLowTemperature.translatesAutoresizingMaskIntoConstraints = NO;
 		[self.highLowTemperature.leadingAnchor constraintGreaterThanOrEqualToAnchor:self.temperature.trailingAnchor constant:-edgePadding].active = YES;
 		[self.highLowTemperature.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-edgePadding].active = YES;
 		[self.highLowTemperature.topAnchor constraintEqualToAnchor:self.conditionDescription.bottomAnchor constant:2].active = YES;
-		[self.highLowTemperature.heightAnchor constraintEqualToConstant:HIGH_LOW_TEMPERATURE_FONT_SIZE].active = YES;
+		[self.highLowTemperature.heightAnchor constraintEqualToConstant:HIGH_LOW_TEMPERATURE_HEIGHT].active = YES;
 		[self.highLowTemperature.bottomAnchor constraintLessThanOrEqualToAnchor:self.hourlyForecastContainerView.topAnchor constant:-CONTENT_PADDING].active = YES;
 		[self.highLowTemperature.bottomAnchor constraintGreaterThanOrEqualToAnchor:self.hourlyForecastContainerView.topAnchor constant:-MAX_CONTENT_PADDING].active = YES;
 		[self.highLowTemperature.bottomAnchor constraintEqualToAnchor:self.temperature.bottomAnchor].active = YES;
@@ -544,13 +546,13 @@
 		self.conditionDescription.translatesAutoresizingMaskIntoConstraints = NO;
 		[self.conditionDescription.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:edgePadding].active = YES;
 		[self.conditionDescription.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-edgePadding].active = YES;
-		[self.conditionDescription.heightAnchor constraintEqualToConstant:CONDITION_DESCRIPTION_FONT_SIZE].active = YES;
+		[self.conditionDescription.heightAnchor constraintEqualToConstant:CONDITION_DESCRIPTION_HEIGHT].active = YES;
 		[self.conditionDescription.bottomAnchor constraintEqualToAnchor:self.highLowTemperature.topAnchor constant:-2].active = YES;
 
 		self.highLowTemperature.translatesAutoresizingMaskIntoConstraints = NO;
 		[self.highLowTemperature.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:edgePadding].active = YES;
 		[self.highLowTemperature.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-edgePadding].active = YES;
-		[self.highLowTemperature.heightAnchor constraintEqualToConstant:HIGH_LOW_TEMPERATURE_FONT_SIZE].active = YES;
+		[self.highLowTemperature.heightAnchor constraintEqualToConstant:HIGH_LOW_TEMPERATURE_HEIGHT].active = YES;
 		[self.highLowTemperature.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:-edgePadding].active = YES;
 	}
 

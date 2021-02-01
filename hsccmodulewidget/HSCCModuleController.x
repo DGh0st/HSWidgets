@@ -13,7 +13,9 @@
 #define CC_SETTINGS_BUNDLE_PATH @"/System/Library/PreferenceBundles/ControlCenterSettings.bundle"
 
 static BOOL IsUnloadableBundle(NSString *identifier) {
-	return ![identifier isEqualToString:@"com.apple.replaykit.controlcenter.screencapture"];
+	// replay kit module (com.apple.replaykit.controlcenter.screencapture) causes crashes for most on unloading
+	// TODO: Figure out a better way to unload modules or the specific reason why system is trying to access its content after being unloaded
+	return NO;
 }
 
 @implementation HSCCModuleController
